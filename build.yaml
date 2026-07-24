@@ -1,0 +1,10 @@
+targets:
+  $default:
+    builders:
+      injectable_generator:injectable_builder:
+        options:
+          auto_register: true
+      drift_dev:
+        options:
+          store_date_time_values_as_text: true
+          named_parameters: true
