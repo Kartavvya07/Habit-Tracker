@@ -9,100 +9,47 @@
 
 # Current Phase
 
-**Phase:** Phase 1 – Core Infrastructure
+**Phase:** Phase 2 – Core Domain Layer
 
-**Status:** Completed (Ready for Phase 2 Review & Approval)
+**Status:** Completed (Ready for Phase 3 Review & Approval)
 
 ---
 
 # Objective
 
-Implement only the project foundation.
-
-Do **not** implement business features, widgets, notifications, analytics, gamification, AI Coach, or cloud sync during this phase.
+Design and implement the application's core domain, persistence layer, repository implementation, and dependency injection.
 
 ---
 
 # Deliverables
 
-- Create Flutter project structure
-- Configure Feature-First Clean Architecture
-- Configure routing with `go_router`
-- Configure dependency injection (`get_it` + `injectable`)
-- Initialize Drift database
-- Create database scaffold
-- Configure application theme
-- Configure environment/configuration layer
-- Configure logging
-- Create reusable core package structure
-- Prepare sync engine scaffold (no implementation)
+- Created immutable Freezed Habit entity (`lib/features/habits/domain/entities/habit.dart`)
+- Created domain enums: `HabitFrequency`, `HabitColor`, `HabitType`
+- Defined Drift `Habits` database table schema (`lib/core/database/tables/habits_table.dart`)
+- Updated `AppDatabase` with `Habits` table schema (`lib/core/database/app_database.dart`)
+- Created data mapper (`HabitMapper`) converting between Drift database models and domain entities
+- Created abstract `HabitRepository` interface and `DriftHabitRepository` concrete implementation
+- Configured Riverpod providers for `AppDatabase` and `HabitRepository`
+- Added comprehensive unit tests for `Habit` serialization & immutability, and `DriftHabitRepository` CRUD operations using in-memory SQLite (`NativeDatabase.memory()`)
 
 ---
 
 # Definition of Done
 
-Phase 1 is complete only if:
+Phase 2 is complete:
 
-- Project builds successfully
-- Android build succeeds
-- iOS build succeeds (where applicable)
-- No analyzer errors
-- No architecture violations
-- Folder structure matches specification
-- Dependencies are documented
-- Every generated file is explained
-
----
-
-# Constraints
-
-The AI **must not**:
-
-- Start Phase 2
-- Create database tables beyond initialization
-- Implement repositories
-- Implement entities
-- Build UI screens
-- Add business logic
-- Add widgets
-- Add notifications
-- Add cloud sync
-- Add AI Coach
-
-Only infrastructure is allowed.
-
----
-
-# Required Output
-
-For this phase the AI must provide:
-
-1. New dependencies and justification
-2. Folder structure
-3. Every created file
-4. Complete code
-5. Setup instructions
-6. Build instructions
-7. Self-review
-8. Known limitations
-9. Suggested improvements (without implementing them)
-
----
-
-# After Completion Checklist
-
-When Phase 1 is finished:
-
-- [x] Verify project compiles
-- [x] Run static analysis
-- [x] Review architecture
-- [x] Update this file to Phase 2
-- [ ] Commit changes using Conventional Commits
+- Project compiles successfully (`flutter pub get`)
+- Code generation completes cleanly (`dart run build_runner build`)
+- `flutter analyze` passes with zero issues
+- `flutter test` passes 100% of all unit tests
+- Clean architecture and repository patterns followed
+- Changes committed using Conventional Commits
 
 ---
 
 # Next Phase
 
-**Phase 2 – Domain & Data Layer**
+**Phase 3 – Habit CRUD & Management**
 
-_Do not begin until Phase 1 has been reviewed and approved._
+_Do not begin until Phase 2 has been reviewed and approved._
+
