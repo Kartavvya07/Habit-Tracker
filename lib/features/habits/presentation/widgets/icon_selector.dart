@@ -44,7 +44,7 @@ class IconSelector extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isSelected
                         ? colorScheme.primaryContainer
-                        : colorScheme.surfaceVariant.withOpacity(0.5),
+                        : colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(12),
                     border: isSelected
                         ? Border.all(color: colorScheme.primary, width: 2)

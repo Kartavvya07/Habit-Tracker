@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../domain/entities/habit_color.dart';
 import '../../domain/entities/habit_frequency.dart';
 import '../../domain/entities/habit_type.dart';
 import '../extensions/habit_color_extension.dart';
@@ -41,7 +39,7 @@ class _CreateHabitScreenState extends ConsumerState<CreateHabitScreen> {
   void _onSavePressed() async {
     final success = await ref.read(createHabitProvider.notifier).saveHabit();
     if (success && mounted) {
-      context.pop();
+      Navigator.of(context).maybePop();
     }
   }
 
@@ -176,8 +174,9 @@ class _CreateHabitScreenState extends ConsumerState<CreateHabitScreen> {
                 children: [
                   Expanded(
                     child: OutlinedButton(
-                      onPressed:
-                          state.isSubmitting ? null : () => context.pop(),
+                      onPressed: state.isSubmitting
+                          ? null
+                          : () => Navigator.of(context).maybePop(),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
