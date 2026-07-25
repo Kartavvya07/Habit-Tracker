@@ -2,7 +2,7 @@
 
 > **Document Type:** Production Project Management & Engineering Roadmap  
 > **Source of Truth:** `PROJECT_SPECIFICATION_FINAL.md` & `CURRENT_PHASE.md`  
-> **Status:** Phase 1 Complete | Ready for Phase 2 Execution
+> **Status:** Phase 3 Complete | Ready for Phase 4 Execution
 
 ---
 
@@ -38,9 +38,9 @@
 
 ```mermaid
 graph TD
-    M1["Phase 1: Core Infrastructure (Completed)"] --> M2["Phase 2: Domain & Data Layer"]
-    M2 --> M3["Phase 3: Habit CRUD & Management"]
-    M3 --> M4["Phase 4: Dashboard & UI Foundation"]
+    M1["Phase 1: Core Infrastructure (Completed)"] --> M2["Phase 2: Domain & Data Layer (Completed)"]
+    M2 --> M3["Phase 3: Habit CRUD & Management (Completed)"]
+    M3 --> M4["Phase 4: Habit Dashboard (Read Vertical Slice)"]
     M4 --> M5["Phase 5: Habit Loop & Streak Engine"]
     M5 --> M6["Phase 6: Notifications & Reminders"]
     M5 --> M7["Phase 7: Interactive Native Widgets"]
@@ -58,9 +58,9 @@ graph TD
 | Milestone | Target Horizon | Prerequisites | Core Objective |
 | :--- | :--- | :--- | :--- |
 | **Phase 1 – Core Infrastructure** | `COMPLETED` | None | Project setup, DI, router, theme, Drift initialization |
-| **Phase 2 – Domain & Data Layer** | Sprint 1 | Phase 1 | Immutable entities, Drift tables, repositories & mappers |
-| **Phase 3 – Habit CRUD & Management** | Sprint 2 | Phase 2 | Habit creation (Boolean, Numeric, Timer), NLP parser & templates |
-| **Phase 4 – Dashboard & UI Foundation** | Sprint 3 | Phase 3 | M3 Dashboard, dark mode, dynamic colors & one-handed UX |
+| **Phase 2 – Domain & Data Layer** | `COMPLETED` | Phase 1 | Immutable entities, Drift tables, repositories & mappers |
+| **Phase 3 – Habit CRUD & Management** | `COMPLETED` | Phase 2 | Habit creation (Boolean, Numeric, Timer), NLP parser & templates |
+| **Phase 4 – Habit Dashboard (Read Vertical Slice)** | Sprint 3 | Phase 3 | Read habit stream, M3 Dashboard UI, habit cards & stats summary |
 | **Phase 5 – Habit Loop & Streak Engine** | Sprint 4 | Phase 4 | Log execution, value logging, streak calculation & Vacation Mode |
 | **Phase 6 – Notifications & Reminders** | Sprint 5 | Phase 5 | Local exact alarms, BOOT_COMPLETED recovery & action buttons |
 | **Phase 7 – Interactive Native Widgets** | Sprint 6 | Phase 5 | Android Glance & iOS WidgetKit home screen widgets |
@@ -86,7 +86,7 @@ graph TD
 
 ---
 
-### Milestone 2: Phase 2 – Domain & Data Layer
+### Milestone 2: Phase 2 – Domain & Data Layer (Completed)
 **Description:** Build the core domain entities, Drift database tables (`Habits`, `HabitLogs`), DTOs, mappers, and repository implementations.
 
 | Issue ID | Issue Title | Description | Acceptance Criteria | Priority | Labels | Effort |
@@ -99,7 +99,7 @@ graph TD
 
 ---
 
-### Milestone 3: Phase 3 – Habit CRUD & Management
+### Milestone 3: Phase 3 – Habit CRUD & Management (Completed)
 **Description:** Implement habit creation, editing, deletion, categories, template picker, and NLP natural-language habit parsing.
 
 | Issue ID | Issue Title | Description | Acceptance Criteria | Priority | Labels | Effort |
@@ -111,7 +111,7 @@ graph TD
 
 ---
 
-### Milestone 4: Phase 4 – Dashboard & UI Foundation
+### Milestone 4: Phase 4 – Habit Dashboard (Read Vertical Slice)
 **Description:** Build the main habit dashboard, list views, filter tabs, dynamic theme switching, and smooth interactive UI components.
 
 | Issue ID | Issue Title | Description | Acceptance Criteria | Priority | Labels | Effort |
