@@ -1,22 +1,211 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../habits/domain/entities/habit.dart';
+import '../../../habits/presentation/providers/habit_providers.dart';
+import '../providers/dashboard_provider.dart';
+import '../providers/dashboard_state.dart';
+import '../widgets/habit_card.dart';
 
-class DashboardScreen extends StatelessWidget {
+/// The main Dashboard screen displaying the user's habit feed.
+/// Observes [dashboardProvider] only and renders presentation states.
+class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(dashboardProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Habit Tracker'),
+        centerTitle: false,
       ),
-      body: const Center(
-        child: Text('Dashboard Placeholder'),
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 720),
+            child: _buildBody(context, ref, state),
+          ),
+        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/create-habit'),
         icon: const Icon(Icons.add),
         label: const Text('Create Habit'),
+        tooltip: 'Create Habit',
+      ),
+    );
+  }
+
+  Widget _buildBody(BuildContext context, WidgetRef ref, DashboardState state) {
+    switch (state) {
+      case DashboardLoading():
+        return const _DashboardLoadingView();
+      case DashboardEmpty():
+        return _DashboardEmptyView(
+          onCreateHabit: () => context.push('/create-habit'),
+        );
+      case DashboardLoaded(:final habits):
+        return _DashboardLoadedView(habits: habits);
+      case DashboardError(:final message):
+        return _DashboardErrorView(
+          message: message,
+          onRetry: () => ref.invalidate(habitsStreamProvider),
+        );
+    }
+  }
+}
+
+class _DashboardLoadingView extends StatelessWidget {
+  const _DashboardLoadingView();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Semantics(
+        label: 'Loading habits',
+        child: const CircularProgressIndicator(),
+      ),
+    );
+  }
+}
+
+class _DashboardEmptyView extends StatelessWidget {
+  final VoidCallback onCreateHabit;
+
+  const _DashboardEmptyView({required this.onCreateHabit});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primaryContainer.withValues(alpha: 0.4),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.assignment_outlined,
+                size: 64,
+                color: theme.colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'No habits yet',
+              style: theme.textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.onSurface,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Start building your routines today by creating your first habit.',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 32),
+            FilledButton.icon(
+              onPressed: onCreateHabit,
+              icon: const Icon(Icons.add),
+              label: const Text('Create Habit'),
+              style: FilledButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 14,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DashboardLoadedView extends StatelessWidget {
+  final List<Habit> habits;
+
+  const _DashboardLoadedView({required this.habits});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      padding: const EdgeInsets.only(top: 8, bottom: 88),
+      itemCount: habits.length,
+      itemBuilder: (context, index) {
+        final habit = habits[index];
+        return HabitCard(
+          key: ValueKey(habit.id),
+          habit: habit,
+        );
+      },
+    );
+  }
+}
+
+class _DashboardErrorView extends StatelessWidget {
+  final String message;
+  final VoidCallback onRetry;
+
+  const _DashboardErrorView({
+    required this.message,
+    required this.onRetry,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: theme.colorScheme.error,
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Failed to load habits',
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.onSurface,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              message,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            FilledButton.icon(
+              onPressed: onRetry,
+              icon: const Icon(Icons.refresh),
+              label: const Text('Retry'),
+            ),
+          ],
+        ),
       ),
     );
   }

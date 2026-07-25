@@ -2,7 +2,7 @@
 
 > **Document Type:** Production Project Management & Engineering Roadmap  
 > **Source of Truth:** Codebase Audit & Refactored Milestone Architecture  
-> **Status:** Phase 1, Phase 2, Phase 3 Complete | Phase 4 (Issues #401–#403 Complete, Issue #404 Pending)
+> **Status:** Phase 1, Phase 2, Phase 3, Phase 4 Complete | Phase 5 Pending
 
 ---
 
@@ -39,7 +39,7 @@
 | Version | Phase | Description | Status |
 | :--- | :--- | :--- | :--- |
 | `v0.1.0-alpha` | Create Habit | Habit creation form, Drift SQLite persistence & Material 3 UI | Completed ✅ |
-| `v0.2.0-alpha` | Dashboard | Habit Dashboard feed, cards & live database stream | In Progress 🚧 |
+| `v0.2.0-alpha` | Dashboard | Habit Dashboard feed, cards & live database stream | Completed ✅ |
 | `v0.3.0-alpha` | Complete Habit | Habit completion logging, streaks & progress modal | Planned |
 | `v0.4.0-alpha` | Edit/Delete | Habit edit form, archiving & deletion mechanics | Planned |
 | `v0.5.0-beta` | Notifications | Local exact alarms, reminders & notification actions | Planned |
@@ -53,7 +53,7 @@
 graph TD
     M1["Phase 1: Core Infrastructure (Completed)"] --> M2["Phase 2: Domain & Data Layer (Completed)"]
     M2 --> M3["Phase 3: Habit CRUD & Management (Completed)"]
-    M3 --> M4["Phase 4: Habit Dashboard (Read Vertical Slice - In Progress)"]
+    M3 --> M4["Phase 4: Habit Dashboard (Read Vertical Slice - Completed)"]
     M4 --> M5["Phase 5: Habit Loop & Streak Engine"]
     M5 --> M6["Phase 6: Notifications & Reminders"]
     M5 --> M7["Phase 7: Interactive Native Widgets"]
@@ -73,7 +73,7 @@ graph TD
 | **Phase 1 – Core Infrastructure** | `COMPLETED` | None | Project setup, Riverpod, GoRouter, M3 theme, Drift initialization |
 | **Phase 2 – Domain & Data Layer** | `COMPLETED` | Phase 1 | Immutable entities, Drift tables, repositories & mappers |
 | **Phase 3 – Habit CRUD & Management** | `COMPLETED` | Phase 2 | Habit creation form, Riverpod state, persistence & custom selectors |
-| **Phase 4 – Habit Dashboard (Read Vertical Slice)** | `IN PROGRESS` | Phase 3 | Reactive read layer, StreamProvider, DashboardState & Dashboard UI |
+| **Phase 4 – Habit Dashboard (Read Vertical Slice)** | `COMPLETED` | Phase 3 | Reactive read layer, StreamProvider, DashboardState & Dashboard UI |
 | **Phase 5 – Habit Loop & Streak Engine** | `PLANNED` | Phase 4 | Habit logs table, progress logging, streak calculation & Vacation Mode |
 | **Phase 6 – Notifications & Reminders** | `PLANNED` | Phase 5 | Local exact alarms, BOOT_COMPLETED recovery & action buttons |
 | **Phase 7 – Interactive Native Widgets** | `PLANNED` | Phase 5 | Android Glance & iOS WidgetKit home screen widgets |
@@ -124,7 +124,7 @@ graph TD
 
 ---
 
-### Milestone 4: Phase 4 – Habit Dashboard (Read Vertical Slice) (In Progress)
+### Milestone 4: Phase 4 – Habit Dashboard (Read Vertical Slice) (Completed)
 **Description:** Build the main habit dashboard, live database stream integration, state provider, and interactive habit feed UI.
 
 | Issue ID | Issue Title | Description | Acceptance Criteria | Status | Priority | Labels |
@@ -132,7 +132,7 @@ graph TD
 | `#401` | Repository Reactive Read Layer | Implement `watchHabits()` in `HabitRepository` emitting `Stream<List<Habit>>` ordered by `createdAt DESC`. | Streams live updates from Drift database reactively. | `Completed` ✅ | `High` | `database` |
 | `#402` | Riverpod StreamProvider Integration | Expose `habitsStreamProvider` wrapping `watchHabits()`. | Automatically updates downstream providers on DB mutations. | `Completed` ✅ | `High` | `architecture` |
 | `#403` | Dashboard State Management | Design `DashboardState` sealed class (`Loading`, `Empty`, `Loaded`, `Error`) and `dashboardProvider`. | Transforms repository stream into presentation states with 100% tests. | `Completed` ✅ | `High` | `architecture` |
-| `#404` | Dashboard UI & Habit Cards | Implement `DashboardScreen` UI consuming `dashboardProvider`, habit card widgets, loading/empty states, and FAB navigation. | Renders habits feed reactively with Material 3 cards and seamless FAB action. | `Pending` 🚧 | `High` | `ui`, `ux` |
+| `#404` | Dashboard UI & Habit Cards | Implement `DashboardScreen` UI consuming `dashboardProvider`, habit card widgets, loading/empty states, and FAB navigation. | Renders habits feed reactively with Material 3 cards and seamless FAB action. | `Completed` ✅ | `High` | `ui`, `ux` |
 
 ---
 

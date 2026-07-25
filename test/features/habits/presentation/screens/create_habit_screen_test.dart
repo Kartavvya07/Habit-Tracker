@@ -98,9 +98,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Habit Tracker'), findsOneWidget);
-      expect(find.text('Create Habit'), findsOneWidget);
+      expect(find.byType(FloatingActionButton), findsOneWidget);
 
-      await tester.tap(find.text('Create Habit'));
+      await tester.tap(find.byType(FloatingActionButton));
       await tester.pumpAndSettle();
 
       expect(find.text('Create New Habit'), findsOneWidget);

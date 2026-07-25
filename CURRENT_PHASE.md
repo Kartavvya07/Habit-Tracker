@@ -8,7 +8,7 @@
 
 # Current Phase
 
-**Phase:** Phase 3 – Habit CRUD & Management (Create Habit Vertical Slice)  
+**Phase:** Phase 4 – Habit Dashboard (Read Vertical Slice)  
 **Status:** COMPLETED  
 **Completion Date:** July 25, 2026  
 
@@ -19,7 +19,7 @@
 | Version | Phase | Status |
 | :--- | :--- | :--- |
 | `v0.1.0-alpha` | Create Habit | Completed ✅ |
-| `v0.2.0-alpha` | Dashboard | In Progress 🚧 |
+| `v0.2.0-alpha` | Dashboard | Completed ✅ |
 | `v0.3.0-alpha` | Complete Habit | Planned |
 | `v0.4.0-alpha` | Edit/Delete | Planned |
 | `v0.5.0-beta` | Notifications | Planned |
@@ -29,25 +29,26 @@
 
 # Implementation Summary
 
-- **Clean Architecture Refactoring:** Relocated Riverpod providers to presentation layer (`lib/features/habits/presentation/providers/`).
-- **Domain Decoupling:** Decoupled `HabitColor` domain entity from Flutter `UI` imports by moving color and icon UI mappings to presentation extensions (`habit_color_extension.dart`, `habit_icon_extension.dart`).
-- **Domain Use Cases:** Implemented `CreateHabitUseCase`, `UpdateHabitUseCase`, and `DeleteHabitUseCase`.
-- **State Management:** Implemented `CreateHabitNotifier` and `CreateHabitState` using Riverpod `Notifier` for state management, validation, loading status, and error handling.
-- **Routing & Navigation:** Integrated GoRouter with `/create-habit` route and floating action button on `DashboardScreen`.
-- **Material 3 UI:** Built `CreateHabitScreen` with custom `ColorSelector` and `IconSelector` widgets.
+- **Reactive Read Layer:** Implemented `watchHabits()` in `HabitRepository` emitting a reactive Drift SQLite stream of habits ordered by `createdAt DESC`.
+- **Riverpod StreamProvider:** Integrated `habitsStreamProvider` wrapping `watchHabits()`, emitting live database updates to downstream presentation components.
+- **Dashboard State Management:** Designed sealed class `DashboardState` (`DashboardLoading`, `DashboardEmpty`, `DashboardLoaded`, `DashboardError`) and `dashboardProvider`.
+- **Material 3 Habit Card UI:** Built reusable `HabitCard` displaying color accent tint, icon avatar, title, description, frequency badge, habit type badge, and target value metadata.
+- **Dashboard Presentation Layer:** Replaced placeholder `DashboardScreen` with a responsive Material 3 UI observing `dashboardProvider` only. Renders loading progress indicator, empty state with CTA button, loaded scrollable habit feed, and error state with stream retry button.
+- **FAB Navigation:** Floating Action Button navigates to `/create-habit`. Newly created habits persist to SQLite and stream automatically into the Dashboard feed without manual refresh.
 
 ---
 
 # Verification Summary
 
-- **Automated Tests:** `flutter test` passed 100% of all 23 unit and widget tests.
+- **Automated Tests:** `flutter test` passed 100% of all 50 unit and widget tests.
 - **Static Analysis:** `flutter analyze` reported 0 issues / warnings.
-- **Runtime Verification:** Successfully executed widget and integration test suite validating form submission and state transitions.
-- **APK Verification:** Resolved Kotlin package structure (`com.habittracker.app.MainActivity`), built Android Release APK (`app-release.apk`, ~54.3 MB), attached asset to `v0.1.0-alpha` release, and verified successful app launch.
-- **Database Persistence Verification:** Created test habit and directly queried Drift SQLite database `habits` table. Confirmed row count = 1 and verified all fields (`id`, `title`, `description`, `icon`, `color`, `frequency`, `habitType`, `targetCount`, `createdAt`, `updatedAt`, `isArchived`) persisted cleanly into SQLite.
+- **State Handling Verification:** Covered all 4 presentation states (`DashboardLoading`, `DashboardEmpty`, `DashboardLoaded`, `DashboardError`) in automated widget test suite.
+- **Reactive Stream Verification:** Validated automatic stream emission update from empty state to populated habit list upon habit insertion.
+- **Ordering Verification:** Verified habits maintain repository order (`createdAt DESC`) without unnecessary re-sorting in presentation.
+- **APK Verification:** Successfully built Android Release APK (`app-release.apk`).
 
 ---
 
 # Next Phase
 
-**Phase 4 – Habit Dashboard (Read Vertical Slice)**
+**Phase 5 – Habit Loop & Streak Engine**
