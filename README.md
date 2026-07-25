@@ -13,6 +13,19 @@ A modern, local-first Flutter Habit Tracker application built with Clean Archite
 
 ---
 
+## Release Checkpoints
+
+| Version | Phase | Status |
+| :--- | :--- | :--- |
+| `v0.1.0-alpha` | Create Habit | Completed ✅ |
+| `v0.2.0-alpha` | Dashboard | In Progress 🚧 |
+| `v0.3.0-alpha` | Complete Habit | Planned |
+| `v0.4.0-alpha` | Edit/Delete | Planned |
+| `v0.5.0-beta` | Notifications | Planned |
+| `v1.0.0` | First Stable Release | Planned |
+
+---
+
 ## Architecture Diagram
 
 ```mermaid

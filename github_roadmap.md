@@ -34,6 +34,19 @@
 
 ---
 
+## 1.1 Release Checkpoints & Version Roadmap
+
+| Version | Phase | Description | Status |
+| :--- | :--- | :--- | :--- |
+| `v0.1.0-alpha` | Create Habit | Habit creation form, Drift SQLite persistence & Material 3 UI | Completed ✅ |
+| `v0.2.0-alpha` | Dashboard | Habit Dashboard feed, cards & live database stream | In Progress 🚧 |
+| `v0.3.0-alpha` | Complete Habit | Habit completion logging, streaks & progress modal | Planned |
+| `v0.4.0-alpha` | Edit/Delete | Habit edit form, archiving & deletion mechanics | Planned |
+| `v0.5.0-beta` | Notifications | Local exact alarms, reminders & notification actions | Planned |
+| `v1.0.0` | First Stable Release | Full release with performance, widgets, sync & store builds | Planned |
+
+---
+
 ## 2. Milestone Hierarchy & Dependency Matrix
 
 ```mermaid

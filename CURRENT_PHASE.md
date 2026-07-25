@@ -14,6 +14,19 @@
 
 ---
 
+# Release Checkpoints & Development Stages
+
+| Version | Phase | Status |
+| :--- | :--- | :--- |
+| `v0.1.0-alpha` | Create Habit | Completed ✅ |
+| `v0.2.0-alpha` | Dashboard | In Progress 🚧 |
+| `v0.3.0-alpha` | Complete Habit | Planned |
+| `v0.4.0-alpha` | Edit/Delete | Planned |
+| `v0.5.0-beta` | Notifications | Planned |
+| `v1.0.0` | First Stable Release | Planned |
+
+---
+
 # Implementation Summary
 
 - **Clean Architecture Refactoring:** Relocated Riverpod providers to presentation layer (`lib/features/habits/presentation/providers/`).
@@ -30,7 +43,7 @@
 - **Automated Tests:** `flutter test` passed 100% of all 23 unit and widget tests.
 - **Static Analysis:** `flutter analyze` reported 0 issues / warnings.
 - **Runtime Verification:** Successfully executed widget and integration test suite validating form submission and state transitions.
-- **APK Verification:** Resolved Kotlin package structure (`com.habittracker.app.MainActivity`), built Android Release APK (`app-release.apk`, ~54.3 MB), and verified successful app launch.
+- **APK Verification:** Resolved Kotlin package structure (`com.habittracker.app.MainActivity`), built Android Release APK (`app-release.apk`, ~54.3 MB), attached asset to `v0.1.0-alpha` release, and verified successful app launch.
 - **Database Persistence Verification:** Created test habit and directly queried Drift SQLite database `habits` table. Confirmed row count = 1 and verified all fields (`id`, `title`, `description`, `icon`, `color`, `frequency`, `habitType`, `targetCount`, `createdAt`, `updatedAt`, `isArchived`) persisted cleanly into SQLite.
 
 ---
