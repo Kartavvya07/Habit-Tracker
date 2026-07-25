@@ -24,8 +24,8 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.habittracker.app"
-    compileSdk 34
-    ndkVersion flutter.ndkVersion
+    compileSdk 35
+    // ndkVersion flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -39,7 +39,7 @@ android {
     defaultConfig {
         applicationId "com.habittracker.app"
         minSdk 24
-        targetSdk 34
+        targetSdk 35
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
