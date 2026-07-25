@@ -21,7 +21,7 @@ Write-Host "  Step 1: Creating & Updating GitHub Labels         " -ForegroundCol
 Write-Host "  Repository: $Repo                                 " -ForegroundColor Cyan
 Write-Host "====================================================" -ForegroundColor Cyan
 
-# Define label definitions as hashtable objects
+# Comprehensive label definitions array
 $Labels = @(
     @{ name = "feature"; color = "a2eeef"; description = "Work Type: New feature implementation" },
     @{ name = "bug"; color = "d73a4a"; description = "Work Type: Problem or unexpected failure in existing code" },
@@ -29,6 +29,10 @@ $Labels = @(
     @{ name = "documentation"; color = "0075ca"; description = "Work Type: Improvements or additions to documentation" },
     @{ name = "architecture"; color = "0052cc"; description = "Domain: Clean Architecture structural decisions and abstractions" },
     @{ name = "database"; color = "bfd4f2"; description = "Domain: Drift SQLite schema, migrations, DTOs and query performance" },
+    @{ name = "domain"; color = "0e8a16"; description = "Domain: Immutable domain entities, value objects, and pure use cases" },
+    @{ name = "repository"; color = "1d76db"; description = "Domain: Repository interfaces and Drift data access implementations" },
+    @{ name = "usecase"; color = "5319e7"; description = "Domain: Business logic use cases executing core application rules" },
+    @{ name = "riverpod"; color = "fbca04"; description = "Domain: Riverpod state providers, stream providers, and state notifiers" },
     @{ name = "ui"; color = "f9d0c4"; description = "Domain: Presentation layer pages, layouts and Material Design 3" },
     @{ name = "ux"; color = "e99695"; description = "Domain: Micro-animations, transitions and interactive design tokens" },
     @{ name = "notifications"; color = "d4c5f9"; description = "Domain: Local exact alarms, action buttons, and system triggers" },
@@ -39,7 +43,10 @@ $Labels = @(
     @{ name = "ai"; color = "bfd4f2"; description = "Domain: AI Coach behavioral insights and habit recommendations" },
     @{ name = "performance"; color = "c5def5"; description = "Governance: Memory efficiency, RepaintBoundary and zero-latency target" },
     @{ name = "security"; color = "b60205"; description = "Governance: Encryption, secure storage and privacy compliance" },
-    @{ name = "testing"; color = "d4c5f9"; description = "Quality: Unit, BLoC, repository and golden UI automated tests" },
+    @{ name = "accessibility"; color = "d4c5f9"; description = "Governance: WCAG 2.1 AA compliance, semantics, screen readers, touch targets" },
+    @{ name = "native"; color = "0052cc"; description = "Platform: Native Kotlin Glance and Swift WidgetKit integration" },
+    @{ name = "release"; color = "0075ca"; description = "Governance: Milestone release verification, git tag, and APK bundle build" },
+    @{ name = "testing"; color = "d4c5f9"; description = "Quality: Unit, Riverpod, repository and golden UI automated tests" },
     @{ name = "refactor"; color = "1d76db"; description = "Quality: Code improvements without behavior changes" },
     @{ name = "technical-debt"; color = "961501"; description = "Quality: Deferred refactoring or structural enhancements" },
     @{ name = "high-priority"; color = "b60205"; description = "Priority: Critical blocker for current milestone completion" },
@@ -70,7 +77,6 @@ foreach ($L in $Labels) {
     $Match = $ExistingLabels | Where-Object { $_.name -ieq $Name }
     
     if ($null -ne $Match) {
-        # Check if color or description needs updating
         $MatchColor = $Match.color.TrimStart('#')
         if ($MatchColor -ieq $Color -and $Match.description -eq $Desc) {
             Write-Host "  [SKIP] Label '$Name' already up-to-date" -ForegroundColor Gray

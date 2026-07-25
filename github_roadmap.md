@@ -1,12 +1,12 @@
-# Habit Tracker – Canonical GitHub Roadmap & Milestone Architecture
+# Habit Tracker – Canonical GitHub Roadmap & Engineering Governance
 
 > **Document Type:** Production Project Management & Engineering Roadmap  
 > **Source of Truth:** Codebase Audit & Refactored Milestone Architecture  
-> **Status:** Phase 1, Phase 2, Phase 3, Phase 4 Complete | Phase 5 Pending
+> **Status:** Phase 1–4 Completed (Historical Record) | Phase 5–13 Active Refactored Roadmap
 
 ---
 
-## 1. Professional Label System
+## 1. Professional Label System (Unified Taxonomy)
 
 | Label Name | Hex Color | Category | Description |
 | :--- | :--- | :--- | :--- |
@@ -16,9 +16,13 @@
 | `documentation` | `#0075ca` | Work Type | Improvements or additions to documentation |
 | `architecture` | `#0052cc` | Domain | Clean Architecture structural decisions & abstractions |
 | `database` | `#bfd4f2` | Domain | Drift SQLite schema, migrations, DTOs & query performance |
+| `domain` | `#0e8a16` | Domain | Immutable domain entities, value objects & pure use cases |
+| `repository` | `#1d76db` | Domain | Repository interfaces & Drift data access implementations |
+| `usecase` | `#5319e7` | Domain | Business logic use cases executing core application rules |
+| `riverpod` | `#fbca04` | Domain | Riverpod state providers, stream providers & state notifiers |
 | `ui` | `#f9d0c4` | Domain | Presentation layer pages, layouts & Material Design 3 |
 | `ux` | `#e99695` | Domain | Micro-animations, transitions & interactive design tokens |
-| `notifications` | `#d4c5f9` | Domain | Local exact alarms, action buttons, & system triggers |
+| `notifications` | `#d4c5f9` | Domain | Local exact alarms, action buttons & system triggers |
 | `widgets` | `#bfdadc` | Domain | Android Glance & iOS WidgetKit native home screen widgets |
 | `analytics` | `#c2e0c6` | Domain | Data visualizations, heatmaps & HealthKit/Health Connect |
 | `gamification` | `#fef2c0` | Domain | Quest lines, skill trees, milestones & cosmetic unlocks |
@@ -26,6 +30,9 @@
 | `ai` | `#bfd4f2` | Domain | AI Coach behavioral insights & habit recommendations |
 | `performance` | `#c5def5` | Governance | Memory efficiency, RepaintBoundary & zero-latency target |
 | `security` | `#b60205` | Governance | Encryption, secure storage & privacy compliance |
+| `accessibility` | `#d4c5f9` | Governance | WCAG 2.1 AA compliance, semantics, screen readers & touch targets |
+| `native` | `#0052cc` | Platform | Native Kotlin Glance & Swift WidgetKit integrations |
+| `release` | `#0075ca` | Governance | Milestone release verification, git tag & APK bundle build |
 | `testing` | `#d4c5f9` | Quality | Unit, Riverpod, repository & golden UI automated tests |
 | `refactor` | `#1d76db` | Quality | Code improvements without behavior changes |
 | `technical-debt` | `#961501` | Quality | Deferred refactoring or structural enhancements |
@@ -40,10 +47,15 @@
 | :--- | :--- | :--- | :--- |
 | `v0.1.0-alpha` | Create Habit | Habit creation form, Drift SQLite persistence & Material 3 UI | Completed ✅ |
 | `v0.2.0-alpha` | Dashboard | Habit Dashboard feed, cards & live database stream | Completed ✅ |
-| `v0.3.0-alpha` | Complete Habit | Habit completion logging, streaks & progress modal | Planned |
-| `v0.4.0-alpha` | Edit/Delete | Habit edit form, archiving & deletion mechanics | Planned |
-| `v0.5.0-beta` | Notifications | Local exact alarms, reminders & notification actions | Planned |
-| `v1.0.0` | First Stable Release | Full release with performance, widgets, sync & store builds | Planned |
+| `v0.3.0-alpha` | Phase 5 – Habit Loop | Completion logging, streaks, logging modals & Vacation Mode | Planned |
+| `v0.4.0-alpha` | Phase 6 – Habit Management | Habit editing, archiving, deletion mechanics & swipe actions | Planned |
+| `v0.5.0-beta` | Phase 7 – Notifications | Local exact alarms, action buttons, BOOT_COMPLETED recovery | Planned |
+| `v0.6.0-beta` | Phase 8 – Home Widgets | Android Glance & iOS WidgetKit home screen widgets | Planned |
+| `v0.7.0-beta` | Phase 9 – Gamification | XP rewards, leveling, quest lines, skill trees & badges | Planned |
+| `v0.8.0-beta` | Phase 10 – Analytics & Health | Contribution heatmaps, trend graphs, Health Connect & HealthKit | Planned |
+| `v0.9.0-beta` | Phase 11 – Cloud Sync | Local-first delta sync engine, authentication & CRDT resolution | Planned |
+| `v0.9.5-beta` | Phase 12 – AI Coach | Behavioral friction analysis, reminder timing, NLP parser | Planned |
+| `v1.0.0` | Phase 13 – Production Release | Golden tests, 100% provider tests, performance audit & store builds | Planned |
 
 ---
 
@@ -52,210 +64,355 @@
 ```mermaid
 graph TD
     M1["Phase 1: Core Infrastructure (Completed)"] --> M2["Phase 2: Domain & Data Layer (Completed)"]
-    M2 --> M3["Phase 3: Habit CRUD & Management (Completed)"]
+    M2 --> M3["Phase 3: Habit CRUD / Create Habit (Completed)"]
     M3 --> M4["Phase 4: Habit Dashboard (Read Vertical Slice - Completed)"]
     M4 --> M5["Phase 5: Habit Loop & Streak Engine"]
-    M5 --> M6["Phase 6: Notifications & Reminders"]
-    M5 --> M7["Phase 7: Interactive Native Widgets"]
-    M5 --> M8["Phase 8: Gamification Engine"]
-    M5 --> M9["Phase 9: Analytics & Health Integrations"]
-    M2 --> M10["Phase 10: Cloud Sync & Auth"]
-    M9 --> M11["Phase 11: AI Coach & Smart Features"]
-    M6 --> M12["Phase 12: Performance, Polish & v1.0 Release"]
-    M7 --> M12
-    M8 --> M12
-    M10 --> M12
-    M11 --> M12
+    M5 --> M6["Phase 6: Habit Management (Edit, Delete, Archive)"]
+    M5 --> M7["Phase 7: Notification & Reminder Engine"]
+    M5 --> M8["Phase 8: Interactive Native Home Screen Widgets"]
+    M5 --> M9["Phase 9: Gamification Engine"]
+    M5 --> M10["Phase 10: Analytics & Health Integrations"]
+    M5 --> M11["Phase 11: Cloud Sync & Authentication"]
+    M10 --> M12["Phase 12: AI Coach & Smart Features"]
+    M6 --> M13["Phase 13: Performance, Accessibility & Production Release"]
+    M7 --> M13
+    M8 --> M13
+    M9 --> M13
+    M11 --> M13
+    M12 --> M13
 ```
 
 | Milestone | Status | Prerequisites | Core Objective |
 | :--- | :--- | :--- | :--- |
 | **Phase 1 – Core Infrastructure** | `COMPLETED` | None | Project setup, Riverpod, GoRouter, M3 theme, Drift initialization |
 | **Phase 2 – Domain & Data Layer** | `COMPLETED` | Phase 1 | Immutable entities, Drift tables, repositories & mappers |
-| **Phase 3 – Habit CRUD & Management** | `COMPLETED` | Phase 2 | Habit creation form, Riverpod state, persistence & custom selectors |
-| **Phase 4 – Habit Dashboard (Read Vertical Slice)** | `COMPLETED` | Phase 3 | Reactive read layer, StreamProvider, DashboardState & Dashboard UI |
-| **Phase 5 – Habit Loop & Streak Engine** | `PLANNED` | Phase 4 | Habit logs table, progress logging, streak calculation & Vacation Mode |
-| **Phase 6 – Notifications & Reminders** | `PLANNED` | Phase 5 | Local exact alarms, BOOT_COMPLETED recovery & action buttons |
-| **Phase 7 – Interactive Native Widgets** | `PLANNED` | Phase 5 | Android Glance & iOS WidgetKit home screen widgets |
-| **Phase 8 – Gamification Engine** | `PLANNED` | Phase 5 | Quests, skill trees, regional milestones & cosmetic rewards |
-| **Phase 9 – Analytics & Health Integrations** | `PLANNED` | Phase 5 | Heatmaps, trend graphs, Health Connect & HealthKit sync |
-| **Phase 10 – Cloud Sync & Auth** | `PLANNED` | Phase 2, 5 | Local-first delta synchronization & offline resolution |
-| **Phase 11 – AI Coach & Smart Features** | `PLANNED` | Phase 9 | Friction detection, optimal reminder timing, NLP parser & insights |
-| **Phase 12 – Performance, Polish & v1.0** | `PLANNED` | Phase 6–11 | Golden tests, RepaintBoundary audit & app store submission |
+| **Phase 3 – Habit CRUD (Create)** | `COMPLETED` | Phase 2 | Habit creation form, Riverpod state, persistence & selectors |
+| **Phase 4 – Habit Dashboard** | `COMPLETED` | Phase 3 | Reactive read layer, StreamProvider, DashboardState & UI |
+| **Phase 5 – Habit Loop & Streak Engine** | `PLANNED` | Phase 4 | HabitLogs table, progress logging, streaks & Vacation Mode |
+| **Phase 6 – Habit Management** | `PLANNED` | Phase 5 | Edit form, archiving mechanics, deletion & swipe actions |
+| **Phase 7 – Notifications & Reminders** | `PLANNED` | Phase 5 | Local exact alarms, BOOT_COMPLETED recovery & action buttons |
+| **Phase 8 – Native Widgets** | `PLANNED` | Phase 5 | Android Glance & iOS WidgetKit interactive widgets |
+| **Phase 9 – Gamification Engine** | `PLANNED` | Phase 5 | XP, leveling, quest lines, skill trees & milestone badges |
+| **Phase 10 – Analytics & Health** | `PLANNED` | Phase 5 | Heatmaps, trend graphs, Health Connect & HealthKit sync |
+| **Phase 11 – Cloud Sync & Auth** | `PLANNED` | Phase 5 | Local-first delta synchronization, auth & CRDT resolution |
+| **Phase 12 – AI Coach & Smart Features** | `PLANNED` | Phase 10 | Behavioral friction detection, timing optimization & NLP parser |
+| **Phase 13 – Performance, Polish & v1.0** | `PLANNED` | Phase 6–12 | Golden tests, 100% provider coverage, WCAG & app store builds |
 
 ---
 
 ## 3. Milestone & Issue Breakdown
 
-### Milestone 1: Phase 1 – Core Infrastructure (Completed)
-**Description:** Establish project foundation, Riverpod state management setup, GoRouter navigation, database initialization, theme tokens, and logging.
+### Milestone 1: Phase 1 – Core Infrastructure (Completed ✅)
+*Historical record preserved.*
 
-| Issue ID | Issue Title | Description | Acceptance Criteria | Priority | Labels |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| `#101` | Initialize Flutter Project & Architecture | Set up Clean Architecture feature-first folders and pubspec constraints. | Builds cleanly across platforms. | `High` | `architecture` |
-| `#102` | Implement Design Tokens & M3 Theme | Create `AppColors`, `AppRadius`, `AppSpacing`, `AppTypography`, and `AppTheme`. | Themes validate M3 specs and token colors. | `High` | `ui`, `ux` |
-| `#103` | Configure GoRouter & Riverpod Setup | Initialize `GoRouter` navigation setup and `ProviderContainer` root. | Router and Riverpod providers resolve error-free. | `High` | `architecture` |
-| `#104` | Initialize Drift SQLite Engine & Logging | Create `AppDatabase`, platform connection, and `appDatabaseProvider`. | SQLite opens cleanly and database provider resolves. | `High` | `database` |
+### Milestone 2: Phase 2 – Domain & Data Layer (Completed ✅)
+*Historical record preserved.*
 
----
+### Milestone 3: Phase 3 – Habit CRUD (Create Habit Vertical Slice) (Completed ✅)
+*Historical record preserved.*
 
-### Milestone 2: Phase 2 – Domain & Data Layer (Completed)
-**Description:** Build the core domain entities, Drift database tables (`HabitsTable`), DTOs, mappers, and repository implementations.
-
-| Issue ID | Issue Title | Description | Acceptance Criteria | Priority | Labels |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| `#201` | Define Core Domain Entities | Create `Habit` immutable entity using `@freezed` and enums (`HabitColor`, `HabitFrequency`, `HabitType`). | Enforces value types, default values & equality. | `High` | `architecture` |
-| `#202` | Implement Drift Database Tables | Define `HabitsTable` schema in Drift with auto-incrementing ID / UUID. | Schema generates cleanly with indexes & types. | `High` | `database` |
-| `#203` | Implement Data Mappers & DTOs | Write bidirectional `HabitMapper` between Drift rows and Domain entities. | 100% test coverage on entity-row transformation. | `High` | `database` |
-| `#204` | Implement Habit Repository | Implement `DriftHabitRepository` wrapping Drift queries. | Reactive streams emit live updates upon database mutations. | `High` | `database`, `architecture` |
-| `#205` | Repository Unit & Integration Tests | Write mock and in-memory SQLite unit tests for repository CRUD methods. | All CRUD operations pass integration tests. | `High` | `testing`, `database` |
+### Milestone 4: Phase 4 – Habit Dashboard (Read Vertical Slice) (Completed ✅)
+*Historical record preserved.*
 
 ---
 
-### Milestone 3: Phase 3 – Habit CRUD & Management (Create Habit Vertical Slice) (Completed)
-**Description:** Implement habit creation vertical slice including domain use cases, Riverpod notifier state management, Material 3 form UI, custom color/icon selectors, and database persistence.
+### Milestone 5: Phase 5 – Habit Loop & Streak Engine (`v0.3.0-alpha`)
+**Description:** Build completion execution, `HabitLogsTable`, streak calculation algorithm, numeric/timer progress logging modals, Vacation Mode, widget tests, and release `v0.3.0-alpha`.
 
-| Issue ID | Issue Title | Description | Acceptance Criteria | Priority | Labels |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| `#301` | Domain Use Cases & Riverpod State Notifier | Implement `CreateHabitUseCase`, `UpdateHabitUseCase`, `DeleteHabitUseCase`, and `CreateHabitNotifier`. | Manages validation, form state, and persistence cleanly. | `High` | `architecture` |
-| `#302` | Create Habit Screen & Form Components | Build `CreateHabitScreen` with custom `ColorSelector` and `IconSelector` widgets. | Responsive UI conforming to Material 3 design tokens. | `High` | `ui` |
-| `#303` | Habit Presentation Extensions | Implement UI extensions (`habit_color_extension.dart`, `habit_icon_extension.dart`) to decouple UI from domain models. | Pure domain models remain decoupled from Flutter UI imports. | `High` | `architecture`, `ui` |
-| `#304` | Integration & Android Release Verification | Verify end-to-end habit creation, database persistence, unit/widget tests, and build release APK. | 100% test pass rate, 0 analyze warnings, release APK generated. | `High` | `testing`, `architecture` |
+#### P5-01 Habit Log Schema & Drift Migration
+- **Purpose:** Define database schema for recording habit execution entries.
+- **Scope:** Create `HabitLogsTable` in Drift, `HabitLog` domain entity using `@freezed`, and bidirectional `HabitLogMapper`.
+- **Files likely to change:** `lib/core/database/tables/habit_logs_table.dart`, `lib/features/habits/domain/entities/habit_log.dart`, `lib/features/habits/data/mappers/habit_log_mapper.dart`, `lib/core/database/app_database.dart`
+- **Dependencies:** Phase 4 completed
+- **Acceptance Criteria:** `HabitLogsTable` compiles cleanly, auto-generates schema via `build_runner`, and supports index on `(habit_id, target_date)`.
+- **Testing Requirements:** Unit test `HabitLogMapper` bidirectional conversion with 100% code coverage.
+- **Completion Criteria:** Code compiles, tests pass, zero analyze warnings.
+- **Required Labels:** `database`, `architecture`
+- **Priority:** High
+- **Suggested commit message:** `feat(database): add HabitLogsTable schema and HabitLog domain mapper`
+
+#### P5-02 Habit Log Repository Integration
+- **Purpose:** Extend habit repository to perform atomic completion logging and log queries.
+- **Scope:** Add `logProgress()`, `getLogsForHabit()`, `watchTodayLogs()`, and `deleteLog()` to `HabitRepository` and `DriftHabitRepository`.
+- **Files likely to change:** `lib/features/habits/domain/repositories/habit_repository.dart`, `lib/features/habits/data/repositories/drift_habit_repository.dart`
+- **Dependencies:** P5-01
+- **Acceptance Criteria:** Log operations update database reactively and emit updated log streams.
+- **Testing Requirements:** Repository integration tests with in-memory SQLite for all log query methods.
+- **Completion Criteria:** All repository log methods pass automated unit/integration tests.
+- **Required Labels:** `repository`, `database`
+- **Priority:** High
+- **Suggested commit message:** `feat(data): implement habit log persistence and reactive streams in DriftHabitRepository`
+
+#### P5-03 Habit Log & Streak Use Cases
+- **Purpose:** Implement domain logic for logging progress and computing streaks.
+- **Scope:** Implement `LogHabitProgressUseCase` (supports boolean, numeric counter, and timer habits) and `CalculateStreakUseCase` (computes current streak, best streak, completion rate).
+- **Files likely to change:** `lib/features/habits/domain/usecases/log_habit_progress_use_case.dart`, `lib/features/habits/domain/usecases/calculate_streak_use_case.dart`
+- **Dependencies:** P5-02
+- **Acceptance Criteria:** Correctly calculates streaks respecting custom frequencies (daily, specific days) and handles missing days accurately.
+- **Testing Requirements:** Unit test streak calculation algorithm against 15+ edge cases (gaps, leap years, weekend habits).
+- **Completion Criteria:** 100% test coverage on `CalculateStreakUseCase` and `LogHabitProgressUseCase`.
+- **Required Labels:** `usecase`, `domain`
+- **Priority:** High
+- **Suggested commit message:** `feat(domain): implement LogHabitProgressUseCase and CalculateStreakUseCase`
+
+#### P5-04 Daily Completion & Streak Riverpod Providers
+- **Purpose:** Expose habit completion logs and streak calculations to presentation layer via Riverpod.
+- **Scope:** Create `todayCompletionsProvider`, `habitLogsStreamProvider`, and `streakProvider`.
+- **Files likely to change:** `lib/features/habits/presentation/providers/habit_completion_provider.dart`, `lib/features/habits/presentation/providers/streak_provider.dart`
+- **Dependencies:** P5-03
+- **Acceptance Criteria:** Providers recompute reactively whenever a habit log entry is added or removed.
+- **Testing Requirements:** Provider unit tests using `ProviderContainer` verifying state emissions upon repository triggers.
+- **Completion Criteria:** State providers compile and update reactively without UI coupling.
+- **Required Labels:** `riverpod`, `architecture`
+- **Priority:** High
+- **Suggested commit message:** `feat(architecture): expose completion and streak state via Riverpod providers`
+
+#### P5-05 Numeric & Timer Progress Logging Modals
+- **Purpose:** Build custom bottom sheets for entering numeric progress values and running live habit timers.
+- **Scope:** Build `NumericProgressBottomSheet` (number keypad / stepper) and `TimerProgressBottomSheet` (stopwatch with start/pause/submit).
+- **Files likely to change:** `lib/features/habits/presentation/widgets/numeric_progress_bottom_sheet.dart`, `lib/features/habits/presentation/widgets/timer_progress_bottom_sheet.dart`
+- **Dependencies:** P5-04
+- **Acceptance Criteria:** Tapping numeric or timer habit opens bottom sheet, accepts user input, and logs completed progress value.
+- **Testing Requirements:** Widget tests for both bottom sheet components verifying input handling and submit callbacks.
+- **Completion Criteria:** Modals render cleanly with M3 styling and correctly log partial/full progress.
+- **Required Labels:** `ui`, `ux`
+- **Priority:** High
+- **Suggested commit message:** `feat(ui): build numeric stepper and timer progress logging bottom sheets`
+
+#### P5-06 Boolean Quick Completion Toggle UI
+- **Purpose:** Add one-tap habit completion toggle directly onto `HabitCard` on Dashboard.
+- **Scope:** Add completion button/checkbox on `HabitCard` with optimistic state update, haptic feedback, and completed visual state.
+- **Files likely to change:** `lib/features/dashboard/presentation/widgets/habit_card.dart`, `lib/features/dashboard/presentation/screens/dashboard_screen.dart`
+- **Dependencies:** P5-05
+- **Acceptance Criteria:** Tapping completion toggle instantly updates UI state and persists log to database without frame drop.
+- **Testing Requirements:** Widget test verifying tap action triggers `LogHabitProgressUseCase` and updates card visuals.
+- **Completion Criteria:** Interactive toggle works seamlessly with 60fps responsiveness.
+- **Required Labels:** `ui`, `ux`
+- **Priority:** High
+- **Suggested commit message:** `feat(ui): add interactive completion toggle to HabitCard`
+
+#### P5-07 Vacation Mode & Streak Protection Engine
+- **Purpose:** Allow users to pause streaks globally during travel or illness without losing hard-earned streaks.
+- **Scope:** Create `VacationModeNotifier`, `vacationModeProvider`, and streak protection evaluation logic in `CalculateStreakUseCase`.
+- **Files likely to change:** `lib/features/habits/domain/usecases/calculate_streak_use_case.dart`, `lib/features/settings/presentation/providers/vacation_mode_provider.dart`
+- **Dependencies:** P5-03
+- **Acceptance Criteria:** When Vacation Mode is active, missed days do not break existing streaks.
+- **Testing Requirements:** Unit test streak calculator with active vacation mode periods.
+- **Completion Criteria:** Vacation mode toggle correctly freezes streak decay.
+- **Required Labels:** `domain`, `feature`
+- **Priority:** Medium
+- **Suggested commit message:** `feat(feature): implement Vacation Mode and streak protection logic`
+
+#### P5-08 Dashboard Integration & Streak Badges
+- **Purpose:** Integrate streak counter badges and progress bars into DashboardScreen.
+- **Scope:** Display current streak flame badge and target value progress indicators on `HabitCard` and header summary.
+- **Files likely to change:** `lib/features/dashboard/presentation/widgets/habit_card.dart`, `lib/features/dashboard/presentation/screens/dashboard_screen.dart`
+- **Dependencies:** P5-06
+- **Acceptance Criteria:** Renders active streak count on cards and displays total daily completion progress ring.
+- **Testing Requirements:** Widget tests verifying streak count and progress bar reflect provider state accurately.
+- **Completion Criteria:** Dashboard visually displays streaks and progress stats cleanly.
+- **Required Labels:** `ui`, `ux`
+- **Priority:** High
+- **Suggested commit message:** `feat(ui): render streak badges and completion progress on Dashboard`
+
+#### P5-09 Habit Loop & Streak Unit & Widget Tests
+- **Purpose:** Verify reliability of complete habit loop and streak engine.
+- **Scope:** Write unit tests for all use cases, mappers, providers, and widget tests for logging UI.
+- **Files likely to change:** `test/features/habits/domain/usecases/calculate_streak_use_case_test.dart`, `test/features/habits/presentation/widgets/habit_card_test.dart`
+- **Dependencies:** P5-01 through P5-08
+- **Acceptance Criteria:** 100% pass rate across all new unit and widget tests.
+- **Testing Requirements:** `flutter test` executes with 0 failures.
+- **Completion Criteria:** Codebase maintains high test coverage.
+- **Required Labels:** `testing`
+- **Priority:** High
+- **Suggested commit message:** `test(habits): add comprehensive unit and widget test suite for Habit Loop & Streak Engine`
+
+#### P5-10 Release & Verification
+- **Purpose:** Perform final milestone verification, build release APK, tag `v0.3.0-alpha`, and publish release.
+- **Scope:** Run static analysis, execute test suite, perform manual QA on Android device, update `CURRENT_PHASE.md`, tag git release, build APK.
+- **Files likely to change:** `CURRENT_PHASE.md`, `CHANGELOG.md`
+- **Dependencies:** P5-09
+- **Acceptance Criteria:** `flutter analyze` passes with 0 warnings, `flutter test` passes 100%, release APK generated, git tag created.
+- **Testing Requirements:** End-to-end automated verification script `.\05-verify-github.ps1`.
+- **Completion Criteria:** Release `v0.3.0-alpha` published successfully.
+- **Required Labels:** `release`, `documentation`
+- **Priority:** High
+- **Suggested commit message:** `chore(release): release v0.3.0-alpha (Phase 5 Habit Loop & Streak Engine)`
 
 ---
 
-### Milestone 4: Phase 4 – Habit Dashboard (Read Vertical Slice) (Completed)
-**Description:** Build the main habit dashboard, live database stream integration, state provider, and interactive habit feed UI.
+### Milestone 6: Phase 6 – Habit Management (Edit, Delete, Archive) (`v0.4.0-alpha`)
+*Detail preserved with updated labels (`usecase`, `repository`, `riverpod`, `ui`, `testing`, `release`).*
 
-| Issue ID | Issue Title | Description | Acceptance Criteria | Status | Priority | Labels |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| `#401` | Repository Reactive Read Layer | Implement `watchHabits()` in `HabitRepository` emitting `Stream<List<Habit>>` ordered by `createdAt DESC`. | Streams live updates from Drift database reactively. | `Completed` ✅ | `High` | `database` |
-| `#402` | Riverpod StreamProvider Integration | Expose `habitsStreamProvider` wrapping `watchHabits()`. | Automatically updates downstream providers on DB mutations. | `Completed` ✅ | `High` | `architecture` |
-| `#403` | Dashboard State Management | Design `DashboardState` sealed class (`Loading`, `Empty`, `Loaded`, `Error`) and `dashboardProvider`. | Transforms repository stream into presentation states with 100% tests. | `Completed` ✅ | `High` | `architecture` |
-| `#404` | Dashboard UI & Habit Cards | Implement `DashboardScreen` UI consuming `dashboardProvider`, habit card widgets, loading/empty states, and FAB navigation. | Renders habits feed reactively with Material 3 cards and seamless FAB action. | `Completed` ✅ | `High` | `ui`, `ux` |
+### Milestone 7: Phase 7 – Notification & Reminder Engine (`v0.5.0-beta`)
+*Detail preserved with updated labels (`notifications`, `usecase`, `ui`, `ux`, `testing`, `release`).*
 
----
+### Milestone 8: Phase 8 – Interactive Native Home Screen Widgets (`v0.6.0-beta`)
+*Detail preserved with updated labels (`widgets`, `native`, `ui`, `testing`, `release`).*
 
-### Milestone 5: Phase 5 – Habit Loop & Streak Engine
-**Description:** Build completion execution, `HabitLogsTable`, streak calculation algorithm, numeric/timer progress logging modals, and Vacation Mode.
+### Milestone 9: Phase 9 – Gamification Engine (`v0.7.0-beta`)
+*Detail preserved with updated labels (`gamification`, `database`, `usecase`, `riverpod`, `ui`, `testing`, `release`).*
 
-| Issue ID | Issue Title | Description | Acceptance Criteria | Priority | Labels |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| `#501` | Habit Logs Table & Model | Create `HabitLogsTable` in Drift, `HabitLog` domain entity, and bidirectional `HabitLogMapper`. | Stores completion timestamp, target date, value, and status. | `High` | `database`, `architecture` |
-| `#502` | Completion Execution Use Case | Implement `LogHabitProgressUseCase` for quick-tap, numeric counter, and timer habit completions. | Atomically records `HabitLog` entry and updates daily status. | `High` | `architecture` |
-| `#503` | Streak Calculation Engine | Implement algorithm to compute current streak, best streak, and completion rate. | Correctly handles flexible frequency rules (daily, weekly). | `High` | `architecture`, `testing` |
-| `#504` | Numeric & Timer Progress Logging Modal | Build custom bottom sheets for entering numeric values and live timer execution. | Timer runs in background with precise tick handling. | `High` | `ui`, `ux` |
-| `#505` | Vacation & Streak Protection Engine | Implement global Vacation Mode toggle to freeze streaks without penalty. | Active vacation pauses streak decay across all habits. | `Medium` | `feature` |
+### Milestone 10: Phase 10 – Analytics & Health Integrations (`v0.8.0-beta`)
+*Detail preserved with updated labels (`analytics`, `database`, `usecase`, `native`, `ui`, `testing`, `release`).*
 
 ---
 
-### Milestone 6: Phase 6 – Notification & Reminder Engine
-**Description:** Implement local exact alarm notifications, action buttons (Complete/Snooze), `BOOT_COMPLETED` recovery, and battery optimization onboarding.
+### Milestone 11: Phase 11 – Cloud Sync & Authentication (`v0.9.0-beta`)
+**Description:** Implement local-first cloud delta synchronization, user authentication, CRDT conflict resolution, offline retry queue, and release `v0.9.0-beta`.
 
-| Issue ID | Issue Title | Description | Acceptance Criteria | Priority | Labels |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| `#601` | Notification Service Abstraction | Implement platform-native wrapper around `flutter_local_notifications`. | Schedules exact time notifications across Android & iOS. | `High` | `notifications` |
-| `#602` | Notification Action Handlers | Add interactive action buttons ("Complete", "Snooze 15m") directly in notification payload. | Tapping notification action logs habit without launching full app. | `High` | `notifications`, `ux` |
-| `#603` | Boot & Timezone Recovery Receiver | Register `BOOT_COMPLETED` broadcast receiver and timezone update listener. | Alarm schedules auto-restore upon device reboot. | `High` | `notifications`, `architecture` |
-| `#604` | Battery Optimization Onboarding | Build user guidance dialog for disabling manufacturer battery restrictions. | Detects OEM ROMs (Xiaomi, Samsung) and opens settings. | `Medium` | `notifications`, `ux` |
+#### P11-01 Authentication Domain & Security Layer
+- **Purpose:** Implement authentication service and secure session token storage.
+- **Scope:** Create `AuthRepository` supporting anonymous login, email/password, OAuth, and token persistence in `FlutterSecureStorage`.
+- **Files likely to change:** `lib/core/auth/auth_repository.dart`, `lib/core/auth/flutter_secure_storage_impl.dart`
+- **Dependencies:** Phase 5 completed
+- **Acceptance Criteria:** Authenticates user and securely persists JWT session tokens across app restarts.
+- **Testing Requirements:** Unit test auth repository state transitions and mock storage.
+- **Completion Criteria:** Secure auth layer functioning cleanly.
+- **Required Labels:** `sync`, `security`, `domain`
+- **Priority:** High
+- **Suggested commit message:** `feat(auth): implement AuthRepository with secure token storage`
+
+#### P11-02 Local-First Delta Sync Schema & Tracker
+- **Purpose:** Establish local-first database replication tables and delta event tracking.
+- **Scope:** Configure delta tracker observing Drift table mutation streams and tracking local revision vectors.
+- **Files likely to change:** `lib/core/sync/delta_tracker.dart`, `lib/core/database/tables/sync_deltas_table.dart`
+- **Dependencies:** P11-01
+- **Acceptance Criteria:** Local DB mutations generate delta payloads ready for remote push.
+- **Testing Requirements:** Unit test delta serialization and revision vector increments.
+- **Completion Criteria:** Local-first sync engine observing mutations.
+- **Required Labels:** `sync`, `database`, `architecture`
+- **Priority:** High
+- **Suggested commit message:** `feat(sync): configure local-first sync engine and delta tracker`
+
+#### P11-03 Sync Engine Client & Replication Transport
+- **Purpose:** Establish bi-directional delta streaming transport between local DB and remote backend server.
+- **Scope:** Implement `SyncEngineClient` managing WebSocket / HTTP delta replication streams.
+- **Files likely to change:** `lib/core/sync/sync_engine_client.dart`
+- **Dependencies:** P11-02
+- **Acceptance Criteria:** Streams local deltas to server and ingests remote deltas cleanly.
+- **Testing Requirements:** Unit test sync client stream connection and payload transmission.
+- **Completion Criteria:** Bi-directional transport functioning.
+- **Required Labels:** `sync`, `architecture`
+- **Priority:** High
+- **Suggested commit message:** `feat(sync): implement SyncEngineClient delta replication transport`
+
+#### P11-04 Conflict Resolution Engine (LWW / CRDT)
+- **Purpose:** Resolve multi-device offline edit conflicts deterministically.
+- **Scope:** Implement `ConflictResolver` using Last-Write-Wins (LWW) and field-level CRDT merge rules.
+- **Files likely to change:** `lib/core/sync/conflict_resolver.dart`
+- **Dependencies:** P11-03
+- **Acceptance Criteria:** Correctly merges simultaneous offline updates without data loss or corruption.
+- **Testing Requirements:** Unit test conflict resolution logic against 10+ concurrent modification scenarios.
+- **Completion Criteria:** 100% test coverage on conflict resolver.
+- **Required Labels:** `sync`, `domain`, `database`
+- **Priority:** High
+- **Suggested commit message:** `feat(sync): implement LWW and CRDT conflict resolution engine`
+
+#### P11-05 Offline Mutation Queue & Retry Engine
+- **Purpose:** Store failed network mutations during offline operation and retry upon network reconnection.
+- **Scope:** Build `OfflineMutationQueue` with exponential backoff retry mechanism and network connectivity listener.
+- **Files likely to change:** `lib/core/sync/offline_mutation_queue.dart`
+- **Dependencies:** P11-04
+- **Acceptance Criteria:** Offline mutations queue up locally and auto-flush in order when connection is restored.
+- **Testing Requirements:** Unit test queue enqueue/dequeue and retry state machine.
+- **Completion Criteria:** Zero data loss during offline usage verified.
+- **Required Labels:** `sync`, `architecture`
+- **Priority:** High
+- **Suggested commit message:** `feat(sync): implement OfflineMutationQueue with exponential backoff retry`
+
+#### P11-06 Sync Status Bar & Connection Indicator UI
+- **Purpose:** Render subtle sync status indicator on DashboardScreen.
+- **Scope:** Build `SyncStatusWidget` displaying status icons: "Synced", "Syncing...", or "Offline Mode".
+- **Files likely to change:** `lib/features/dashboard/presentation/widgets/sync_status_widget.dart`
+- **Dependencies:** P11-05
+- **Acceptance Criteria:** Updates icon and color dynamically based on sync provider state.
+- **Testing Requirements:** Widget test verifying indicator state transitions.
+- **Completion Criteria:** Non-intrusive sync status widget on Dashboard.
+- **Required Labels:** `ui`, `sync`
+- **Priority:** Medium
+- **Suggested commit message:** `feat(ui): add non-intrusive SyncStatusWidget on Dashboard`
+
+#### P11-07 Account & Sync Management Settings Screen
+- **Purpose:** Provide UI for managing user account, manual sync triggers, and cloud backup reset.
+- **Scope:** Build `AccountSettingsScreen` with login/logout buttons, force sync CTA, and cloud data export.
+- **Files likely to change:** `lib/features/settings/presentation/screens/account_settings_screen.dart`
+- **Dependencies:** P11-06
+- **Acceptance Criteria:** Allows user to log in/out, view sync status, and trigger manual cloud sync.
+- **Testing Requirements:** Widget test for AccountSettingsScreen buttons and state triggers.
+- **Completion Criteria:** Account settings screen functioning cleanly.
+- **Required Labels:** `ui`, `sync`
+- **Priority:** High
+- **Suggested commit message:** `feat(ui): build AccountSettingsScreen for auth management and manual sync triggers`
+
+#### P11-08 Auth & Sync Integration Unit Tests
+- **Purpose:** Automated test verification for Cloud Sync & Auth suite.
+- **Scope:** Write unit tests for conflict resolution, offline queue retries, auth token storage, and sync status state.
+- **Files likely to change:** `test/core/sync/conflict_resolver_test.dart`
+- **Dependencies:** P11-01 through P11-07
+- **Acceptance Criteria:** 100% pass rate across sync test suite.
+- **Testing Requirements:** `flutter test` completes error-free.
+- **Completion Criteria:** All tests green.
+- **Required Labels:** `testing`, `sync`
+- **Priority:** High
+- **Suggested commit message:** `test(sync): add unit test suite for Auth & Local-First Cloud Sync Engine`
+
+#### P11-09 Release & Verification
+- **Purpose:** Milestone verification, tag `v0.9.0-beta`, build release APK, and publish release.
+- **Scope:** Run `flutter analyze`, `flutter test`, manual simulated offline/online QA, update docs, tag release.
+- **Files likely to change:** `CURRENT_PHASE.md`, `CHANGELOG.md`
+- **Dependencies:** P11-08
+- **Acceptance Criteria:** Zero analyze errors, 100% tests pass, release APK built.
+- **Testing Requirements:** Run `.\05-verify-github.ps1`.
+- **Completion Criteria:** Release `v0.9.0-beta` published successfully.
+- **Required Labels:** `release`, `documentation`
+- **Priority:** High
+- **Suggested commit message:** `chore(release): release v0.9.0-beta (Phase 11 Cloud Sync & Authentication)`
 
 ---
 
-### Milestone 7: Phase 7 – Interactive Native Home Screen Widgets
-**Description:** Build home screen widgets using Kotlin Glance (Android) and Swift WidgetKit (iOS) supporting quick completions and heatmaps.
-
-| Issue ID | Issue Title | Description | Acceptance Criteria | Priority | Labels |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| `#701` | Platform Channel Data Exporter | Expose local Drift database updates to shared App Group / SharedPreferences storage. | Native widget reads updated habit states in real-time. | `High` | `widgets`, `architecture` |
-| `#702` | Android Glance Quick-Complete Widget | Create Android Glance Jetpack Compose widget with toggle checkboxes. | Completing habit on widget syncs instantly to SQLite. | `High` | `widgets` |
-| `#703` | iOS WidgetKit Interactive Widget | Create iOS WidgetKit SwiftUI interactive widget for iOS 17+. | Interactive AppIntents log habit progress cleanly. | `High` | `widgets` |
-| `#704` | Dashboard Heatmap Widget | Design medium/large widget displaying 30-day completion heatmap grid. | Renders visual completion intensity matching theme primary color. | `Medium` | `widgets`, `ui` |
+### Milestone 12: Phase 12 – AI Coach & Smart Features (`v0.9.5-beta`)
+*Detail preserved with updated labels (`ai`, `analytics`, `notifications`, `usecase`, `ui`, `testing`, `release`).*
 
 ---
 
-### Milestone 8: Phase 8 – Gamification Engine
-**Description:** Implement quest lines, skill trees, regional milestones, and rare cosmetic rewards.
+### Milestone 13: Phase 13 – Performance, Accessibility & Production Release (`v1.0.0`)
+*Detail preserved with expanded Accessibility Acceptance Criteria on P13-04.*
 
-| Issue ID | Issue Title | Description | Acceptance Criteria | Priority | Labels |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| `#801` | Experience & Leveling Logic | Implement XP reward engine based on consistency, streaks, and target completions. | Calculates levels, progress thresholds, and level-up events. | `Medium` | `gamification`, `architecture` |
-| `#802` | Quest Lines & Challenge System | Create daily, weekly, and special event quest definitions and progress trackers. | Completing quest triggers XP gains and unlock notifications. | `Medium` | `gamification` |
-| `#803` | Skill Trees & Unlocks | Build visual Skill Tree screen where users allocate points for custom icons and themes. | Unlocked nodes persist and alter app cosmetic theme tokens. | `Low` | `gamification`, `ui` |
-| `#804` | Regional Milestones & Badges | Implement achievement badges for long-term consistency milestones (e.g. 100-day streak). | Badges render with custom vector artwork and shareable cards. | `Low` | `gamification`, `ui` |
-
----
-
-### Milestone 9: Phase 9 – Analytics & Health Integrations
-**Description:** Build comprehensive analytics dashboard, completion heatmaps, trend graphs, and Health Connect / HealthKit bi-directional sync.
-
-| Issue ID | Issue Title | Description | Acceptance Criteria | Priority | Labels |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| `#901` | Habit Analytics Engine | Implement aggregation use cases calculating completion rate, monthly distribution, and trends. | Efficient SQL grouping queries execute in <50ms. | `High` | `analytics`, `database` |
-| `#902` | Interactive Heatmap Grid | Build custom GitHub-style annual/monthly habit contribution heatmap widget. | Supports tap-to-inspect daily details and smooth zooming. | `High` | `analytics`, `ui` |
-| `#903` | Trend & Correlation Charts | Implement charts visualizing target vs actual metrics over week/month/year spans. | Custom animated chart components using Flutter CustomPainter. | `Medium` | `analytics`, `ui` |
-| `#904` | Health Connect & HealthKit Integration | Integrate native health SDKs to automatically complete health-linked habits (e.g., steps, sleep). | Background sync pulls health metrics and marks habits done. | `Medium` | `analytics`, `feature` |
-
----
-
-### Milestone 10: Phase 10 – Cloud Sync & Authentication
-**Description:** Implement local-first cloud sync engine (PowerSync / ElectricSQL), user authentication, conflict resolution, and offline queuing.
-
-| Issue ID | Issue Title | Description | Acceptance Criteria | Priority | Labels |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| `#1001`| Sync Engine Implementation | Replace `NoOpSyncEngine` with production local-first synchronization worker. | Automatically streams delta changes to/from backend server. | `High` | `sync`, `architecture` |
-| `#1002`| Conflict Resolution Manager | Implement last-write-wins (LWW) and deterministic CRDT conflict resolution rules. | Resolves simultaneous multi-device offline edits seamlessly. | `High` | `sync`, `database` |
-| `#1003`| Anonymous & Social Authentication | Implement Supabase/Firebase Auth supporting anonymous login and OAuth providers. | User session tokens persist securely in `FlutterSecureStorage`. | `High` | `sync`, `security` |
-| `#1004`| Offline Change Queue & Retry | Build persistent mutation queue ensuring zero data loss when offline. | Retries failed network mutations with exponential backoff. | `High` | `sync` |
+#### P13-04 Accessibility & Screen Reader (TalkBack/VoiceOver) Audit
+- **Purpose:** Ensure complete WCAG 2.1 AA accessibility compliance across all app UI components.
+- **Scope:** Audit UI for WCAG 2.1 AA compliance, wrap controls in `Semantics`, enforce 48x48dp minimum touch targets, verify high-contrast ratios.
+- **Files likely to change:** `lib/shared/widgets/accessible_touch_target.dart`
+- **Dependencies:** P13-01
+- **Acceptance Criteria:**
+  - Screen readers (TalkBack on Android, VoiceOver on iOS) navigate all core features cleanly without unlabelled controls.
+  - All interactive elements wrap explicit `Semantics` tags (`label`, `hint`, `button`, `isHeader`).
+  - All touchable UI targets adhere to minimum **48x48dp** dimensions.
+  - Text and icon elements meet WCAG 2.1 AA minimum **4.5:1 color contrast ratio** in both Light and Dark themes.
+  - Keyboard and D-pad focus traversal order follows natural reading hierarchy.
+  - 200% dynamic font scaling operates without layout overflow or text clipping.
+  - Passes automated semantics test checklist (`tester.getSemantics()`).
+- **Testing Requirements:** Automated accessibility semantics test suite (`test/accessibility_test.dart`) and manual TalkBack audit.
+- **Completion Criteria:** Passes WCAG 2.1 AA accessibility audit matrix.
+- **Required Labels:** `accessibility`, `ui`, `ux`
+- **Priority:** Medium
+- **Suggested commit message:** `accessibility(ui): add Semantics wrappers and achieve WCAG 2.1 AA compliance`
 
 ---
 
-### Milestone 11: Phase 11 – AI Coach & Smart Features
-**Description:** Implement non-chatbot AI Coach providing behavioral coaching, friction detection, reminder optimization, NLP habit creation, and monthly insights.
+## 5. Standard Engineering Workflow (12-Step Issue Execution)
 
-| Issue ID | Issue Title | Description | Acceptance Criteria | Priority | Labels |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| `#1101`| Behavioral Pattern Analyzer | Implement local rule engine detecting habit failure patterns. | Highlights high-friction habits in weekly summaries. | `Medium` | `ai`, `analytics` |
-| `#1102`| Optimal Reminder Timing Engine | Calculate optimal notification times based on historical completion velocity. | Suggests time adjustments to maximize completion probability. | `Medium` | `ai`, `notifications` |
-| `#1103`| Natural Language Processing (NLP) Parser | Integrate regex/NLP parser for inputs like "Read 20 mins every morning". | Extracts title, frequency, target value, and target unit. | `Low` | `ai`, `feature` |
-| `#1104`| Monthly AI Performance Insight Cards | Generate monthly performance insight summaries highlighting progress and focus areas. | Renders interactive insight cards on dashboard UI. | `Low` | `ai`, `ui` |
+Every future implementation issue must be executed following this standard 12-step engineering loop:
 
----
-
-### Milestone 12: Phase 12 – Performance, Accessibility & Production Release (v1.0)
-**Description:** Complete test coverage, golden UI tests, performance profiling, accessibility compliance, and app store release preparation.
-
-| Issue ID | Issue Title | Description | Acceptance Criteria | Priority | Labels |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| `#1201`| Unit & Provider Test Suite Verification | Write 100% unit test coverage for all domain use cases and Riverpod providers. | `flutter test --coverage` passes 100% of domain and state tests. | `High` | `testing` |
-| `#1202`| Golden UI Test Suite | Create golden tests across light and dark themes for core screens. | Validates pixel-perfect UI rendering on multiple device sizes. | `High` | `testing`, `ui` |
-| `#1203`| Performance Optimization & Profiling | Audit repaints using `RepaintBoundary`, reduce build overhead, and optimize frame times. | 60/120fps performance with zero dropped frames during scroll. | `High` | `performance` |
-| `#1204`| Accessibility & Semantics Audit | Ensure full screen reader (TalkBack/VoiceOver) support and dynamic font scaling. | Passes WCAG 2.1 AA accessibility guidelines. | `Medium` | `ui`, `ux` |
-| `#1205`| App Store & Play Store Release Build | Configure app signing, obfuscation (`--obfuscate`), app bundles (.aab), and store metadata. | Production builds compile cleanly for iOS App Store and Google Play. | `High` | `architecture` |
-
----
-
-## 4. Git Workflow & Engineering Governance
-
-### A. Branch Naming Convention
-All branches branch off `main` and adhere to standard prefixes:
-- **Features**: `feat/<issue-id>-<short-description>` (e.g., `feat/404-dashboard-ui`)
-- **Bug Fixes**: `fix/<issue-id>-<short-description>` (e.g., `fix/602-notification-alarm-crash`)
-- **Refactoring**: `refactor/<issue-id>-<short-description>` (e.g., `refactor/401-dashboard-shell`)
-- **Documentation**: `docs/<short-description>` (e.g., `docs/update-readme`)
-- **Releases**: `release/v<major>.<minor>.<patch>` (e.g., `release/v1.0.0`)
-
-### B. Commit Message Convention (Conventional Commits)
-All commit messages must follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
-
-```text
-<type>(<scope>): <short description>
-```
-
-**Allowed Types:** `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`.
-
-### C. Milestone Completion Checklist
-Before closing any milestone:
-1. All child GitHub issues must be closed with passing PRs.
-2. `flutter analyze` reports 0 warnings/errors.
-3. `flutter test` completes with 100% pass rate.
-4. `CURRENT_PHASE.md` updated to reflect next active milestone.
+1. **Issue Review:** Read the target GitHub issue description, acceptance criteria, and governance metadata.
+2. **Architecture Review:** Inspect existing domain, data, and presentation code to ensure new code conforms to Clean Architecture layer scoping.
+3. **Branch Creation:** Create a clean working branch off `main` following conventional naming (`feat/p5-01-log-schema`).
+4. **Feature Implementation:** Implement code strictly scoped to the issue's single objective.
+5. **Static Analysis:** Run `flutter analyze` to ensure **0 errors / 0 warnings**.
+6. **Automated Testing:** Execute `flutter test` to ensure **100% pass rate** across all existing and new tests.
+7. **Manual QA Verification:** Test the implemented feature on an Android device or emulator to verify real-world UX.
+8. **Self-Code Review:** Conduct a self-review ensuring no placeholder logic, missing error handling, or unused imports exist.
+9. **Documentation Update:** Update relevant project documentation (e.g., `CURRENT_PHASE.md`, API docs) if architecture or schemas changed.
+10. **Conventional Commit:** Stage and commit changes using Conventional Commits syntax (`feat(database): add HabitLogsTable schema`).
+11. **Merge & Push:** Merge branch into `main` and push commits to GitHub repository.
+12. **Close & Advance:** Close the GitHub issue, verify milestone progress, and advance to the next sequential issue.

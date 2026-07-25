@@ -27,35 +27,39 @@ $milestones = @(
     },
     @{
         Title = "Phase 5 - Habit Loop & Streak Engine"
-        Description = "Habit logging, streak calculations, and vacation mode."
+        Description = "Habit logging, streak calculations, progress logging modals, and vacation mode."
     },
     @{
-        Title = "Phase 6 - Notifications & Reminder Engine"
-        Description = "Notifications, snooze, action buttons, and reboot recovery."
+        Title = "Phase 6 - Habit Management"
+        Description = "Habit edit form, archiving mechanics, deletion, and swipe actions."
     },
     @{
-        Title = "Phase 7 - Interactive Native Widgets"
+        Title = "Phase 7 - Notification & Reminder Engine"
+        Description = "Local exact alarms, snooze, notification action buttons, and reboot recovery."
+    },
+    @{
+        Title = "Phase 8 - Interactive Native Home Screen Widgets"
         Description = "Android Glance widgets and iOS WidgetKit widgets."
     },
     @{
-        Title = "Phase 8 - Gamification Engine"
-        Description = "XP, levels, quests, achievements, and rewards."
+        Title = "Phase 9 - Gamification Engine"
+        Description = "XP, levels, quest lines, skill trees, achievements, and rewards."
     },
     @{
-        Title = "Phase 9 - Analytics & Health Integrations"
-        Description = "Charts, heatmaps, Health Connect, and HealthKit."
+        Title = "Phase 10 - Analytics & Health Integrations"
+        Description = "Charts, contribution heatmaps, Health Connect, and HealthKit."
     },
     @{
-        Title = "Phase 10 - Cloud Sync & Authentication"
-        Description = "Offline-first synchronization, authentication, and conflict resolution."
+        Title = "Phase 11 - Cloud Sync & Authentication"
+        Description = "Local-first delta synchronization, authentication, and CRDT conflict resolution."
     },
     @{
-        Title = "Phase 11 - AI Coach & Smart Features"
-        Description = "Behavior analysis, reminder optimization, and AI insights."
+        Title = "Phase 12 - AI Coach & Smart Features"
+        Description = "Behavior analysis, reminder optimization, NLP parser, and AI insights."
     },
     @{
-        Title = "Phase 12 - Performance, Polish & v1.0 Release"
-        Description = "Optimization, accessibility, testing, and production release."
+        Title = "Phase 13 - Performance, Accessibility & Production Release"
+        Description = "Golden tests, 100% provider unit tests, rendering optimization, accessibility audit, and v1.0 release."
     }
 )
 

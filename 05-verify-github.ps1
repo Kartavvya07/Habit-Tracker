@@ -31,8 +31,9 @@ $AssignmentsPass = $true
 Write-Host "Verifying Labels..." -ForegroundColor Yellow
 $ExpectedLabels = @(
     "feature", "bug", "enhancement", "documentation", "architecture", "database",
-    "ui", "ux", "notifications", "widgets", "analytics", "gamification", "sync",
-    "ai", "performance", "security", "testing", "refactor", "technical-debt",
+    "domain", "repository", "usecase", "riverpod", "ui", "ux", "notifications",
+    "widgets", "analytics", "gamification", "sync", "ai", "performance", "security",
+    "accessibility", "native", "release", "testing", "refactor", "technical-debt",
     "high-priority", "good-first-issue"
 )
 
@@ -73,7 +74,7 @@ if ($MilestonesJson) {
 }
 
 $MissingPhases = @()
-for ($p = 1; $p -le 12; $p++) {
+for ($p = 1; $p -le 13; $p++) {
     $PhasePattern = "Phase $p\b"
     $Found = $MilestoneTitles | Where-Object { $_ -match $PhasePattern }
     if (-not $Found) {
@@ -82,7 +83,7 @@ for ($p = 1; $p -le 12; $p++) {
 }
 
 if ($MissingPhases.Count -eq 0) {
-    Write-Host "  [OK] All 12 milestone phases detected." -ForegroundColor Green
+    Write-Host "  [OK] All 13 milestone phases detected." -ForegroundColor Green
 } else {
     Write-Host "  [FAIL] Missing milestones: $($MissingPhases -join ', ')" -ForegroundColor Red
     $MilestonesPass = $false
