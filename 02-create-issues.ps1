@@ -32,10 +32,10 @@ if ($MilestonesJson) {
     }
 }
 
-# Helper to resolve exact milestone title for Phase N
+# Helper to resolve exact milestone title for Phase N using boundary matching
 function Get-MilestoneTitle ($PhaseNumber) {
     foreach ($m in $Milestones) {
-        if ($m.title -like "Phase $PhaseNumber - *" -or $m.title -like "Phase ${PhaseNumber}:*" -or $m.title -like "Phase $PhaseNumber *") {
+        if ($m.title -match "^Phase ${PhaseNumber}\b") {
             return $m.title
         }
     }
@@ -237,7 +237,7 @@ $($Item.acceptance)
         gh @EditArgs 2>$null
         $UpdatedCount++
     } else {
-        Write-Host "  [CREATE] Creating issue '$Title' (Phase $Phase, Milestone '$MilestoneTitle')..." -ForegroundColor Green
+        Write-Host "  [CREATE] Creating issue '$Title' (Phase $Phase, Milestone '$MilestoneTitle')...." -ForegroundColor Green
         
         $CreateArgs = @("issue", "create", "--repo", $Repo, "--title", $Title, "--body", $Body)
         if ($MilestoneTitle) {

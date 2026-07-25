@@ -63,35 +63,39 @@ if ($MissingLabels.Count -eq 0) {
 
 # 2. Verify Milestones
 Write-Host "Verifying Milestones..." -ForegroundColor Yellow
-$MilestonesJson = gh api repos/$Repo/milestones?state=all 2>$null | Out-String
-$MilestoneTitles = @()
+$MilestonesJson = gh api "repos/$Repo/milestones?state=all&per_page=100" 2>$null | Out-String
+$Milestones = @()
 if ($MilestonesJson) {
     try {
-        $MilestoneTitles = ($MilestonesJson | ConvertFrom-Json).title
+        $Milestones = $MilestonesJson | ConvertFrom-Json
     } catch {
-        $MilestoneTitles = @()
+        $Milestones = @()
     }
 }
 
+$MilestoneTitles = $Milestones.title
+$OpenMilestoneCount = ($Milestones | Where-Object { $_.state -eq "open" }).Count
+$ClosedMilestoneCount = ($Milestones | Where-Object { $_.state -eq "closed" }).Count
+
 $MissingPhases = @()
 for ($p = 1; $p -le 13; $p++) {
-    $PhasePattern = "Phase $p\b"
+    $PhasePattern = "^Phase $p\b"
     $Found = $MilestoneTitles | Where-Object { $_ -match $PhasePattern }
     if (-not $Found) {
         $MissingPhases += "Phase $p"
     }
 }
 
-if ($MissingPhases.Count -eq 0) {
-    Write-Host "  [OK] All 13 milestone phases detected." -ForegroundColor Green
+if ($MissingPhases.Count -eq 0 -and $Milestones.Count -eq 13 -and $OpenMilestoneCount -eq 9 -and $ClosedMilestoneCount -eq 4) {
+    Write-Host "  [OK] Canonical 13 milestone structure verified (4 closed, 9 open, 0 duplicates)." -ForegroundColor Green
 } else {
-    Write-Host "  [FAIL] Missing milestones: $($MissingPhases -join ', ')" -ForegroundColor Red
+    Write-Host "  [FAIL] Milestone structure error: Total=$($Milestones.Count) (expected 13), Open=$OpenMilestoneCount (expected 9), Closed=$ClosedMilestoneCount (expected 4), Missing: $($MissingPhases -join ', ')" -ForegroundColor Red
     $MilestonesPass = $false
 }
 
 # 3. Verify Issues & Assignments
 Write-Host "Verifying Issues & Assignments..." -ForegroundColor Yellow
-$IssuesJson = gh issue list --repo $Repo --limit 500 --state all --json number,title,milestone,labels 2>$null | Out-String
+$IssuesJson = gh issue list --repo $Repo --limit 500 --state all --json number,title,state,milestone,labels 2>$null | Out-String
 $Issues = @()
 if ($IssuesJson) {
     try {
@@ -101,18 +105,20 @@ if ($IssuesJson) {
     }
 }
 
-if ($Issues.Count -ge 50) {
-    Write-Host "  [OK] Total issues found: $($Issues.Count) (expected >= 50)" -ForegroundColor Green
+$OpenIssues = @($Issues | Where-Object { $_.state -eq "open" })
+
+if ($OpenIssues.Count -ge 50) {
+    Write-Host "  [OK] Open implementation issues found: $($OpenIssues.Count) (expected >= 50)" -ForegroundColor Green
 } else {
-    Write-Host "  [FAIL] Issues count: $($Issues.Count) (expected >= 50)" -ForegroundColor Red
+    Write-Host "  [FAIL] Open issues count: $($OpenIssues.Count) (expected >= 50)" -ForegroundColor Red
     $IssuesPass = $false
 }
 
-$UnassignedMilestones = @($Issues | Where-Object { $null -eq $_.milestone })
-$UnassignedLabels = @($Issues | Where-Object { $null -eq $_.labels -or $_.labels.Count -eq 0 })
+$UnassignedMilestones = @($OpenIssues | Where-Object { $null -eq $_.milestone })
+$UnassignedLabels = @($OpenIssues | Where-Object { $null -eq $_.labels -or $_.labels.Count -eq 0 })
 
 if ($UnassignedMilestones.Count -eq 0 -and $UnassignedLabels.Count -eq 0) {
-    Write-Host "  [OK] All issues have valid milestone and label assignments." -ForegroundColor Green
+    Write-Host "  [OK] All active open issues have valid canonical milestone and label assignments." -ForegroundColor Green
 } else {
     Write-Host "  [FAIL] Unassigned milestones count: $($UnassignedMilestones.Count), Unassigned labels count: $($UnassignedLabels.Count)" -ForegroundColor Red
     $AssignmentsPass = $false
