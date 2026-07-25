@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart';
 import '../../../../core/database/app_database.dart';
 import '../../domain/entities/habit.dart';
 import '../../domain/repositories/habit_repository.dart';
@@ -34,14 +35,18 @@ class DriftHabitRepository implements HabitRepository {
 
   @override
   Stream<List<Habit>> watchHabits() {
-    return _db.select(_db.habits).watch().map(
+    final query = _db.select(_db.habits)
+      ..orderBy([(tbl) => OrderingTerm.desc(tbl.createdAt)]);
+    return query.watch().map(
           (rows) => rows.map(HabitMapper.toEntity).toList(),
         );
   }
 
   @override
   Future<List<Habit>> getHabits() async {
-    final rows = await _db.select(_db.habits).get();
+    final query = _db.select(_db.habits)
+      ..orderBy([(tbl) => OrderingTerm.desc(tbl.createdAt)]);
+    final rows = await query.get();
     return rows.map(HabitMapper.toEntity).toList();
   }
 }

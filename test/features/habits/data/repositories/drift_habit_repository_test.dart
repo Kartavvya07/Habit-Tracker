@@ -95,6 +95,7 @@ void main() {
         final secondHabit = testHabit.copyWith(
           id: 'habit-2',
           title: 'Exercise',
+          createdAt: now.add(const Duration(hours: 1)),
         );
 
         final emissions = <List<Habit>>[];
@@ -111,13 +112,35 @@ void main() {
         expect(emissions.length, 2);
         expect(emissions.last, equals([testHabit]));
 
-        // 3. Second insert triggers another update event
+        // 3. Second insert (newer timestamp) triggers update event with newest first
         await repository.createHabit(secondHabit);
         await Future<void>.delayed(Duration.zero);
         expect(emissions.length, 3);
-        expect(emissions.last, equals([testHabit, secondHabit]));
+        expect(emissions.last, equals([secondHabit, testHabit]));
 
         await subscription.cancel();
+      });
+
+      test('orders habits by createdAt DESC (newest first)', () async {
+        final olderHabit = testHabit.copyWith(
+          id: 'habit-older',
+          title: 'Older Habit',
+          createdAt: DateTime.parse('2026-01-01T10:00:00.000Z'),
+        );
+        final newerHabit = testHabit.copyWith(
+          id: 'habit-newer',
+          title: 'Newer Habit',
+          createdAt: DateTime.parse('2026-07-25T10:00:00.000Z'),
+        );
+
+        // Insert older habit first, then newer habit
+        await repository.createHabit(olderHabit);
+        await repository.createHabit(newerHabit);
+
+        final habits = await repository.watchHabits().first;
+        expect(habits.length, equals(2));
+        expect(habits[0].id, equals('habit-newer'));
+        expect(habits[1].id, equals('habit-older'));
       });
 
       test('correctly maps database row fields to Habit domain entity', () async {
