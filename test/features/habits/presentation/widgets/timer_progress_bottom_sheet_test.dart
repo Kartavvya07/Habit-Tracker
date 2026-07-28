@@ -17,7 +17,7 @@ void main() {
     id: 'h-timer',
     title: 'Meditation',
     habitType: HabitType.timer,
-    targetCount: 900,
+    targetCount: 900, // 15 mins
     color: HabitColor.purple,
     frequency: HabitFrequency.daily,
     createdAt: now,
@@ -46,7 +46,7 @@ void main() {
   }
 
   group('TimerProgressBottomSheet Widget Tests', () {
-    testWidgets('renders title, target minutes, timer display and quick chips', (tester) async {
+    testWidgets('renders title, countdown clock starting at target, and Start button', (tester) async {
       await repository.createHabit(habit);
 
       await tester.pumpWidget(
@@ -56,14 +56,13 @@ void main() {
       );
 
       expect(find.text('Meditation'), findsOneWidget);
-      expect(find.text('Target: 15 min'), findsOneWidget);
-      expect(find.text('00:00'), findsOneWidget);
-      expect(find.text('+1 Min'), findsOneWidget);
-      expect(find.text('+5 Mins'), findsOneWidget);
-      expect(find.text('Save Progress'), findsOneWidget);
+      expect(find.text('15:00'), findsOneWidget);
+      expect(find.text('Start'), findsOneWidget);
+      expect(find.text('+1 Min'), findsNothing);
+      expect(find.text('Save Progress'), findsNothing);
     });
 
-    testWidgets('adds minutes via quick chips and resets timer', (tester) async {
+    testWidgets('starts, pauses, and resets countdown cleanly', (tester) async {
       await repository.createHabit(habit);
 
       await tester.pumpWidget(
@@ -72,33 +71,49 @@ void main() {
         ),
       );
 
-      await tester.tap(find.text('+5 Mins'));
-      await tester.pumpAndSettle();
-      expect(find.text('05:00'), findsOneWidget);
+      // Tap Start
+      await tester.tap(find.text('Start'));
+      await tester.pump();
+      expect(find.text('Pause'), findsOneWidget);
+      expect(find.text('Reset'), findsOneWidget);
 
-      await tester.tap(find.byTooltip('Reset Timer'));
+      // Advance 1 second
+      await tester.pump(const Duration(seconds: 1));
+      expect(find.text('14:59'), findsOneWidget);
+
+      // Tap Pause
+      await tester.tap(find.text('Pause'));
       await tester.pumpAndSettle();
-      expect(find.text('00:00'), findsOneWidget);
+      expect(find.text('Resume'), findsOneWidget);
+
+      // Tap Reset
+      await tester.tap(find.text('Reset'));
+      await tester.pumpAndSettle();
+      expect(find.text('15:00'), findsOneWidget);
+      expect(find.text('Start'), findsOneWidget);
     });
 
-    testWidgets('submits progress and saves log to repository', (tester) async {
-      await repository.createHabit(habit);
+    testWidgets('auto-completes when countdown reaches zero', (tester) async {
+      final shortHabit = habit.copyWith(targetCount: 2);
+      await repository.createHabit(shortHabit);
 
       await tester.pumpWidget(
         buildTestableWidget(
-          TimerProgressBottomSheet(habit: habit, targetDate: now),
+          TimerProgressBottomSheet(habit: shortHabit, targetDate: now),
         ),
       );
 
-      await tester.tap(find.text('+10 Mins'));
+      await tester.tap(find.text('Start'));
+      await tester.pump();
+
+      // Tick 2 seconds
+      await tester.pump(const Duration(seconds: 2));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Save Progress'));
-      await tester.pumpAndSettle();
-
+      expect(find.text('Completed! 🎉'), findsOneWidget);
+      expect(find.text('Done'), findsOneWidget);
       expect(repository.logs.length, equals(1));
-      expect(repository.logs.first.currentValue, equals(600));
-      expect(repository.logs.first.habitId, equals('h-timer'));
+      expect(repository.logs.first.currentValue, equals(2));
     });
   });
 }
