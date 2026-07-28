@@ -42,6 +42,16 @@
 
 ---
 
+# Physical Device UX Refinement Sprints (v0.3.1-alpha)
+
+- **UX-01 Bottom Sheet Safe Area & Sticky Action (#143):** Re-architected modal sheets (`showModalBottomSheet` with `useSafeArea: true`) so primary action buttons are sticky at the bottom and never obscured by Android gesture navigation, 3-button navigation, or soft keyboards.
+- **UX-02 Timer Habit Duration Picker & Adaptive Formatting (#144):** Built decoupled `DurationPicker` widget with Hours/Minutes/Seconds wheel scroll pickers and `HabitDuration` domain value object for single-source adaptive formatting (`45 sec`, `1 min 30 sec`, `15 min`, `1 hr`, `1 hr 15 min`).
+- **UX-03 Numeric Progress Slider & 4-Way Input Sync (#145):** Added Material `Slider`, visual progress bar (`55 / 100`), 4-way synchronized inputs (Slider, Stepper, Quick Chips, Direct Text Editing), and Goal Reached status indicator.
+- **UX-04 Timer Countdown & Auto-Completion (#147):** Transformed Timer Habits into a genuine Android countdown timer (`30:00` → `00:00`), auto-completing on zero, restoring target duration on reset, and transitioning buttons cleanly (`Start` → `Pause/Reset` → `Resume/Reset` → `Completed`).
+
+---
+
 # Next Active Phase
 
 **Next Phase:** Phase 6 – Habit Management (Edit, Delete, Archive) (`v0.4.0-alpha`)
+
