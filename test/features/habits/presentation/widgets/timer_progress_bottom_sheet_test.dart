@@ -17,7 +17,7 @@ void main() {
     id: 'h-timer',
     title: 'Meditation',
     habitType: HabitType.timer,
-    targetCount: 15,
+    targetCount: 900,
     color: HabitColor.purple,
     frequency: HabitFrequency.daily,
     createdAt: now,
@@ -56,7 +56,7 @@ void main() {
       );
 
       expect(find.text('Meditation'), findsOneWidget);
-      expect(find.text('Target: 15 mins'), findsOneWidget);
+      expect(find.text('Target: 15 min'), findsOneWidget);
       expect(find.text('00:00'), findsOneWidget);
       expect(find.text('+1 Min'), findsOneWidget);
       expect(find.text('+5 Mins'), findsOneWidget);
@@ -97,7 +97,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(repository.logs.length, equals(1));
-      expect(repository.logs.first.currentValue, equals(10));
+      expect(repository.logs.first.currentValue, equals(600));
       expect(repository.logs.first.habitId, equals('h-timer'));
     });
   });

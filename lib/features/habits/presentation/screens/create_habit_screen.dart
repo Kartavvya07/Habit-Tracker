@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../domain/entities/habit_duration.dart';
 import '../../domain/entities/habit_frequency.dart';
 import '../../domain/entities/habit_type.dart';
 import '../extensions/habit_color_extension.dart';
 import '../providers/create_habit_notifier.dart';
 import '../widgets/color_selector.dart';
+import '../widgets/duration_picker.dart';
 import '../widgets/icon_selector.dart';
 
 class CreateHabitScreen extends ConsumerStatefulWidget {
@@ -141,7 +143,7 @@ class _CreateHabitScreenState extends ConsumerState<CreateHabitScreen> {
                 },
               ),
               const SizedBox(height: 20),
-              if (state.habitType != HabitType.boolean) ...[
+              if (state.habitType == HabitType.numeric) ...[
                 TextField(
                   controller: _targetCountController,
                   keyboardType: TextInputType.number,
@@ -150,14 +152,38 @@ class _CreateHabitScreenState extends ConsumerState<CreateHabitScreen> {
                     notifier.updateTargetCount(parsed);
                   },
                   decoration: InputDecoration(
-                    labelText: state.habitType == HabitType.timer
-                        ? 'Target Duration (Minutes)'
-                        : 'Target Count',
+                    labelText: 'Target Count',
                     errorText: state.targetCountError,
                     border: const OutlineInputBorder(),
                     prefixIcon: const Icon(Icons.flag_outlined),
                   ),
                 ),
+                const SizedBox(height: 20),
+              ],
+              if (state.habitType == HabitType.timer) ...[
+                Text(
+                  'Target Duration',
+                  style: theme.textTheme.titleSmall
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                DurationPicker(
+                  initialDuration: HabitDuration(
+                    state.targetCount <= 0 ? 900 : state.targetCount,
+                  ),
+                  onChanged: (duration) {
+                    notifier.updateTargetCount(duration.totalSeconds);
+                  },
+                ),
+                if (state.targetCountError != null) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    state.targetCountError!,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.error,
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 20),
               ],
               ColorSelector(

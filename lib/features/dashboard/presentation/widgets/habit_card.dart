@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../habits/domain/entities/habit.dart';
+import '../../../habits/domain/entities/habit_duration.dart';
 import '../../../habits/domain/entities/habit_frequency.dart';
 import '../../../habits/domain/entities/habit_log.dart';
 import '../../../habits/domain/entities/habit_type.dart';
@@ -61,7 +62,9 @@ class _HabitCardState extends ConsumerState<HabitCard> {
       case HabitType.numeric:
         return '$currentValue / ${habit.targetCount}';
       case HabitType.timer:
-        return '${currentValue}m / ${habit.targetCount} mins';
+        final currentDuration = HabitDuration(currentValue);
+        final targetDuration = HabitDuration(habit.targetCount);
+        return '${currentDuration.formatted()} / ${targetDuration.formatted()}';
       case HabitType.boolean:
         return null;
     }

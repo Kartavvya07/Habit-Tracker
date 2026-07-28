@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/entities/habit.dart';
+import '../../domain/entities/habit_duration.dart';
 import '../../domain/entities/habit_log.dart';
 import '../extensions/habit_color_extension.dart';
 import '../extensions/habit_icon_extension.dart';
@@ -58,8 +59,7 @@ class _TimerProgressBottomSheetState
   @override
   void initState() {
     super.initState();
-    final initialMinutes = widget.initialLog?.currentValue ?? 0;
-    _secondsElapsed = initialMinutes * 60;
+    _secondsElapsed = widget.initialLog?.currentValue ?? 0;
   }
 
   @override
@@ -120,12 +120,11 @@ class _TimerProgressBottomSheetState
 
     try {
       HapticFeedback.mediumImpact();
-      final minutesCompleted = (_secondsElapsed / 60).round();
       final useCase = ref.read(logHabitProgressUseCaseProvider);
       await useCase.execute(
         habitId: widget.habit.id,
         targetDate: widget.targetDate,
-        value: minutesCompleted,
+        value: _secondsElapsed,
       );
 
       if (mounted) {
@@ -145,7 +144,7 @@ class _TimerProgressBottomSheetState
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final accentColor = widget.habit.color.color;
-    final targetMinutes = widget.habit.targetCount;
+    final targetDurationStr = HabitDuration(widget.habit.targetCount).formatted();
     final mediaQuery = MediaQuery.of(context);
 
     return SafeArea(
@@ -213,7 +212,7 @@ class _TimerProgressBottomSheetState
                                   ),
                                 ),
                                 Text(
-                                  'Target: $targetMinutes mins',
+                                  'Target: $targetDurationStr',
                                   style: theme.textTheme.bodySmall?.copyWith(
                                     color: theme.colorScheme.onSurfaceVariant,
                                   ),

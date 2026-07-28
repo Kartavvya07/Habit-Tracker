@@ -100,7 +100,7 @@ void main() {
         color: HabitColor.purple,
         frequency: HabitFrequency.daily,
         habitType: HabitType.timer,
-        targetCount: 20,
+        targetCount: 1200,
         createdAt: now,
         updatedAt: now,
       );
@@ -109,7 +109,7 @@ void main() {
 
       expect(find.text('Meditation'), findsOneWidget);
       expect(find.text('Timer'), findsOneWidget);
-      expect(find.text('0m / 20 mins'), findsOneWidget);
+      expect(find.text('0 sec / 20 min'), findsOneWidget);
       expect(find.byIcon(Icons.self_improvement), findsOneWidget);
     });
 
