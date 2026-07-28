@@ -9,6 +9,8 @@ import 'package:habit_tracker/features/habits/presentation/providers/create_habi
 import 'package:habit_tracker/features/habits/presentation/providers/create_habit_state.dart';
 import 'package:habit_tracker/features/habits/presentation/providers/habit_providers.dart';
 
+import 'package:habit_tracker/features/habits/domain/entities/habit_log.dart';
+
 class MockHabitRepository implements HabitRepository {
   final List<Habit> savedHabits = [];
   bool shouldThrow = false;
@@ -35,6 +37,21 @@ class MockHabitRepository implements HabitRepository {
 
   @override
   Stream<List<Habit>> watchHabits() => Stream.value(savedHabits);
+
+  @override
+  Future<void> saveHabitLog(HabitLog log) async {}
+
+  @override
+  Future<HabitLog?> getHabitLog(String id) async => null;
+
+  @override
+  Future<List<HabitLog>> getHabitLogs(String habitId) async => [];
+
+  @override
+  Stream<List<HabitLog>> watchHabitLogs(String habitId) => Stream.value([]);
+
+  @override
+  Future<void> deleteHabitLog(String id) async {}
 }
 
 void main() {

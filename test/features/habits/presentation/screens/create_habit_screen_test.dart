@@ -7,6 +7,8 @@ import 'package:habit_tracker/features/habits/domain/repositories/habit_reposito
 import 'package:habit_tracker/features/habits/presentation/providers/habit_providers.dart';
 import 'package:habit_tracker/features/habits/presentation/screens/create_habit_screen.dart';
 
+import 'package:habit_tracker/features/habits/domain/entities/habit_log.dart';
+
 class FakeHabitRepository implements HabitRepository {
   final List<Habit> savedHabits = [];
 
@@ -29,6 +31,21 @@ class FakeHabitRepository implements HabitRepository {
 
   @override
   Stream<List<Habit>> watchHabits() => Stream.value(savedHabits);
+
+  @override
+  Future<void> saveHabitLog(HabitLog log) async {}
+
+  @override
+  Future<HabitLog?> getHabitLog(String id) async => null;
+
+  @override
+  Future<List<HabitLog>> getHabitLogs(String habitId) async => [];
+
+  @override
+  Stream<List<HabitLog>> watchHabitLogs(String habitId) => Stream.value([]);
+
+  @override
+  Future<void> deleteHabitLog(String id) async {}
 }
 
 void main() {

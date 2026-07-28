@@ -8,6 +8,8 @@ import 'package:habit_tracker/features/habits/domain/usecases/create_habit_use_c
 import 'package:habit_tracker/features/habits/domain/usecases/delete_habit_use_case.dart';
 import 'package:habit_tracker/features/habits/domain/usecases/update_habit_use_case.dart';
 
+import 'package:habit_tracker/features/habits/domain/entities/habit_log.dart';
+
 class FakeHabitRepository implements HabitRepository {
   final List<Habit> _habits = [];
 
@@ -44,6 +46,21 @@ class FakeHabitRepository implements HabitRepository {
   Stream<List<Habit>> watchHabits() {
     return Stream.value(_habits);
   }
+
+  @override
+  Future<void> saveHabitLog(HabitLog log) async {}
+
+  @override
+  Future<HabitLog?> getHabitLog(String id) async => null;
+
+  @override
+  Future<List<HabitLog>> getHabitLogs(String habitId) async => [];
+
+  @override
+  Stream<List<HabitLog>> watchHabitLogs(String habitId) => Stream.value([]);
+
+  @override
+  Future<void> deleteHabitLog(String id) async {}
 }
 
 void main() {

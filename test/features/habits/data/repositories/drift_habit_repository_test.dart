@@ -5,6 +5,7 @@ import 'package:habit_tracker/features/habits/data/repositories/drift_habit_repo
 import 'package:habit_tracker/features/habits/domain/entities/habit.dart';
 import 'package:habit_tracker/features/habits/domain/entities/habit_color.dart';
 import 'package:habit_tracker/features/habits/domain/entities/habit_frequency.dart';
+import 'package:habit_tracker/features/habits/domain/entities/habit_log.dart';
 import 'package:habit_tracker/features/habits/domain/entities/habit_type.dart';
 
 void main() {
@@ -159,6 +160,68 @@ void main() {
         expect(habit.createdAt, equals(now));
         expect(habit.updatedAt, equals(now));
         expect(habit.isArchived, isFalse);
+      });
+    });
+
+    group('DriftHabitRepository HabitLog Persistence Tests', () {
+      final testLog = HabitLog(
+        id: 'log-repo-1',
+        habitId: 'habit-1',
+        targetDate: now,
+        status: HabitLogStatus.completed,
+        currentValue: 20,
+        isFrozen: false,
+      );
+
+      setUp(() async {
+        await repository.createHabit(testHabit);
+      });
+
+      test('saveHabitLog and getHabitLog save and retrieve domain log', () async {
+        await repository.saveHabitLog(testLog);
+        final retrieved = await repository.getHabitLog('log-repo-1');
+
+        expect(retrieved, isNotNull);
+        expect(retrieved, equals(testLog));
+      });
+
+      test('getHabitLogs returns all logs for specific habit', () async {
+        final secondLog = testLog.copyWith(
+          id: 'log-repo-2',
+          targetDate: now.add(const Duration(days: 1)),
+          status: HabitLogStatus.skipped,
+        );
+
+        await repository.saveHabitLog(testLog);
+        await repository.saveHabitLog(secondLog);
+
+        final logs = await repository.getHabitLogs('habit-1');
+        expect(logs.length, equals(2));
+        expect(logs, containsAll([testLog, secondLog]));
+      });
+
+      test('watchHabitLogs emits reactive updates', () async {
+        final emissions = <List<HabitLog>>[];
+        final subscription = repository.watchHabitLogs('habit-1').listen(emissions.add);
+
+        await Future<void>.delayed(Duration.zero);
+        expect(emissions.last, isEmpty);
+
+        await repository.saveHabitLog(testLog);
+        await Future<void>.delayed(Duration.zero);
+
+        expect(emissions.last.length, equals(1));
+        expect(emissions.last.single, equals(testLog));
+
+        await subscription.cancel();
+      });
+
+      test('deleteHabitLog removes log from repository', () async {
+        await repository.saveHabitLog(testLog);
+        await repository.deleteHabitLog('log-repo-1');
+
+        final retrieved = await repository.getHabitLog('log-repo-1');
+        expect(retrieved, isNull);
       });
     });
   });
