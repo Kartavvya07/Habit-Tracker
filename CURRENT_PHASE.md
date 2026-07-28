@@ -9,7 +9,7 @@
 # Current Phase
 
 **Phase:** Phase 5 – Habit Loop & Streak Engine  
-**Status:** IN PROGRESS (P5-03 & P5-04 Completed ✅)  
+**Status:** IN PROGRESS (P5-05 & P5-06 Completed ✅)  
 **Last Updated:** July 29, 2026  
 
 ---
@@ -27,18 +27,17 @@
 
 ---
 
-# Completed Issue Summary (P5-03 — Habit Log & Streak Use Cases & P5-04 — Daily Completion & Streak Riverpod Providers)
+# Completed Issue Summary (P5-05 — Numeric & Timer Progress Logging UI & P5-06 — Boolean Quick Completion Toggle UI)
 
-- **Domain Entities & Value Objects (P5-03):** Implemented immutable `StreakInfo` and `DailyCompletionStats` entities using `@freezed` with JSON serialization.
-- **Progress Logging Use Case (`LogHabitProgressUseCase`):** Domain logic for habit progress logging supporting boolean, numeric counter, and timer habit types. Validates progress values (prevents negative values) and evaluates status (`completed`, `inProgress`, `failed`, `skipped`).
-- **Streak Engine (`CalculateStreakUseCase`):** Pure streak calculation algorithm evaluating current streak, best streak, and completion rate. Tested against 17 edge cases (custom frequencies, gap detection, leap years, month/year boundaries, and streak protection via `isFrozen` / `skipped` flags).
-- **Daily Completion Use Case (`GetDailyCompletionUseCase`):** Aggregates daily completion percentage and full-completion status for active habits on a target date.
-- **Riverpod Architecture Layer (P5-04):** Created `todayLogsStreamProvider`, `todayCompletionsProvider` (`StreamProvider<DailyCompletionStats>`), `habitLogsStreamProvider`, and `streakProvider` (`StreamProvider.family<StreakInfo, String>`). Dependency wiring added in `use_case_providers.dart`.
-- **Automated Verification:** Comprehensive unit tests in `log_habit_progress_use_case_test.dart`, `calculate_streak_use_case_test.dart`, `get_daily_completion_use_case_test.dart`, `habit_completion_provider_test.dart`, and `streak_provider_test.dart`. Both `flutter test` (111/111 passing) and `flutter analyze` (0 issues) passed cleanly.
+- **Numeric Progress Logging Sheet (`NumericProgressBottomSheet`):** Built custom M3 bottom sheet for numeric habits with target status, `-` / `+` stepper, `+1` / `+5` quick chips, direct numeric input, validation error handling, and submit button.
+- **Timer Progress Logging Sheet (`TimerProgressBottomSheet`):** Built custom M3 bottom sheet for timer habits with live stopwatch (`mm:ss`), Start/Pause/Reset timer action controls, manual minute chips (`+1 Min`, `+5 Mins`, `+10 Mins`), and submit button.
+- **Boolean Quick Completion Toggle (`HabitCard`):** Enhanced `HabitCard` with an interactive quick completion toggle button (`_CompletionToggle`). Toggling boolean habits triggers `LogHabitProgressUseCase`, optimistic check icon animation, strikethrough title styling, and haptic feedback.
+- **Error Rollback & Feedback:** Implemented state rollback and SnackBar error feedback when repository operations fail, ensuring habits never remain visually completed on persistence failure.
+- **Automated Verification:** Added widget tests in `numeric_progress_bottom_sheet_test.dart`, `timer_progress_bottom_sheet_test.dart`, and `habit_card_test.dart`. Both `flutter test` (121/121 passing) and `flutter analyze` (0 issues) passed cleanly.
 
 ---
 
 # Active Phase: Phase 5 – Habit Loop & Streak Engine
 
 **Primary Objective:** Build completion execution engine, `HabitLogsTable`, streak calculation algorithm, numeric & timer progress logging modals, Vacation Mode streak protection, and Dashboard completion widgets.
-- **Next Issue:** P5-05 — Numeric & Timer Progress Logging Modals
+- **Next Issue:** P5-07 — Vacation Mode & Streak Protection Engine
