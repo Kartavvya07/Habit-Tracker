@@ -3,9 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../habits/domain/entities/habit.dart';
 import '../../../habits/presentation/providers/habit_providers.dart';
+import '../../../settings/presentation/providers/vacation_mode_provider.dart';
 import '../providers/dashboard_provider.dart';
 import '../providers/dashboard_state.dart';
+import '../widgets/daily_summary_card.dart';
 import '../widgets/habit_card.dart';
+import '../widgets/vacation_banner.dart';
 
 /// The main Dashboard screen displaying the user's habit feed.
 /// Observes [dashboardProvider] only and renders presentation states.
@@ -15,11 +18,34 @@ class DashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(dashboardProvider);
+    final isVacationModeActive = ref.watch(vacationModeProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Habit Tracker'),
         centerTitle: false,
+        actions: [
+          Semantics(
+            button: true,
+            label: 'Toggle Vacation Mode',
+            child: IconButton(
+              icon: Icon(
+                isVacationModeActive
+                    ? Icons.beach_access_rounded
+                    : Icons.beach_access_outlined,
+                color: isVacationModeActive
+                    ? Theme.of(context).colorScheme.tertiary
+                    : null,
+              ),
+              tooltip: isVacationModeActive
+                  ? 'Vacation Mode Active'
+                  : 'Turn on Vacation Mode',
+              onPressed: () {
+                ref.read(vacationModeProvider.notifier).toggleVacationMode();
+              },
+            ),
+          ),
+        ],
       ),
       body: SafeArea(
         child: Center(
@@ -135,18 +161,31 @@ class _DashboardEmptyView extends StatelessWidget {
   }
 }
 
-class _DashboardLoadedView extends StatelessWidget {
+class _DashboardLoadedView extends ConsumerWidget {
   final List<Habit> habits;
 
   const _DashboardLoadedView({required this.habits});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isVacationModeActive = ref.watch(vacationModeProvider);
+
     return ListView.builder(
-      padding: const EdgeInsets.only(top: 8, bottom: 88),
-      itemCount: habits.length,
+      padding: const EdgeInsets.only(top: 4, bottom: 88),
+      itemCount: habits.length + 2,
       itemBuilder: (context, index) {
-        final habit = habits[index];
+        if (index == 0) {
+          return VacationBanner(
+            isActive: isVacationModeActive,
+            onToggle: () {
+              ref.read(vacationModeProvider.notifier).toggleVacationMode();
+            },
+          );
+        }
+        if (index == 1) {
+          return const DailySummaryCard();
+        }
+        final habit = habits[index - 2];
         return HabitCard(
           key: ValueKey(habit.id),
           habit: habit,
@@ -155,6 +194,7 @@ class _DashboardLoadedView extends StatelessWidget {
     );
   }
 }
+
 
 class _DashboardErrorView extends StatelessWidget {
   final String message;

@@ -156,154 +156,191 @@ class _TimerProgressBottomSheetState
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Handle bar
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            // Header
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Handle bar
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
                   decoration: BoxDecoration(
-                    color: accentColor.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    widget.habit.icon.toIconData,
-                    color: accentColor,
-                    size: 24,
+                    color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                    borderRadius: BorderRadius.circular(2),
                   ),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.habit.title,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
+              ),
+              const SizedBox(height: 20),
+              // Header
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: accentColor.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      widget.habit.icon.toIconData,
+                      color: accentColor,
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.habit.title,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      Text(
-                        'Target: $targetMinutes mins',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
+                        Text(
+                          'Target: $targetMinutes mins',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+                  ),
+                  Semantics(
+                    button: true,
+                    label: 'Close timer progress log',
+                    child: IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.close),
+                      tooltip: 'Cancel',
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              // Timer Display
+              Center(
+                child: Semantics(
+                  label: 'Elapsed time ${_formatTime(_secondsElapsed)}',
+                  child: Text(
+                    _formatTime(_secondsElapsed),
+                    style: theme.textTheme.displayMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: accentColor,
+                    ),
                   ),
                 ),
-                IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.close),
-                  tooltip: 'Cancel',
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            // Timer Display
-            Center(
-              child: Text(
-                _formatTime(_secondsElapsed),
-                style: theme.textTheme.displayMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: accentColor,
-                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            // Timer Controls
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton.filledTonal(
-                  onPressed: _resetTimer,
-                  icon: const Icon(Icons.refresh),
-                  tooltip: 'Reset Timer',
-                ),
-                const SizedBox(width: 24),
-                FloatingActionButton.large(
-                  onPressed: _isRunning ? _pauseTimer : _startTimer,
-                  backgroundColor: accentColor,
-                  child: Icon(
-                    _isRunning ? Icons.pause : Icons.play_arrow,
-                    size: 36,
-                    color: Colors.white,
+              const SizedBox(height: 20),
+              // Timer Controls
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Semantics(
+                    button: true,
+                    label: 'Reset timer',
+                    child: IconButton.filledTonal(
+                      onPressed: _resetTimer,
+                      icon: const Icon(Icons.refresh),
+                      tooltip: 'Reset Timer',
+                    ),
                   ),
-                ),
-                const SizedBox(width: 24),
-                IconButton.filledTonal(
-                  onPressed: () => _addMinutes(5),
-                  icon: const Icon(Icons.add),
-                  tooltip: 'Add 5 Mins',
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            // Quick Add Minute Chips
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ActionChip(
-                  label: const Text('+1 Min'),
-                  onPressed: () => _addMinutes(1),
-                ),
-                const SizedBox(width: 8),
-                ActionChip(
-                  label: const Text('+5 Mins'),
-                  onPressed: () => _addMinutes(5),
-                ),
-                const SizedBox(width: 8),
-                ActionChip(
-                  label: const Text('+10 Mins'),
-                  onPressed: () => _addMinutes(10),
-                ),
-              ],
-            ),
-            if (_errorMessage != null) ...[
-              const SizedBox(height: 12),
-              Text(
-                _errorMessage!,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.error,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-            const SizedBox(height: 24),
-            // Save Button
-            FilledButton(
-              onPressed: _isSubmitting ? null : _submit,
-              style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                backgroundColor: accentColor,
-              ),
-              child: _isSubmitting
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
+                  const SizedBox(width: 24),
+                  Semantics(
+                    button: true,
+                    label: _isRunning ? 'Pause timer' : 'Start timer',
+                    child: FloatingActionButton.large(
+                      onPressed: _isRunning ? _pauseTimer : _startTimer,
+                      backgroundColor: accentColor,
+                      child: Icon(
+                        _isRunning ? Icons.pause : Icons.play_arrow,
+                        size: 36,
                         color: Colors.white,
                       ),
-                    )
-                  : const Text('Save Progress'),
-            ),
-          ],
+                    ),
+                  ),
+                  const SizedBox(width: 24),
+                  Semantics(
+                    button: true,
+                    label: 'Add 5 minutes to timer',
+                    child: IconButton.filledTonal(
+                      onPressed: () => _addMinutes(5),
+                      icon: const Icon(Icons.add),
+                      tooltip: 'Add 5 Mins',
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              // Quick Add Minute Chips
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Semantics(
+                    button: true,
+                    label: 'Add 1 minute to timer',
+                    child: ActionChip(
+                      label: const Text('+1 Min'),
+                      onPressed: () => _addMinutes(1),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Semantics(
+                    button: true,
+                    label: 'Add 5 minutes to timer',
+                    child: ActionChip(
+                      label: const Text('+5 Mins'),
+                      onPressed: () => _addMinutes(5),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Semantics(
+                    button: true,
+                    label: 'Add 10 minutes to timer',
+                    child: ActionChip(
+                      label: const Text('+10 Mins'),
+                      onPressed: () => _addMinutes(10),
+                    ),
+                  ),
+                ],
+              ),
+              if (_errorMessage != null) ...[
+                const SizedBox(height: 12),
+                Text(
+                  _errorMessage!,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.error,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+              const SizedBox(height: 24),
+              // Save Button
+              Semantics(
+                button: true,
+                label: 'Save timer progress',
+                child: FilledButton(
+                  onPressed: _isSubmitting ? null : _submit,
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: accentColor,
+                  ),
+                  child: _isSubmitting
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text('Save Progress'),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

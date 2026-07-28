@@ -9,9 +9,13 @@ import 'package:habit_tracker/features/dashboard/presentation/screens/dashboard_
 import 'package:habit_tracker/features/dashboard/presentation/widgets/habit_card.dart';
 import 'package:habit_tracker/features/habits/domain/entities/habit.dart';
 import 'package:habit_tracker/features/habits/presentation/providers/habit_providers.dart';
+import 'package:habit_tracker/features/settings/presentation/providers/vacation_mode_provider.dart';
+
+import '../../../settings/presentation/providers/vacation_mode_provider_test.dart';
 
 void main() {
   final now = DateTime(2026, 7, 25);
+  final fakeVacationRepository = FakeVacationModeRepository();
 
   final sampleHabit1 = Habit(
     id: 'habit-1',
@@ -49,12 +53,16 @@ void main() {
         );
 
     return ProviderScope(
-      overrides: overrides,
+      overrides: [
+        vacationModeRepositoryProvider.overrideWithValue(fakeVacationRepository),
+        ...overrides,
+      ],
       child: MaterialApp.router(
         routerConfig: testRouter,
       ),
     );
   }
+
 
   group('DashboardScreen Widget Tests', () {
     testWidgets('renders Loading state indicator', (tester) async {

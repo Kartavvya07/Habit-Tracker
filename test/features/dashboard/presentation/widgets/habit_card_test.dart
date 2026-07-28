@@ -10,15 +10,19 @@ import 'package:habit_tracker/features/habits/domain/entities/habit_type.dart';
 import 'package:habit_tracker/features/habits/presentation/providers/habit_providers.dart';
 import 'package:habit_tracker/features/habits/presentation/widgets/numeric_progress_bottom_sheet.dart';
 import 'package:habit_tracker/features/habits/presentation/widgets/timer_progress_bottom_sheet.dart';
+import 'package:habit_tracker/features/settings/presentation/providers/vacation_mode_provider.dart';
 
 import '../../../habits/domain/usecases/log_habit_progress_use_case_test.dart';
+import '../../../settings/presentation/providers/vacation_mode_provider_test.dart';
 
 void main() {
   late InMemoryHabitRepository repository;
+  late FakeVacationModeRepository vacationRepository;
   final now = DateTime(2026, 7, 25);
 
   setUp(() {
     repository = InMemoryHabitRepository();
+    vacationRepository = FakeVacationModeRepository();
   });
 
   tearDown(() {
@@ -29,6 +33,7 @@ void main() {
     return ProviderScope(
       overrides: [
         habitRepositoryProvider.overrideWithValue(repository),
+        vacationModeRepositoryProvider.overrideWithValue(vacationRepository),
       ],
       child: MaterialApp(
         home: Scaffold(
@@ -37,6 +42,7 @@ void main() {
       ),
     );
   }
+
 
   group('HabitCard Widget Tests', () {
     testWidgets('renders boolean habit card correctly', (tester) async {
@@ -202,7 +208,9 @@ void main() {
         ProviderScope(
           overrides: [
             habitRepositoryProvider.overrideWithValue(failingRepository),
+            vacationModeRepositoryProvider.overrideWithValue(vacationRepository),
           ],
+
           child: MaterialApp(
             home: Scaffold(
               body: HabitCard(habit: habit),

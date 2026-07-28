@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../settings/presentation/providers/vacation_mode_provider.dart';
 import '../../domain/entities/habit_log.dart';
 import '../../domain/entities/streak_info.dart';
 import 'habit_providers.dart';
@@ -14,10 +15,15 @@ final habitLogsStreamProvider =
 
 /// Reactive stream provider calculating streak info for a habit.
 ///
-/// Automatically recomputes whenever habit logs for [habitId] change.
+/// Automatically recomputes whenever habit logs for [habitId] or [vacationModeProvider] change.
 final streakProvider =
     StreamProvider.family<StreakInfo, String>((ref, habitId) async* {
   ref.watch(habitLogsStreamProvider(habitId));
+  final isVacationModeActive = ref.watch(vacationModeProvider);
   final useCase = ref.watch(calculateStreakUseCaseProvider);
-  yield await useCase.execute(habitId: habitId);
+  yield await useCase.execute(
+    habitId: habitId,
+    isVacationModeActive: isVacationModeActive,
+  );
 });
+

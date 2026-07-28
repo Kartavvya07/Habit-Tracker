@@ -16,6 +16,7 @@ class CalculateStreakUseCase {
   Future<StreakInfo> execute({
     required String habitId,
     DateTime? referenceDate,
+    bool isVacationModeActive = false,
   }) async {
     final habit = await _repository.getHabit(habitId);
     if (habit == null) {
@@ -23,7 +24,12 @@ class CalculateStreakUseCase {
     }
 
     final logs = await _repository.getLogsForHabit(habitId);
-    return calculate(habit, logs, referenceDate: referenceDate);
+    return calculate(
+      habit,
+      logs,
+      referenceDate: referenceDate,
+      isVacationModeActive: isVacationModeActive,
+    );
   }
 
   /// Pure calculation algorithm for streak metrics.
@@ -31,6 +37,7 @@ class CalculateStreakUseCase {
     Habit habit,
     List<HabitLog> logs, {
     DateTime? referenceDate,
+    bool isVacationModeActive = false,
   }) {
     if (logs.isEmpty) {
       return const StreakInfo(
@@ -88,7 +95,8 @@ class CalculateStreakUseCase {
     final todayLog = logMap[normalizedRefDate];
     final isTodayCompleted = todayLog?.status == HabitLogStatus.completed;
     final isTodayProtected = todayLog?.isFrozen == true ||
-        todayLog?.status == HabitLogStatus.skipped;
+        todayLog?.status == HabitLogStatus.skipped ||
+        isVacationModeActive;
 
     if (!isTodayCompleted && !isTodayProtected) {
       // Today is not completed yet, start streak check from yesterday
@@ -102,7 +110,8 @@ class CalculateStreakUseCase {
         if (log?.status == HabitLogStatus.completed) {
           currentStreak++;
         } else if (log?.isFrozen == true ||
-            log?.status == HabitLogStatus.skipped) {
+            log?.status == HabitLogStatus.skipped ||
+            isVacationModeActive) {
           // Streak protection preserves streak count without breaking
         } else {
           // Missed/failed on a scheduled day breaks the streak
@@ -129,7 +138,8 @@ class CalculateStreakUseCase {
           tempStreak++;
           bestStreak = max(bestStreak, tempStreak);
         } else if (log?.isFrozen == true ||
-            log?.status == HabitLogStatus.skipped) {
+            log?.status == HabitLogStatus.skipped ||
+            isVacationModeActive) {
           // Protected day: streak preserved
         } else {
           // Missed day: reset current chain
@@ -152,6 +162,7 @@ class CalculateStreakUseCase {
       totalScheduled: totalScheduled,
     );
   }
+
 
   bool _isScheduledDay(Habit habit, DateTime date) {
     switch (habit.frequency) {

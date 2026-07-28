@@ -136,160 +136,194 @@ class _NumericProgressBottomSheetState
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Handle bar
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
-                  borderRadius: BorderRadius.circular(2),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Handle bar
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            // Header
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: accentColor.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    widget.habit.icon.toIconData,
-                    color: accentColor,
-                    size: 24,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.habit.title,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        'Target: $targetCount',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.close),
-                  tooltip: 'Cancel',
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            // Stepper and Input Display
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton.filledTonal(
-                  onPressed: _currentValue > 0 ? _decrement : null,
-                  icon: const Icon(Icons.remove),
-                  tooltip: 'Decrement',
-                ),
-                const SizedBox(width: 16),
-                SizedBox(
-                  width: 100,
-                  child: TextField(
-                    controller: _controller,
-                    keyboardType: TextInputType.number,
-                    textAlign: TextAlign.center,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    style: theme.textTheme.headlineLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
+              const SizedBox(height: 20),
+              // Header
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: accentColor.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      widget.habit.icon.toIconData,
                       color: accentColor,
+                      size: 24,
                     ),
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                    ),
-                    onChanged: (text) {
-                      final val = int.tryParse(text);
-                      if (val != null && val >= 0) {
-                        setState(() {
-                          _currentValue = val;
-                          _errorMessage = null;
-                        });
-                      }
-                    },
                   ),
-                ),
-                const SizedBox(width: 16),
-                IconButton.filledTonal(
-                  onPressed: () => _increment(1),
-                  icon: const Icon(Icons.add),
-                  tooltip: 'Increment',
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.habit.title,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'Target: $targetCount',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Semantics(
+                    button: true,
+                    label: 'Close progress log',
+                    child: IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.close),
+                      tooltip: 'Cancel',
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              // Stepper and Input Display
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Semantics(
+                    button: true,
+                    label: 'Decrement count',
+                    child: IconButton.filledTonal(
+                      onPressed: _currentValue > 0 ? _decrement : null,
+                      icon: const Icon(Icons.remove),
+                      tooltip: 'Decrement',
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  SizedBox(
+                    width: 100,
+                    child: Semantics(
+                      label: 'Progress value input field',
+                      value: _currentValue.toString(),
+                      child: TextField(
+                        controller: _controller,
+                        keyboardType: TextInputType.number,
+                        textAlign: TextAlign.center,
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        style: theme.textTheme.headlineLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: accentColor,
+                        ),
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                        ),
+                        onChanged: (text) {
+                          final val = int.tryParse(text);
+                          if (val != null && val >= 0) {
+                            setState(() {
+                              _currentValue = val;
+                              _errorMessage = null;
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Semantics(
+                    button: true,
+                    label: 'Increment count',
+                    child: IconButton.filledTonal(
+                      onPressed: () => _increment(1),
+                      icon: const Icon(Icons.add),
+                      tooltip: 'Increment',
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              // Quick Add Chips
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Semantics(
+                    button: true,
+                    label: 'Add 1 to progress',
+                    child: ActionChip(
+                      label: const Text('+1'),
+                      onPressed: () => _increment(1),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Semantics(
+                    button: true,
+                    label: 'Add 5 to progress',
+                    child: ActionChip(
+                      label: const Text('+5'),
+                      onPressed: () => _increment(5),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Semantics(
+                    button: true,
+                    label: 'Set progress to target $targetCount',
+                    child: ActionChip(
+                      label: const Text('Target'),
+                      onPressed: () => _updateValue(targetCount),
+                    ),
+                  ),
+                ],
+              ),
+              if (_errorMessage != null) ...[
+                const SizedBox(height: 12),
+                Text(
+                  _errorMessage!,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.error,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ],
-            ),
-            const SizedBox(height: 16),
-            // Quick Add Chips
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ActionChip(
-                  label: const Text('+1'),
-                  onPressed: () => _increment(1),
+              const SizedBox(height: 24),
+              // Action Buttons
+              Semantics(
+                button: true,
+                label: 'Save progress',
+                child: FilledButton(
+                  onPressed: _isSubmitting ? null : _submit,
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: accentColor,
+                  ),
+                  child: _isSubmitting
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text('Save Progress'),
                 ),
-                const SizedBox(width: 8),
-                ActionChip(
-                  label: const Text('+5'),
-                  onPressed: () => _increment(5),
-                ),
-                const SizedBox(width: 8),
-                ActionChip(
-                  label: const Text('Target'),
-                  onPressed: () => _updateValue(targetCount),
-                ),
-              ],
-            ),
-            if (_errorMessage != null) ...[
-              const SizedBox(height: 12),
-              Text(
-                _errorMessage!,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.error,
-                ),
-                textAlign: TextAlign.center,
               ),
             ],
-            const SizedBox(height: 24),
-            // Action Buttons
-            FilledButton(
-              onPressed: _isSubmitting ? null : _submit,
-              style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                backgroundColor: accentColor,
-              ),
-              child: _isSubmitting
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
-                  : const Text('Save Progress'),
-            ),
-          ],
+          ),
         ),
       ),
     );

@@ -9,9 +9,12 @@ import '../../../habits/domain/entities/habit_type.dart';
 import '../../../habits/presentation/extensions/habit_color_extension.dart';
 import '../../../habits/presentation/extensions/habit_icon_extension.dart';
 import '../../../habits/presentation/providers/habit_completion_provider.dart';
+import '../../../habits/presentation/providers/streak_provider.dart';
 import '../../../habits/presentation/providers/use_case_providers.dart';
 import '../../../habits/presentation/widgets/numeric_progress_bottom_sheet.dart';
 import '../../../habits/presentation/widgets/timer_progress_bottom_sheet.dart';
+import '../../../settings/presentation/providers/vacation_mode_provider.dart';
+import 'streak_badge.dart';
 
 /// Material 3 Habit Card widget with interactive quick completion toggle.
 class HabitCard extends ConsumerStatefulWidget {
@@ -146,13 +149,19 @@ class _HabitCardState extends ConsumerState<HabitCard> {
       }
     }
 
+    final asyncStreak = ref.watch(streakProvider(widget.habit.id));
+    final streak = asyncStreak.valueOrNull;
+    final currentStreak = streak?.currentStreak ?? 0;
+    final isVacationModeActive = ref.watch(vacationModeProvider);
+    final isProtected = isVacationModeActive || currentLog?.isFrozen == true;
+
     final currentValue = currentLog?.currentValue ?? 0;
     final isCompleted = currentLog?.status == HabitLogStatus.completed;
     final targetText = _formatTargetValue(widget.habit, currentValue);
 
     return Semantics(
       label:
-          'Habit ${widget.habit.title}, $frequencyText frequency, $typeText type${targetText != null ? ', $targetText' : ''}, ${isCompleted ? 'completed' : 'not completed'}',
+          'Habit ${widget.habit.title}, $frequencyText frequency, $typeText type, streak $currentStreak days${targetText != null ? ', $targetText' : ''}, ${isCompleted ? 'completed' : 'not completed'}',
       button: true,
       child: Card(
         elevation: 1,
@@ -227,7 +236,12 @@ class _HabitCardState extends ConsumerState<HabitCard> {
                       Wrap(
                         spacing: 8,
                         runSpacing: 6,
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
+                          StreakBadge(
+                            streakCount: currentStreak,
+                            isProtected: isProtected,
+                          ),
                           _MetaBadge(
                             label: frequencyText,
                             backgroundColor:
@@ -277,6 +291,7 @@ class _HabitCardState extends ConsumerState<HabitCard> {
     );
   }
 }
+
 
 class _CompletionToggle extends StatelessWidget {
   final Habit habit;

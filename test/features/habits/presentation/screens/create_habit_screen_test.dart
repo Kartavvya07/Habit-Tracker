@@ -8,6 +8,9 @@ import 'package:habit_tracker/features/habits/presentation/providers/habit_provi
 import 'package:habit_tracker/features/habits/presentation/screens/create_habit_screen.dart';
 
 import 'package:habit_tracker/features/habits/domain/entities/habit_log.dart';
+import 'package:habit_tracker/features/settings/presentation/providers/vacation_mode_provider.dart';
+
+import '../../../settings/presentation/providers/vacation_mode_provider_test.dart';
 
 class FakeHabitRepository implements HabitRepository {
   final List<Habit> savedHabits = [];
@@ -105,12 +108,15 @@ void main() {
     return ProviderScope(
       overrides: [
         habitRepositoryProvider.overrideWithValue(fakeRepository),
+        vacationModeRepositoryProvider.overrideWithValue(FakeVacationModeRepository()),
       ],
       child: MaterialApp.router(
         routerConfig: goRouter,
       ),
     );
   }
+
+
 
   group('CreateHabitScreen Widget Tests', () {
     testWidgets('renders all form components correctly', (tester) async {

@@ -10,6 +10,7 @@ A modern, local-first Flutter Habit Tracker application built with Clean Archite
 - ✅ **Phase 2 Complete:** Domain & Data Layer
 - ✅ **Phase 3 Complete:** Habit CRUD & Management (Create Habit Vertical Slice)
 - ✅ **Phase 4 Complete:** Habit Dashboard (Read Vertical Slice)
+- ✅ **Phase 5 Complete:** Habit Loop & Streak Engine (`v0.3.0-alpha`)
 
 ---
 
@@ -19,9 +20,9 @@ A modern, local-first Flutter Habit Tracker application built with Clean Archite
 | :--- | :--- | :--- |
 | `v0.1.0-alpha` | Create Habit | Completed ✅ |
 | `v0.2.0-alpha` | Dashboard | Completed ✅ |
-| `v0.3.0-alpha` | Complete Habit | Planned |
-| `v0.4.0-alpha` | Edit/Delete | Planned |
-| `v0.5.0-beta` | Notifications | Planned |
+| `v0.3.0-alpha` | Phase 5 – Habit Loop & Streak Engine | Completed ✅ |
+| `v0.4.0-alpha` | Phase 6 – Habit Management (Edit/Delete) | Planned |
+| `v0.5.0-beta` | Phase 7 – Notifications & Reminders | Planned |
 | `v1.0.0` | First Stable Release | Planned |
 
 ---
@@ -31,10 +32,10 @@ A modern, local-first Flutter Habit Tracker application built with Clean Archite
 ```mermaid
 graph TD
     Presentation["Presentation (Screens & Widgets)"]
-    Riverpod["Riverpod (Notifiers & State)"]
-    UseCases["Use Cases (Domain Logic)"]
-    Repository["Repository Interface & Implementation"]
-    Drift["Drift (Data Access Object / Mappers)"]
+    Riverpod["Riverpod (Notifiers & Stream Providers)"]
+    UseCases["Use Cases (Domain Logic & Streak Engine)"]
+    Repository["Repository Interface & Drift Implementation"]
+    Drift["Drift (Data Access Object / Mappers / SQLite)"]
     SQLite["SQLite Database"]
 
     Presentation --> Riverpod
@@ -43,14 +44,6 @@ graph TD
     Repository --> Drift
     Drift --> SQLite
 ```
-
----
-
-## Screenshots
-
-| Create Habit Screen | Dashboard (Placeholder) |
-| :---: | :---: |
-| *(Screenshot Placeholder)* | *(Screenshot Placeholder)* |
 
 ---
 

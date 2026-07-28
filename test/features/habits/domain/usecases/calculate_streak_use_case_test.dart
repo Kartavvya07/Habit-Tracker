@@ -455,5 +455,119 @@ void main() {
       expect(streak.currentStreak, equals(2));
       expect(streak.bestStreak, equals(2));
     });
+
+    test('18. Vacation Mode active preserves streak on missed days without falsely increasing it', () {
+      final refDate = DateTime(2026, 1, 5);
+      // User completed 3 days (Jan 1, Jan 2, Jan 3), then missed Jan 4 and Jan 5 while in Vacation Mode
+      final logs = [
+        HabitLog(
+          id: 'l1',
+          habitId: 'h1',
+          targetDate: DateTime(2026, 1, 1),
+          status: HabitLogStatus.completed,
+        ),
+        HabitLog(
+          id: 'l2',
+          habitId: 'h1',
+          targetDate: DateTime(2026, 1, 2),
+          status: HabitLogStatus.completed,
+        ),
+        HabitLog(
+          id: 'l3',
+          habitId: 'h1',
+          targetDate: DateTime(2026, 1, 3),
+          status: HabitLogStatus.completed,
+        ),
+      ];
+
+      final streak = useCase.calculate(
+        habit,
+        logs,
+        referenceDate: refDate,
+        isVacationModeActive: true,
+      );
+
+      // Streak remains 3 (preserved, not broken to 0, and not falsely increased to 5)
+      expect(streak.currentStreak, equals(3));
+      expect(streak.bestStreak, equals(3));
+    });
+
+    test('19. Vacation Mode disabled resets streak on missed days', () {
+      final refDate = DateTime(2026, 1, 5);
+      final logs = [
+        HabitLog(
+          id: 'l1',
+          habitId: 'h1',
+          targetDate: DateTime(2026, 1, 1),
+          status: HabitLogStatus.completed,
+        ),
+        HabitLog(
+          id: 'l2',
+          habitId: 'h1',
+          targetDate: DateTime(2026, 1, 2),
+          status: HabitLogStatus.completed,
+        ),
+        HabitLog(
+          id: 'l3',
+          habitId: 'h1',
+          targetDate: DateTime(2026, 1, 3),
+          status: HabitLogStatus.completed,
+        ),
+      ];
+
+      final streak = useCase.calculate(
+        habit,
+        logs,
+        referenceDate: refDate,
+        isVacationModeActive: false,
+      );
+
+      // Missed Jan 4 breaks streak to 0
+      expect(streak.currentStreak, equals(0));
+      expect(streak.bestStreak, equals(3));
+    });
+
+    test('20. Streak resumes and increments cleanly after returning from Vacation Mode', () {
+      final refDate = DateTime(2026, 1, 6);
+      // Completed Jan 1-3, missed Jan 4-5 on vacation, completed Jan 6 after returning
+      final logs = [
+        HabitLog(
+          id: 'l1',
+          habitId: 'h1',
+          targetDate: DateTime(2026, 1, 1),
+          status: HabitLogStatus.completed,
+        ),
+        HabitLog(
+          id: 'l2',
+          habitId: 'h1',
+          targetDate: DateTime(2026, 1, 2),
+          status: HabitLogStatus.completed,
+        ),
+        HabitLog(
+          id: 'l3',
+          habitId: 'h1',
+          targetDate: DateTime(2026, 1, 3),
+          status: HabitLogStatus.completed,
+        ),
+        HabitLog(
+          id: 'l4',
+          habitId: 'h1',
+          targetDate: DateTime(2026, 1, 6),
+          status: HabitLogStatus.completed,
+        ),
+      ];
+
+      final streak = useCase.calculate(
+        habit,
+        logs,
+        referenceDate: refDate,
+        isVacationModeActive: true,
+      );
+
+      // Preserved 3 + 1 completed today = 4 current streak
+      expect(streak.currentStreak, equals(4));
+      expect(streak.bestStreak, equals(4));
+    });
   });
 }
+

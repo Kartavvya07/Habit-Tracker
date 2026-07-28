@@ -6,21 +6,27 @@ import 'package:habit_tracker/features/habits/domain/entities/habit_type.dart';
 import 'package:habit_tracker/features/habits/domain/entities/streak_info.dart';
 import 'package:habit_tracker/features/habits/presentation/providers/habit_providers.dart';
 import 'package:habit_tracker/features/habits/presentation/providers/streak_provider.dart';
+import 'package:habit_tracker/features/settings/presentation/providers/vacation_mode_provider.dart';
 
+import '../../../settings/presentation/providers/vacation_mode_provider_test.dart';
 import '../../domain/usecases/log_habit_progress_use_case_test.dart';
 
 void main() {
   late InMemoryHabitRepository repository;
+  late FakeVacationModeRepository vacationRepository;
   late ProviderContainer container;
 
   setUp(() {
     repository = InMemoryHabitRepository();
+    vacationRepository = FakeVacationModeRepository();
     container = ProviderContainer(
       overrides: [
         habitRepositoryProvider.overrideWithValue(repository),
+        vacationModeRepositoryProvider.overrideWithValue(vacationRepository),
       ],
     );
   });
+
 
   tearDown(() {
     container.dispose();
