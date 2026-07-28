@@ -11,6 +11,18 @@ class DriftHabitRepository implements HabitRepository {
 
   DriftHabitRepository(this._db);
 
+  DateTime _startOfDay(DateTime date) {
+    return date.isUtc
+        ? DateTime.utc(date.year, date.month, date.day)
+        : DateTime(date.year, date.month, date.day);
+  }
+
+  DateTime _endOfDay(DateTime date) {
+    return date.isUtc
+        ? DateTime.utc(date.year, date.month, date.day, 23, 59, 59, 999, 999)
+        : DateTime(date.year, date.month, date.day, 23, 59, 59, 999, 999);
+  }
+
   @override
   Future<void> createHabit(Habit habit) async {
     await _db.into(_db.habits).insert(HabitMapper.toCompanion(habit));
@@ -58,6 +70,18 @@ class DriftHabitRepository implements HabitRepository {
   }
 
   @override
+  Future<void> saveHabitLogs(List<HabitLog> logs) async {
+    if (logs.isEmpty) return;
+    final companions = logs.map(HabitLogMapper.toCompanion).toList();
+    await _db.habitLogsDao.upsertLogs(companions);
+  }
+
+  @override
+  Future<void> logProgress(HabitLog log) async {
+    await saveHabitLog(log);
+  }
+
+  @override
   Future<HabitLog?> getHabitLog(String id) async {
     final result = await _db.habitLogsDao.getLogById(id);
     return result != null ? HabitLogMapper.toEntity(result) : null;
@@ -70,6 +94,9 @@ class DriftHabitRepository implements HabitRepository {
   }
 
   @override
+  Future<List<HabitLog>> getLogsForHabit(String habitId) => getHabitLogs(habitId);
+
+  @override
   Stream<List<HabitLog>> watchHabitLogs(String habitId) {
     return _db.habitLogsDao.watchLogsForHabit(habitId).map(
           (rows) => rows.map(HabitLogMapper.toEntity).toList(),
@@ -80,4 +107,84 @@ class DriftHabitRepository implements HabitRepository {
   Future<void> deleteHabitLog(String id) async {
     await _db.habitLogsDao.deleteLog(id);
   }
+
+  @override
+  Future<void> deleteLog(String id) => deleteHabitLog(id);
+
+  // Date & Feature Queries
+  @override
+  Stream<List<HabitLog>> watchTodayLogs(DateTime date) {
+    final start = _startOfDay(date);
+    final end = _endOfDay(date);
+    return _db.habitLogsDao.watchLogsForDate(start, end).map(
+          (rows) => rows.map(HabitLogMapper.toEntity).toList(),
+        );
+  }
+
+  @override
+  Future<List<HabitLog>> getLogsForDate(DateTime date) async {
+    final start = _startOfDay(date);
+    final end = _endOfDay(date);
+    final rows = await _db.habitLogsDao.getLogsForDate(start, end);
+    return rows.map(HabitLogMapper.toEntity).toList();
+  }
+
+  @override
+  Future<List<HabitLog>> getLogsForDateRange(
+    DateTime startDate,
+    DateTime endDate, {
+    List<String>? habitIds,
+  }) async {
+    final start = _startOfDay(startDate);
+    final end = _endOfDay(endDate);
+    final rows = await _db.habitLogsDao.getLogsForDateRange(
+      start,
+      end,
+      habitIds: habitIds,
+    );
+    return rows.map(HabitLogMapper.toEntity).toList();
+  }
+
+  @override
+  Stream<List<HabitLog>> watchLogsForDateRange(
+    DateTime startDate,
+    DateTime endDate, {
+    List<String>? habitIds,
+  }) {
+    final start = _startOfDay(startDate);
+    final end = _endOfDay(endDate);
+    return _db.habitLogsDao
+        .watchLogsForDateRange(
+          start,
+          end,
+          habitIds: habitIds,
+        )
+        .map(
+          (rows) => rows.map(HabitLogMapper.toEntity).toList(),
+        );
+  }
+
+  @override
+  Future<List<HabitLog>> getLogsForHabits(List<String> habitIds) async {
+    if (habitIds.isEmpty) return [];
+    final rows = await _db.habitLogsDao.getLogsForHabits(habitIds);
+    return rows.map(HabitLogMapper.toEntity).toList();
+  }
+
+  @override
+  Future<List<HabitLog>> getLogsForHabitAndDateRange(
+    String habitId,
+    DateTime startDate,
+    DateTime endDate,
+  ) async {
+    final start = _startOfDay(startDate);
+    final end = _endOfDay(endDate);
+    final rows = await _db.habitLogsDao.getLogsForHabitAndDateRange(
+      habitId,
+      start,
+      end,
+    );
+    return rows.map(HabitLogMapper.toEntity).toList();
+  }
 }
+

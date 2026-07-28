@@ -61,7 +61,53 @@ class FakeHabitRepository implements HabitRepository {
 
   @override
   Future<void> deleteHabitLog(String id) async {}
+
+  @override
+  Future<void> saveHabitLogs(List<HabitLog> logs) async {}
+
+  @override
+  Future<void> logProgress(HabitLog log) async {}
+
+  @override
+  Future<List<HabitLog>> getLogsForHabit(String habitId) async => [];
+
+  @override
+  Future<void> deleteLog(String id) async {}
+
+  @override
+  Stream<List<HabitLog>> watchTodayLogs(DateTime date) => Stream.value([]);
+
+  @override
+  Future<List<HabitLog>> getLogsForDate(DateTime date) async => [];
+
+  @override
+  Future<List<HabitLog>> getLogsForDateRange(
+    DateTime startDate,
+    DateTime endDate, {
+    List<String>? habitIds,
+  }) async =>
+      [];
+
+  @override
+  Stream<List<HabitLog>> watchLogsForDateRange(
+    DateTime startDate,
+    DateTime endDate, {
+    List<String>? habitIds,
+  }) =>
+      Stream.value([]);
+
+  @override
+  Future<List<HabitLog>> getLogsForHabits(List<String> habitIds) async => [];
+
+  @override
+  Future<List<HabitLog>> getLogsForHabitAndDateRange(
+    String habitId,
+    DateTime startDate,
+    DateTime endDate,
+  ) async =>
+      [];
 }
+
 
 void main() {
   late FakeHabitRepository repository;

@@ -223,6 +223,195 @@ void main() {
         final retrieved = await repository.getHabitLog('log-repo-1');
         expect(retrieved, isNull);
       });
+
+      test('logProgress, getLogsForHabit, and deleteLog work as expected', () async {
+        await repository.logProgress(testLog);
+        final logs = await repository.getLogsForHabit('habit-1');
+        expect(logs.length, equals(1));
+        expect(logs.single, equals(testLog));
+
+        await repository.deleteLog('log-repo-1');
+        final logsAfterDelete = await repository.getLogsForHabit('habit-1');
+        expect(logsAfterDelete, isEmpty);
+      });
+
+      test('saveHabitLogs performs batch upsert', () async {
+        final log1 = testLog;
+        final log2 = testLog.copyWith(
+          id: 'log-repo-2',
+          targetDate: now.add(const Duration(days: 1)),
+        );
+        await repository.saveHabitLogs([log1, log2]);
+
+        final logs = await repository.getLogsForHabit('habit-1');
+        expect(logs.length, equals(2));
+        expect(logs, containsAll([log1, log2]));
+      });
+
+      group('Date-Filtered & Multi-Habit Queries', () {
+        final dateToday = DateTime.parse('2026-07-28T14:00:00.000Z');
+        final logTodayHabit1 = HabitLog(
+          id: 'log-today-1',
+          habitId: 'habit-1',
+          targetDate: DateTime.parse('2026-07-28T09:30:00.000Z'),
+          status: HabitLogStatus.completed,
+          currentValue: 10,
+        );
+        final logTodayHabit2 = HabitLog(
+          id: 'log-today-2',
+          habitId: 'habit-2',
+          targetDate: DateTime.parse('2026-07-28T18:15:00.000Z'),
+          status: HabitLogStatus.inProgress,
+          currentValue: 5,
+        );
+        final logYesterdayHabit1 = HabitLog(
+          id: 'log-yesterday-1',
+          habitId: 'habit-1',
+          targetDate: DateTime.parse('2026-07-27T20:00:00.000Z'),
+          status: HabitLogStatus.completed,
+          currentValue: 20,
+        );
+        final logTomorrowHabit1 = HabitLog(
+          id: 'log-tomorrow-1',
+          habitId: 'habit-1',
+          targetDate: DateTime.parse('2026-07-29T10:00:00.000Z'),
+          status: HabitLogStatus.skipped,
+        );
+
+        final secondHabit = testHabit.copyWith(id: 'habit-2', title: 'Habit 2');
+
+        setUp(() async {
+          await repository.createHabit(secondHabit);
+        });
+
+        test('getLogsForDate retrieves logs matching exact date boundaries', () async {
+          await repository.saveHabitLogs([
+            logTodayHabit1,
+            logTodayHabit2,
+            logYesterdayHabit1,
+            logTomorrowHabit1,
+          ]);
+
+          final todayLogs = await repository.getLogsForDate(dateToday);
+          expect(todayLogs.length, equals(2));
+          expect(todayLogs, containsAll([logTodayHabit1, logTodayHabit2]));
+        });
+
+        test('watchTodayLogs emits reactive logs for date', () async {
+          final emissions = <List<HabitLog>>[];
+          final sub = repository.watchTodayLogs(dateToday).listen(emissions.add);
+
+          await Future<void>.delayed(Duration.zero);
+          expect(emissions.last, isEmpty);
+
+          await repository.saveHabitLog(logTodayHabit1);
+          await Future<void>.delayed(Duration.zero);
+          expect(emissions.last.length, equals(1));
+          expect(emissions.last.single, equals(logTodayHabit1));
+
+          await repository.saveHabitLog(logYesterdayHabit1);
+          await Future<void>.delayed(Duration.zero);
+          // Yesterday log should not affect today stream count
+          expect(emissions.last.length, equals(1));
+
+          await sub.cancel();
+        });
+
+
+        test('getLogsForDateRange retrieves logs in date range and filters by habitIds', () async {
+          await repository.saveHabitLogs([
+            logYesterdayHabit1,
+            logTodayHabit1,
+            logTodayHabit2,
+            logTomorrowHabit1,
+          ]);
+
+          final rangeLogs = await repository.getLogsForDateRange(
+            DateTime.parse('2026-07-27T00:00:00.000Z'),
+            DateTime.parse('2026-07-28T23:59:59.000Z'),
+          );
+          expect(rangeLogs.length, equals(3));
+          expect(rangeLogs, containsAll([logYesterdayHabit1, logTodayHabit1, logTodayHabit2]));
+
+          final habitFilteredLogs = await repository.getLogsForDateRange(
+            DateTime.parse('2026-07-27T00:00:00.000Z'),
+            DateTime.parse('2026-07-28T23:59:59.000Z'),
+            habitIds: ['habit-1'],
+          );
+          expect(habitFilteredLogs.length, equals(2));
+          expect(habitFilteredLogs, containsAll([logYesterdayHabit1, logTodayHabit1]));
+        });
+
+        test('watchLogsForDateRange emits reactive logs for range', () async {
+          final emissions = <List<HabitLog>>[];
+          final sub = repository.watchLogsForDateRange(
+            DateTime.parse('2026-07-28T00:00:00.000Z'),
+            DateTime.parse('2026-07-29T23:59:59.000Z'),
+          ).listen(emissions.add);
+
+          await Future<void>.delayed(Duration.zero);
+          expect(emissions.last, isEmpty);
+
+          await repository.saveHabitLog(logTodayHabit1);
+          await Future<void>.delayed(Duration.zero);
+          expect(emissions.last.length, equals(1));
+
+          await repository.saveHabitLog(logTomorrowHabit1);
+          await Future<void>.delayed(Duration.zero);
+          expect(emissions.last.length, equals(2));
+
+          await sub.cancel();
+        });
+
+        test('getLogsForHabits retrieves logs for multiple habit ids', () async {
+          await repository.saveHabitLogs([logTodayHabit1, logTodayHabit2]);
+
+          final multiLogs = await repository.getLogsForHabits(['habit-1', 'habit-2']);
+          expect(multiLogs.length, equals(2));
+          expect(multiLogs, containsAll([logTodayHabit1, logTodayHabit2]));
+
+          final emptyHabitLogs = await repository.getLogsForHabits([]);
+          expect(emptyHabitLogs, isEmpty);
+        });
+
+        test('getLogsForHabitAndDateRange queries specific habit within date range', () async {
+          await repository.saveHabitLogs([
+            logYesterdayHabit1,
+            logTodayHabit1,
+            logTodayHabit2,
+          ]);
+
+          final singleHabitRangeLogs = await repository.getLogsForHabitAndDateRange(
+            'habit-1',
+            DateTime.parse('2026-07-28T00:00:00.000Z'),
+            DateTime.parse('2026-07-28T23:59:59.000Z'),
+          );
+
+          expect(singleHabitRangeLogs.length, equals(1));
+          expect(singleHabitRangeLogs.single, equals(logTodayHabit1));
+        });
+
+        test('empty dataset handling returns empty lists for all query methods', () async {
+          expect(await repository.getLogsForDate(dateToday), isEmpty);
+          expect(
+            await repository.getLogsForDateRange(
+              DateTime.parse('2026-01-01T00:00:00.000Z'),
+              DateTime.parse('2026-01-31T23:59:59.000Z'),
+            ),
+            isEmpty,
+          );
+          expect(await repository.getLogsForHabits(['habit-1']), isEmpty);
+          expect(
+            await repository.getLogsForHabitAndDateRange(
+              'habit-1',
+              DateTime.parse('2026-01-01T00:00:00.000Z'),
+              DateTime.parse('2026-01-31T23:59:59.000Z'),
+            ),
+            isEmpty,
+          );
+        });
+      });
     });
+
   });
 }

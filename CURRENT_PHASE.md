@@ -9,7 +9,7 @@
 # Current Phase
 
 **Phase:** Phase 5 – Habit Loop & Streak Engine  
-**Status:** IN PROGRESS (P5-01 Completed ✅)  
+**Status:** IN PROGRESS (P5-03 & P5-04 Completed ✅)  
 **Last Updated:** July 29, 2026  
 
 ---
@@ -27,18 +27,18 @@
 
 ---
 
-# Completed Issue Summary (P5-01 — Habit Log Schema & Drift Migration)
+# Completed Issue Summary (P5-03 — Habit Log & Streak Use Cases & P5-04 — Daily Completion & Streak Riverpod Providers)
 
-- **HabitLog Drift Table:** Created `HabitLogs` Drift table with primary key `id`, foreign key `habit_id` referencing `Habits(id)` with `ON DELETE CASCADE`, `target_date`, `status`, `current_value` (default 0), and `is_frozen` (default false).
-- **Composite Index:** Created `idx_habit_logs_habit_target_date` index on `(habit_id, target_date)` for query optimization.
-- **Drift Migration:** Incremented `schemaVersion` from `1` to `2` in `AppDatabase` and implemented `MigrationStrategy` handling schema upgrade (`createTable(habitLogs)`) and foreign key enforcement (`PRAGMA foreign_keys = ON;`).
-- **Domain Entity & Mapper:** Defined `@freezed` `HabitLog` domain entity with `HabitLogStatus` enum and bidirectional `HabitLogMapper`.
-- **DAO & Repository Primitives:** Created `HabitLogsDao` for atomic persistence operations and extended `HabitRepository` / `DriftHabitRepository` with data access methods.
-- **Automated Verification:** Added unit, mapper, DAO, repository, and SQLite schema migration test suites. `flutter test` (70/70 passing) and `flutter analyze` (0 issues/warnings) passed completely.
+- **Domain Entities & Value Objects (P5-03):** Implemented immutable `StreakInfo` and `DailyCompletionStats` entities using `@freezed` with JSON serialization.
+- **Progress Logging Use Case (`LogHabitProgressUseCase`):** Domain logic for habit progress logging supporting boolean, numeric counter, and timer habit types. Validates progress values (prevents negative values) and evaluates status (`completed`, `inProgress`, `failed`, `skipped`).
+- **Streak Engine (`CalculateStreakUseCase`):** Pure streak calculation algorithm evaluating current streak, best streak, and completion rate. Tested against 17 edge cases (custom frequencies, gap detection, leap years, month/year boundaries, and streak protection via `isFrozen` / `skipped` flags).
+- **Daily Completion Use Case (`GetDailyCompletionUseCase`):** Aggregates daily completion percentage and full-completion status for active habits on a target date.
+- **Riverpod Architecture Layer (P5-04):** Created `todayLogsStreamProvider`, `todayCompletionsProvider` (`StreamProvider<DailyCompletionStats>`), `habitLogsStreamProvider`, and `streakProvider` (`StreamProvider.family<StreakInfo, String>`). Dependency wiring added in `use_case_providers.dart`.
+- **Automated Verification:** Comprehensive unit tests in `log_habit_progress_use_case_test.dart`, `calculate_streak_use_case_test.dart`, `get_daily_completion_use_case_test.dart`, `habit_completion_provider_test.dart`, and `streak_provider_test.dart`. Both `flutter test` (111/111 passing) and `flutter analyze` (0 issues) passed cleanly.
 
 ---
 
 # Active Phase: Phase 5 – Habit Loop & Streak Engine
 
 **Primary Objective:** Build completion execution engine, `HabitLogsTable`, streak calculation algorithm, numeric & timer progress logging modals, Vacation Mode streak protection, and Dashboard completion widgets.
-- **Next Issue:** P5-02 — Habit Log Repository Integration
+- **Next Issue:** P5-05 — Numeric & Timer Progress Logging Modals
