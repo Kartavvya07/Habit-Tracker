@@ -9,6 +9,8 @@ import '../extensions/habit_icon_extension.dart';
 import '../providers/use_case_providers.dart';
 
 /// Modal bottom sheet for logging progress on numeric habits.
+/// Features a Material Slider, direct numeric text editing, stepper buttons (+/-),
+/// quick add chips (+1, +5, Target), real-time progress bar, and Goal Reached status.
 class NumericProgressBottomSheet extends ConsumerStatefulWidget {
   final Habit habit;
   final HabitLog? initialLog;
@@ -55,7 +57,9 @@ class _NumericProgressBottomSheetState
   @override
   void initState() {
     super.initState();
-    _currentValue = widget.initialLog?.currentValue ?? 0;
+    final target = widget.habit.targetCount;
+    final initialVal = widget.initialLog?.currentValue ?? 0;
+    _currentValue = initialVal.clamp(0, target > 0 ? target : 1);
     _controller = TextEditingController(text: _currentValue.toString());
   }
 
@@ -66,11 +70,12 @@ class _NumericProgressBottomSheetState
   }
 
   void _updateValue(int newValue) {
-    if (newValue < 0) return;
+    final target = widget.habit.targetCount;
+    final clamped = newValue.clamp(0, target > 0 ? target : 1);
     HapticFeedback.lightImpact();
     setState(() {
-      _currentValue = newValue;
-      _controller.text = newValue.toString();
+      _currentValue = clamped;
+      _controller.text = clamped.toString();
       _errorMessage = null;
     });
   }
@@ -127,6 +132,10 @@ class _NumericProgressBottomSheetState
     final accentColor = widget.habit.color.color;
     final targetCount = widget.habit.targetCount;
     final mediaQuery = MediaQuery.of(context);
+    final isGoalReached = _currentValue >= targetCount && targetCount > 0;
+    final progressFraction = targetCount > 0
+        ? (_currentValue / targetCount).clamp(0.0, 1.0)
+        : 0.0;
 
     return SafeArea(
       top: false,
@@ -193,14 +202,30 @@ class _NumericProgressBottomSheetState
                                   ),
                                 ),
                                 Text(
-                                  'Target: $targetCount',
-                                  style: theme.textTheme.bodySmall?.copyWith(
+                                  '$_currentValue / $targetCount',
+                                  style: theme.textTheme.bodyMedium?.copyWith(
                                     color: theme.colorScheme.onSurfaceVariant,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ],
                             ),
                           ),
+                          if (isGoalReached)
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.green.shade100,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                'Goal Reached 🎉',
+                                style: theme.textTheme.labelSmall?.copyWith(
+                                  color: Colors.green.shade800,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
                           Semantics(
                             button: true,
                             label: 'Close progress log',
@@ -212,8 +237,19 @@ class _NumericProgressBottomSheetState
                           ),
                         ],
                       ),
-                      const SizedBox(height: 24),
-                      // Stepper and Input Display
+                      const SizedBox(height: 12),
+                      // Visual Progress Bar
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: LinearProgressIndicator(
+                          value: progressFraction,
+                          minHeight: 8,
+                          backgroundColor: accentColor.withValues(alpha: 0.15),
+                          valueColor: AlwaysStoppedAnimation<Color>(accentColor),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      // Stepper & Direct Input Display
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -227,11 +263,13 @@ class _NumericProgressBottomSheetState
                             ),
                           ),
                           const SizedBox(width: 16),
+                          // Direct Number Editing input
                           SizedBox(
-                            width: 100,
+                            width: 110,
                             child: Semantics(
                               label: 'Progress value input field',
                               value: _currentValue.toString(),
+                              hint: 'Tap to edit number directly',
                               child: TextField(
                                 controller: _controller,
                                 keyboardType: TextInputType.number,
@@ -241,15 +279,37 @@ class _NumericProgressBottomSheetState
                                   fontWeight: FontWeight.bold,
                                   color: accentColor,
                                 ),
-                                decoration: const InputDecoration(
-                                  border: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide(
+                                      color: accentColor.withValues(alpha: 0.3),
+                                    ),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide(
+                                      color: accentColor.withValues(alpha: 0.2),
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide(
+                                      color: accentColor,
+                                      width: 2,
+                                    ),
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 8,
+                                    horizontal: 8,
+                                  ),
                                 ),
                                 onChanged: (text) {
                                   final val = int.tryParse(text);
-                                  if (val != null && val >= 0) {
+                                  if (val != null) {
+                                    final clamped = val.clamp(0, targetCount > 0 ? targetCount : 1);
                                     setState(() {
-                                      _currentValue = val;
+                                      _currentValue = clamped;
                                       _errorMessage = null;
                                     });
                                   }
@@ -262,7 +322,7 @@ class _NumericProgressBottomSheetState
                             button: true,
                             label: 'Increment count',
                             child: IconButton.filledTonal(
-                              onPressed: () => _increment(1),
+                              onPressed: _currentValue < targetCount ? () => _increment(1) : null,
                               icon: const Icon(Icons.add),
                               tooltip: 'Increment',
                             ),
@@ -270,6 +330,29 @@ class _NumericProgressBottomSheetState
                         ],
                       ),
                       const SizedBox(height: 16),
+                      // Material Slider
+                      Semantics(
+                        label: 'Progress slider',
+                        value: '$_currentValue out of $targetCount',
+                        child: SliderTheme(
+                          data: SliderTheme.of(context).copyWith(
+                            activeTrackColor: accentColor,
+                            thumbColor: accentColor,
+                            overlayColor: accentColor.withValues(alpha: 0.2),
+                          ),
+                          child: Slider(
+                            value: _currentValue.toDouble().clamp(0.0, targetCount > 0 ? targetCount.toDouble() : 1.0),
+                            min: 0.0,
+                            max: targetCount > 0 ? targetCount.toDouble() : 1.0,
+                            divisions: targetCount > 0 ? targetCount : 1,
+                            label: _currentValue.toString(),
+                            onChanged: (val) {
+                              _updateValue(val.round());
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
                       // Quick Add Chips
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -279,7 +362,7 @@ class _NumericProgressBottomSheetState
                             label: 'Add 1 to progress',
                             child: ActionChip(
                               label: const Text('+1'),
-                              onPressed: () => _increment(1),
+                              onPressed: _currentValue < targetCount ? () => _increment(1) : null,
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -288,7 +371,7 @@ class _NumericProgressBottomSheetState
                             label: 'Add 5 to progress',
                             child: ActionChip(
                               label: const Text('+5'),
-                              onPressed: () => _increment(5),
+                              onPressed: _currentValue < targetCount ? () => _increment(5) : null,
                             ),
                           ),
                           const SizedBox(width: 8),

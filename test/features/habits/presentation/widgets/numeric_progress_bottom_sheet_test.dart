@@ -46,7 +46,7 @@ void main() {
   }
 
   group('NumericProgressBottomSheet Widget Tests', () {
-    testWidgets('renders header, target, stepper and chips correctly', (tester) async {
+    testWidgets('renders header, target ratio, slider, stepper and chips correctly', (tester) async {
       await repository.createHabit(habit);
 
       await tester.pumpWidget(
@@ -56,14 +56,16 @@ void main() {
       );
 
       expect(find.text('Water Glasses'), findsOneWidget);
-      expect(find.text('Target: 8'), findsOneWidget);
+      expect(find.text('0 / 8'), findsOneWidget);
+      expect(find.byType(Slider), findsOneWidget);
+      expect(find.byType(LinearProgressIndicator), findsOneWidget);
       expect(find.text('+1'), findsOneWidget);
       expect(find.text('+5'), findsOneWidget);
       expect(find.text('Target'), findsOneWidget);
       expect(find.text('Save Progress'), findsOneWidget);
     });
 
-    testWidgets('increments and decrements value via stepper and chips', (tester) async {
+    testWidgets('increments and decrements value via stepper and chips with Goal Reached badge', (tester) async {
       await repository.createHabit(habit);
 
       await tester.pumpWidget(
@@ -72,19 +74,21 @@ void main() {
         ),
       );
 
-      expect(find.text('0'), findsOneWidget);
+      expect(find.text('0 / 8'), findsOneWidget);
 
       await tester.tap(find.byTooltip('Increment'));
       await tester.pumpAndSettle();
-      expect(find.text('1'), findsOneWidget);
+      expect(find.text('1 / 8'), findsOneWidget);
 
-      await tester.tap(find.text('+5'));
+      await tester.tap(find.text('Target'));
       await tester.pumpAndSettle();
-      expect(find.text('6'), findsOneWidget);
+      expect(find.text('8 / 8'), findsOneWidget);
+      expect(find.text('Goal Reached 🎉'), findsOneWidget);
 
       await tester.tap(find.byTooltip('Decrement'));
       await tester.pumpAndSettle();
-      expect(find.text('5'), findsOneWidget);
+      expect(find.text('7 / 8'), findsOneWidget);
+      expect(find.text('Goal Reached 🎉'), findsNothing);
     });
 
     testWidgets('submits progress successfully and persists log to repository', (tester) async {
