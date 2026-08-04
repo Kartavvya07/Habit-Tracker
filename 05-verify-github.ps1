@@ -86,10 +86,10 @@ for ($p = 1; $p -le 13; $p++) {
     }
 }
 
-if ($MissingPhases.Count -eq 0 -and $Milestones.Count -eq 13 -and $OpenMilestoneCount -eq 9 -and $ClosedMilestoneCount -eq 4) {
-    Write-Host "  [OK] Canonical 13 milestone structure verified (4 closed, 9 open, 0 duplicates)." -ForegroundColor Green
+if ($MissingPhases.Count -eq 0 -and $Milestones.Count -eq 13 -and $OpenMilestoneCount -eq 8 -and $ClosedMilestoneCount -eq 5) {
+    Write-Host "  [OK] Canonical 13 milestone structure verified (5 closed, 8 open, 0 duplicates)." -ForegroundColor Green
 } else {
-    Write-Host "  [FAIL] Milestone structure error: Total=$($Milestones.Count) (expected 13), Open=$OpenMilestoneCount (expected 9), Closed=$ClosedMilestoneCount (expected 4), Missing: $($MissingPhases -join ', ')" -ForegroundColor Red
+    Write-Host "  [FAIL] Milestone structure error: Total=$($Milestones.Count) (expected 13), Open=$OpenMilestoneCount (expected 8), Closed=$ClosedMilestoneCount (expected 5), Missing: $($MissingPhases -join ', ')" -ForegroundColor Red
     $MilestonesPass = $false
 }
 
