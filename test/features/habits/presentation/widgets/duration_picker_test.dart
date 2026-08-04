@@ -52,5 +52,22 @@ void main() {
       expect(updated, isNotNull);
       expect(updated!.totalSeconds, greaterThan(0));
     });
+
+    testWidgets('renders long initial durations greater than 24 hours (e.g. 48 hours and 99 hours)', (tester) async {
+      const longDuration = HabitDuration(172800); // 48 hours
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: DurationPicker(
+              initialDuration: longDuration,
+              onChanged: (_) {},
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('48 hr'), findsOneWidget);
+    });
   });
 }

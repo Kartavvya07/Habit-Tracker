@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
+import '../../../../core/utils/duration_formatter.dart';
 
-/// Value object representing a habit duration with adaptive human-friendly formatting.
+/// Value object representing a habit duration with adaptive human-friendly and digital clock formatting.
 @immutable
 class HabitDuration {
   final int totalSeconds;
@@ -18,29 +19,11 @@ class HabitDuration {
 
   Duration toDuration() => Duration(seconds: totalSeconds);
 
-  /// Returns adaptive human-friendly formatted string.
-  /// Examples:
-  /// - 45 sec -> '45 sec'
-  /// - 90 sec -> '1 min 30 sec'
-  /// - 900 sec -> '15 min'
-  /// - 3600 sec -> '1 hr'
-  /// - 4500 sec -> '1 hr 15 min'
-  /// - 9000 sec -> '2 hr 30 min'
-  /// - 9015 sec -> '2 hr 30 min 15 sec'
-  String formatted() {
-    if (totalSeconds <= 0) return '0 sec';
+  /// Returns adaptive human-friendly formatted string (e.g. '1 hr 15 min').
+  String formatted() => DurationFormatter.formatHuman(totalSeconds);
 
-    final hrs = hours;
-    final mins = minutes;
-    final secs = seconds;
-
-    final parts = <String>[];
-    if (hrs > 0) parts.add('$hrs hr');
-    if (mins > 0) parts.add('$mins min');
-    if (secs > 0) parts.add('$secs sec');
-
-    return parts.isEmpty ? '0 sec' : parts.join(' ');
-  }
+  /// Returns digital clock formatted string ('MM:SS' if < 1h, 'HH:MM:SS' if >= 1h).
+  String formattedClock() => DurationFormatter.formatClock(totalSeconds);
 
   @override
   bool operator ==(Object other) =>

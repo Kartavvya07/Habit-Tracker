@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/utils/duration_formatter.dart';
 import '../../domain/entities/habit.dart';
 import '../../domain/entities/habit_duration.dart';
 import '../../domain/entities/habit_log.dart';
@@ -42,18 +43,6 @@ class TimerProgressBottomSheet extends ConsumerWidget {
     );
   }
 
-  String _formatCountdownClock(int seconds) {
-    if (seconds <= 0) return '00:00';
-    final hrs = seconds ~/ 3600;
-    final mins = (seconds % 3600) ~/ 60;
-    final secs = seconds % 60;
-
-    if (hrs > 0) {
-      return '${hrs.toString().padLeft(2, '0')}:${mins.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
-    }
-    return '${mins.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final params = TimerCountdownParams(
@@ -70,7 +59,7 @@ class TimerProgressBottomSheet extends ConsumerWidget {
 
     final targetDurationStr = HabitDuration(state.targetSeconds).formatted();
     final remainingDurationStr = HabitDuration(state.remainingSeconds).formatted();
-    final clockDisplayStr = _formatCountdownClock(state.remainingSeconds);
+    final clockDisplayStr = DurationFormatter.formatClock(state.remainingSeconds);
 
     return SafeArea(
       top: false,

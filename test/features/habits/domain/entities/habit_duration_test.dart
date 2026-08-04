@@ -30,6 +30,18 @@ void main() {
       expect(const HabitDuration(0).formatted(), '0 sec');
     });
 
+    test('formats digital clock string formattedClock correctly', () {
+      expect(const HabitDuration(45).formattedClock(), '00:45');
+      expect(const HabitDuration(300).formattedClock(), '05:00');
+      expect(const HabitDuration(3540).formattedClock(), '59:00');
+      expect(const HabitDuration(3600).formattedClock(), '01:00:00');
+      expect(const HabitDuration(4500).formattedClock(), '01:15:00');
+      expect(const HabitDuration(7200).formattedClock(), '02:00:00');
+      expect(const HabitDuration(86400).formattedClock(), '24:00:00');
+      expect(const HabitDuration(172800).formattedClock(), '48:00:00');
+      expect(const HabitDuration(356400).formattedClock(), '99:00:00');
+    });
+
     test('equality and hashCode match totalSeconds', () {
       const d1 = HabitDuration(300);
       const d2 = HabitDuration(300);

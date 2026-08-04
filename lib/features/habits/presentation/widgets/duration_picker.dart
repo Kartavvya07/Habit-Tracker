@@ -32,7 +32,7 @@ class _DurationPickerState extends State<DurationPicker> {
   @override
   void initState() {
     super.initState();
-    _hours = widget.initialDuration.hours.clamp(0, 23);
+    _hours = widget.initialDuration.hours.clamp(0, 99);
     _minutes = widget.initialDuration.minutes.clamp(0, 59);
     _seconds = widget.initialDuration.seconds.clamp(0, 59);
 
@@ -164,7 +164,7 @@ class _DurationPickerState extends State<DurationPicker> {
             children: [
               _buildWheelColumn(
                 label: 'Hours',
-                maxValue: 23,
+                maxValue: 99,
                 currentValue: _hours,
                 controller: _hoursController,
                 onSelected: (val) {

@@ -18,6 +18,8 @@ enum TimerCountdownStatus {
 class TimerCountdownState {
   final int remainingSeconds;
   final int targetSeconds;
+  final int elapsedSecondsBeforeStart;
+  final DateTime? startTimestamp;
   final TimerCountdownStatus status;
   final bool isSubmitting;
   final String? errorMessage;
@@ -25,6 +27,8 @@ class TimerCountdownState {
   const TimerCountdownState({
     required this.remainingSeconds,
     required this.targetSeconds,
+    this.elapsedSecondsBeforeStart = 0,
+    this.startTimestamp,
     this.status = TimerCountdownStatus.initial,
     this.isSubmitting = false,
     this.errorMessage,
@@ -33,6 +37,8 @@ class TimerCountdownState {
   TimerCountdownState copyWith({
     int? remainingSeconds,
     int? targetSeconds,
+    int? elapsedSecondsBeforeStart,
+    ValueGetter<DateTime?>? startTimestamp,
     TimerCountdownStatus? status,
     bool? isSubmitting,
     ValueGetter<String?>? errorMessage,
@@ -40,6 +46,10 @@ class TimerCountdownState {
     return TimerCountdownState(
       remainingSeconds: remainingSeconds ?? this.remainingSeconds,
       targetSeconds: targetSeconds ?? this.targetSeconds,
+      elapsedSecondsBeforeStart:
+          elapsedSecondsBeforeStart ?? this.elapsedSecondsBeforeStart,
+      startTimestamp:
+          startTimestamp != null ? startTimestamp() : this.startTimestamp,
       status: status ?? this.status,
       isSubmitting: isSubmitting ?? this.isSubmitting,
       errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
@@ -70,14 +80,15 @@ class TimerCountdownParams {
   int get hashCode => Object.hash(habit.id, initialLog?.id, targetDate);
 }
 
-final timerCountdownProvider = AutoDisposeNotifierProviderFamily<
+final timerCountdownProvider = NotifierProviderFamily<
     TimerCountdownNotifier, TimerCountdownState, TimerCountdownParams>(
   TimerCountdownNotifier.new,
 );
 
 class TimerCountdownNotifier
-    extends AutoDisposeFamilyNotifier<TimerCountdownState, TimerCountdownParams> {
+    extends FamilyNotifier<TimerCountdownState, TimerCountdownParams> {
   Timer? _timer;
+  int _ticksSinceStart = 0;
 
   @override
   TimerCountdownState build(TimerCountdownParams arg) {
@@ -93,6 +104,7 @@ class TimerCountdownNotifier
       return TimerCountdownState(
         remainingSeconds: 0,
         targetSeconds: target,
+        elapsedSecondsBeforeStart: target,
         status: TimerCountdownStatus.completed,
       );
     }
@@ -104,6 +116,7 @@ class TimerCountdownNotifier
       return TimerCountdownState(
         remainingSeconds: 0,
         targetSeconds: target,
+        elapsedSecondsBeforeStart: target,
         status: TimerCountdownStatus.completed,
       );
     }
@@ -114,6 +127,7 @@ class TimerCountdownNotifier
     return TimerCountdownState(
       remainingSeconds: remaining,
       targetSeconds: target,
+      elapsedSecondsBeforeStart: elapsed,
       status: initialStatus,
     );
   }
@@ -123,20 +137,42 @@ class TimerCountdownNotifier
     HapticFeedback.lightImpact();
 
     _timer?.cancel();
-    state = state.copyWith(status: TimerCountdownStatus.running);
+    _ticksSinceStart = 0;
+    final now = DateTime.now();
+    state = state.copyWith(
+      status: TimerCountdownStatus.running,
+      startTimestamp: () => now,
+    );
 
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (state.remainingSeconds > 1) {
-        state = state.copyWith(remainingSeconds: state.remainingSeconds - 1);
-      } else {
-        _timer?.cancel();
-        state = state.copyWith(
-          remainingSeconds: 0,
-          status: TimerCountdownStatus.completed,
-        );
-        _completeHabit();
-      }
-    });
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
+  }
+
+  void _tick() {
+    if (state.status != TimerCountdownStatus.running) {
+      return;
+    }
+
+    _ticksSinceStart += 1;
+    final realElapsed = state.startTimestamp != null
+        ? DateTime.now().difference(state.startTimestamp!).inSeconds
+        : 0;
+    final elapsedSinceStart =
+        realElapsed > _ticksSinceStart ? realElapsed : _ticksSinceStart;
+    final totalElapsed = state.elapsedSecondsBeforeStart + elapsedSinceStart;
+    final remaining = (state.targetSeconds - totalElapsed).clamp(0, state.targetSeconds);
+
+    if (remaining <= 0) {
+      _timer?.cancel();
+      state = state.copyWith(
+        remainingSeconds: 0,
+        status: TimerCountdownStatus.completed,
+        startTimestamp: () => null,
+        elapsedSecondsBeforeStart: state.targetSeconds,
+      );
+      _completeHabit();
+    } else {
+      state = state.copyWith(remainingSeconds: remaining);
+    }
   }
 
   void pause() {
@@ -144,15 +180,32 @@ class TimerCountdownNotifier
     HapticFeedback.lightImpact();
 
     _timer?.cancel();
-    state = state.copyWith(status: TimerCountdownStatus.paused);
+    final realElapsed = state.startTimestamp != null
+        ? DateTime.now().difference(state.startTimestamp!).inSeconds
+        : 0;
+    final elapsedSinceStart =
+        realElapsed > _ticksSinceStart ? realElapsed : _ticksSinceStart;
+    final totalElapsed = state.elapsedSecondsBeforeStart + elapsedSinceStart;
+    final remaining = (state.targetSeconds - totalElapsed).clamp(0, state.targetSeconds);
+
+    state = state.copyWith(
+      status: TimerCountdownStatus.paused,
+      startTimestamp: () => null,
+      elapsedSecondsBeforeStart: totalElapsed,
+      remainingSeconds: remaining,
+    );
+    _ticksSinceStart = 0;
   }
 
   void reset() {
     HapticFeedback.mediumImpact();
 
     _timer?.cancel();
+    _ticksSinceStart = 0;
     state = state.copyWith(
       remainingSeconds: state.targetSeconds,
+      elapsedSecondsBeforeStart: 0,
+      startTimestamp: () => null,
       status: TimerCountdownStatus.initial,
       errorMessage: () => null,
     );

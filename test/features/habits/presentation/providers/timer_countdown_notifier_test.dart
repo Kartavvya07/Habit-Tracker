@@ -53,7 +53,7 @@ void main() {
       expect(state.status, TimerCountdownStatus.initial);
     });
 
-    test('start and pause transition timer status and preserve remaining seconds', () async {
+    test('start, pause, resume, reset transition timer status correctly', () async {
       final container = makeContainer();
       addTearDown(container.dispose);
 
@@ -65,22 +65,50 @@ void main() {
 
       notifier.pause();
       expect(container.read(timerCountdownProvider(params)).status, TimerCountdownStatus.paused);
+
+      notifier.start();
+      expect(container.read(timerCountdownProvider(params)).status, TimerCountdownStatus.running);
+
+      notifier.reset();
+      final state = container.read(timerCountdownProvider(params));
+      expect(state.remainingSeconds, 10);
+      expect(state.status, TimerCountdownStatus.initial);
     });
 
-    test('reset returns remainingSeconds to targetSeconds', () {
+    test('timer completes automatically and logs habit progress when timer hits 0', () async {
+      await repository.createHabit(habit);
+      final container = makeContainer();
+      addTearDown(container.dispose);
+
+      final fastHabit = habit.copyWith(targetCount: 1);
+      final params = TimerCountdownParams(habit: fastHabit);
+      final notifier = container.read(timerCountdownProvider(params).notifier);
+
+      notifier.start();
+      await Future<void>.delayed(const Duration(milliseconds: 1200));
+
+      final state = container.read(timerCountdownProvider(params));
+      expect(state.status, TimerCountdownStatus.completed);
+      expect(state.remainingSeconds, 0);
+
+      final logs = await repository.getLogsForHabit(fastHabit.id);
+      expect(logs, hasLength(1));
+      expect(logs.first.currentValue, 1);
+    });
+
+    test('timer state persists across multiple reads and does not duplicate timers', () async {
       final container = makeContainer();
       addTearDown(container.dispose);
 
       final params = TimerCountdownParams(habit: habit);
-      final notifier = container.read(timerCountdownProvider(params).notifier);
+      final notifier1 = container.read(timerCountdownProvider(params).notifier);
+      notifier1.start();
 
-      notifier.start();
-      notifier.pause();
-      notifier.reset();
+      final notifier2 = container.read(timerCountdownProvider(params).notifier);
+      expect(identical(notifier1, notifier2), isTrue);
+      expect(container.read(timerCountdownProvider(params)).status, TimerCountdownStatus.running);
 
-      final state = container.read(timerCountdownProvider(params));
-      expect(state.remainingSeconds, 10);
-      expect(state.status, TimerCountdownStatus.initial);
+      notifier1.pause();
     });
   });
 }

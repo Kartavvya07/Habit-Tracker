@@ -48,10 +48,14 @@
 - **UX-02 Timer Habit Duration Picker & Adaptive Formatting (#144):** Built decoupled `DurationPicker` widget with Hours/Minutes/Seconds wheel scroll pickers and `HabitDuration` domain value object for single-source adaptive formatting (`45 sec`, `1 min 30 sec`, `15 min`, `1 hr`, `1 hr 15 min`).
 - **UX-03 Numeric Progress Slider & 4-Way Input Sync (#145):** Added Material `Slider`, visual progress bar (`55 / 100`), 4-way synchronized inputs (Slider, Stepper, Quick Chips, Direct Text Editing), and Goal Reached status indicator.
 - **UX-04 Timer Countdown & Auto-Completion (#147):** Transformed Timer Habits into a genuine Android countdown timer (`30:00` → `00:00`), auto-completing on zero, restoring target duration on reset, and transitioning buttons cleanly (`Start` → `Pause/Reset` → `Resume/Reset` → `Completed`).
+- **UX-05 Timer UX Refinement Sprint – Issue 1 Countdown Formatting (#148):** Created single-source `DurationFormatter` utility providing dynamic clock formatting (`MM:SS` for < 1hr, `HH:MM:SS` for ≥ 1hr up to `99:59:59`) reused consistently across bottom sheet, habit cards, dashboard, and duration pickers.
+- **UX-06 Timer UX Refinement Sprint – Issue 2 Persistent Timer Session (#149):** Refactored `timerCountdownProvider` to non-autoDispose Riverpod `NotifierProviderFamily` using timestamp delta calculations (`targetDuration - (now - startTimestamp)`). Timer survives bottom sheet dismissal, screen navigation, and auto-logs progress on completion without user interaction.
+- **UX-07 Timer UX Refinement Sprint – Issue 3 Duration Picker Range Expansion (#150):** Expanded `DurationPicker` hours wheel range to `0-99` hours, supporting multi-day durations (`48:00:00`, `72:15:10`, `99:59:59`) with no clock wraparound or arbitrary caps.
 
 ---
 
 # Next Active Phase
 
 **Next Phase:** Phase 6 – Habit Management (Edit, Delete, Archive) (`v0.4.0-alpha`)
+
 

@@ -115,5 +115,64 @@ void main() {
       expect(repository.logs.length, equals(1));
       expect(repository.logs.first.currentValue, equals(2));
     });
+
+    testWidgets('dismissing and reopening bottom sheet restores active countdown session', (tester) async {
+      await repository.createHabit(habit);
+      final scope = ProviderContainer(
+        overrides: [
+          habitRepositoryProvider.overrideWithValue(repository),
+        ],
+      );
+      addTearDown(scope.dispose);
+
+      Widget buildWithScope(Widget child) {
+        return UncontrolledProviderScope(
+          container: scope,
+          child: MaterialApp(home: Scaffold(body: child)),
+        );
+      }
+
+      // First open
+      await tester.pumpWidget(buildWithScope(TimerProgressBottomSheet(habit: habit)));
+      await tester.tap(find.text('Start'));
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 2));
+      expect(find.text('14:58'), findsOneWidget);
+
+      // Simulate dismiss by pumping empty widget
+      await tester.pumpWidget(buildWithScope(const SizedBox.shrink()));
+
+      // Advance time while sheet is closed
+      await tester.pump(const Duration(seconds: 3));
+
+      // Reopen sheet
+      await tester.pumpWidget(buildWithScope(TimerProgressBottomSheet(habit: habit)));
+      await tester.pump();
+
+      // Verify timer continued running and restored state
+      expect(find.text('14:55'), findsOneWidget);
+      expect(find.text('Pause'), findsOneWidget);
+
+      // Pause timer so pending periodic timer is cancelled cleanly
+      await tester.tap(find.text('Pause'));
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('renders long duration timer (>59 mins) with HH:MM:SS format', (tester) async {
+      final longHabit = habit.copyWith(
+        id: 'h-long',
+        targetCount: 4500, // 75 minutes = 01:15:00
+      );
+      await repository.createHabit(longHabit);
+
+      await tester.pumpWidget(
+        buildTestableWidget(
+          TimerProgressBottomSheet(habit: longHabit),
+        ),
+      );
+
+      expect(find.text('01:15:00'), findsOneWidget);
+      expect(find.text('1 hr 15 min remaining of 1 hr 15 min'), findsOneWidget);
+    });
   });
 }
