@@ -268,7 +268,7 @@ void main() {
       );
 
       // Initial state
-      expect(find.text('15 sec'), findsOneWidget);
+      expect(find.text('0 sec / 15 sec'), findsOneWidget);
 
       // Start timer via notifier
       final params = TimerCountdownParams(habit: timerHabit);
