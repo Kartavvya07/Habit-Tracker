@@ -51,6 +51,7 @@
 - **UX-05 Timer UX Refinement Sprint – Issue 1 Countdown Formatting (#148):** Created single-source `DurationFormatter` utility providing dynamic clock formatting (`MM:SS` for < 1hr, `HH:MM:SS` for ≥ 1hr up to `99:59:59`) reused consistently across bottom sheet, habit cards, dashboard, and duration pickers.
 - **UX-06 Timer UX Refinement Sprint – Issue 2 Persistent Timer Session (#149):** Refactored `timerCountdownProvider` to non-autoDispose Riverpod `NotifierProviderFamily` using timestamp delta calculations (`targetDuration - (now - startTimestamp)`). Timer survives bottom sheet dismissal, screen navigation, and auto-logs progress on completion without user interaction.
 - **UX-07 Timer UX Refinement Sprint – Issue 3 Duration Picker Range Expansion (#150):** Expanded `DurationPicker` hours wheel range to `0-99` hours, supporting multi-day durations (`48:00:00`, `72:15:10`, `99:59:59`) with no clock wraparound or arbitrary caps.
+- **UX-08 Live Timer Progress Synchronization on Dashboard (#151):** Subscribed `HabitCard` directly to `timerCountdownProvider` for timer habits, enabling real-time dashboard updates (`⏱ 14 sec remaining`, `Paused • 08:42 remaining`) without duplicate timer state or database read overhead.
 
 ---
 

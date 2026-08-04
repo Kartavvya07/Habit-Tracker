@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/utils/duration_formatter.dart';
 import '../../../habits/domain/entities/habit.dart';
 import '../../../habits/domain/entities/habit_duration.dart';
 import '../../../habits/domain/entities/habit_frequency.dart';
@@ -11,6 +12,7 @@ import '../../../habits/presentation/extensions/habit_color_extension.dart';
 import '../../../habits/presentation/extensions/habit_icon_extension.dart';
 import '../../../habits/presentation/providers/habit_completion_provider.dart';
 import '../../../habits/presentation/providers/streak_provider.dart';
+import '../../../habits/presentation/providers/timer_countdown_notifier.dart';
 import '../../../habits/presentation/providers/use_case_providers.dart';
 import '../../../habits/presentation/widgets/numeric_progress_bottom_sheet.dart';
 import '../../../habits/presentation/widgets/timer_progress_bottom_sheet.dart';
@@ -57,14 +59,46 @@ class _HabitCardState extends ConsumerState<HabitCard> {
     }
   }
 
-  String? _formatTargetValue(Habit habit, int currentValue) {
+  String? _formatTargetValue(
+    Habit habit,
+    int currentValue,
+    TimerCountdownState? timerState,
+  ) {
     switch (habit.habitType) {
       case HabitType.numeric:
         return '$currentValue / ${habit.targetCount}';
+
       case HabitType.timer:
+        if (timerState != null) {
+          switch (timerState.status) {
+            case TimerCountdownStatus.running:
+              final remaining = timerState.remainingSeconds;
+              final timeStr = remaining < 60
+                  ? DurationFormatter.formatHuman(remaining)
+                  : DurationFormatter.formatClock(remaining);
+              return '⏱ $timeStr remaining';
+
+            case TimerCountdownStatus.paused:
+              final remaining = timerState.remainingSeconds;
+              final timeStr = remaining < 60
+                  ? DurationFormatter.formatHuman(remaining)
+                  : DurationFormatter.formatClock(remaining);
+              return 'Paused • $timeStr remaining';
+
+            case TimerCountdownStatus.completed:
+              final targetDuration = HabitDuration(habit.targetCount);
+              return '${targetDuration.formatted()} / ${targetDuration.formatted()}';
+
+            case TimerCountdownStatus.initial:
+              final currentDuration = HabitDuration(currentValue);
+              final targetDuration = HabitDuration(habit.targetCount);
+              return '${currentDuration.formatted()} / ${targetDuration.formatted()}';
+          }
+        }
         final currentDuration = HabitDuration(currentValue);
         final targetDuration = HabitDuration(habit.targetCount);
         return '${currentDuration.formatted()} / ${targetDuration.formatted()}';
+
       case HabitType.boolean:
         return null;
     }
@@ -152,6 +186,15 @@ class _HabitCardState extends ConsumerState<HabitCard> {
       }
     }
 
+    TimerCountdownState? timerState;
+    if (widget.habit.habitType == HabitType.timer) {
+      final params = TimerCountdownParams(
+        habit: widget.habit,
+        initialLog: currentLog,
+      );
+      timerState = ref.watch(timerCountdownProvider(params));
+    }
+
     final asyncStreak = ref.watch(streakProvider(widget.habit.id));
     final streak = asyncStreak.valueOrNull;
     final currentStreak = streak?.currentStreak ?? 0;
@@ -159,8 +202,9 @@ class _HabitCardState extends ConsumerState<HabitCard> {
     final isProtected = isVacationModeActive || currentLog?.isFrozen == true;
 
     final currentValue = currentLog?.currentValue ?? 0;
-    final isCompleted = currentLog?.status == HabitLogStatus.completed;
-    final targetText = _formatTargetValue(widget.habit, currentValue);
+    final isCompleted = currentLog?.status == HabitLogStatus.completed ||
+        (timerState?.status == TimerCountdownStatus.completed);
+    final targetText = _formatTargetValue(widget.habit, currentValue, timerState);
 
     return Semantics(
       label:
