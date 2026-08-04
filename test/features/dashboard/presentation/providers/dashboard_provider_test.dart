@@ -40,6 +40,12 @@ class MockStreamHabitRepository implements HabitRepository {
   Future<void> updateHabit(Habit habit) async {}
 
   @override
+  Future<void> archiveHabit(String id) async {}
+
+  @override
+  Future<void> restoreHabit(String id) async {}
+
+  @override
   Future<void> deleteHabit(String id) async {}
 
   @override
@@ -47,6 +53,18 @@ class MockStreamHabitRepository implements HabitRepository {
 
   @override
   Future<List<Habit>> getHabits() async => [];
+
+  @override
+  Future<List<Habit>> getActiveHabits() async => [];
+
+  @override
+  Stream<List<Habit>> watchActiveHabits() => _controller.stream;
+
+  @override
+  Future<List<Habit>> getArchivedHabits() async => [];
+
+  @override
+  Stream<List<Habit>> watchArchivedHabits() => Stream.value([]);
 
   @override
   Future<void> saveHabitLog(HabitLog log) async {}

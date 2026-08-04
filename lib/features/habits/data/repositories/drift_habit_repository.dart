@@ -1,4 +1,3 @@
-import 'package:drift/drift.dart';
 import '../../../../core/database/app_database.dart';
 import '../../domain/entities/habit.dart';
 import '../../domain/entities/habit_log.dart';
@@ -25,41 +24,71 @@ class DriftHabitRepository implements HabitRepository {
 
   @override
   Future<void> createHabit(Habit habit) async {
-    await _db.into(_db.habits).insert(HabitMapper.toCompanion(habit));
+    await _db.habitsDao.insertHabit(HabitMapper.toCompanion(habit));
   }
 
   @override
   Future<void> updateHabit(Habit habit) async {
-    await (_db.update(_db.habits)..where((tbl) => tbl.id.equals(habit.id)))
-        .write(HabitMapper.toCompanion(habit));
+    await _db.habitsDao.updateHabit(HabitMapper.toCompanion(habit));
+  }
+
+  @override
+  Future<void> archiveHabit(String id) async {
+    await _db.habitsDao.archiveHabit(id);
+  }
+
+  @override
+  Future<void> restoreHabit(String id) async {
+    await _db.habitsDao.restoreHabit(id);
   }
 
   @override
   Future<void> deleteHabit(String id) async {
-    await (_db.delete(_db.habits)..where((tbl) => tbl.id.equals(id))).go();
+    await _db.habitsDao.deleteHabit(id);
   }
 
   @override
   Future<Habit?> getHabit(String id) async {
-    final query = _db.select(_db.habits)..where((tbl) => tbl.id.equals(id));
-    final result = await query.getSingleOrNull();
+    final result = await _db.habitsDao.getHabitById(id);
     return result != null ? HabitMapper.toEntity(result) : null;
   }
 
   @override
   Stream<List<Habit>> watchHabits() {
-    final query = _db.select(_db.habits)
-      ..orderBy([(tbl) => OrderingTerm.desc(tbl.createdAt)]);
-    return query.watch().map(
+    return _db.habitsDao.watchAllHabits().map(
           (rows) => rows.map(HabitMapper.toEntity).toList(),
         );
   }
 
   @override
   Future<List<Habit>> getHabits() async {
-    final query = _db.select(_db.habits)
-      ..orderBy([(tbl) => OrderingTerm.desc(tbl.createdAt)]);
-    final rows = await query.get();
+    final rows = await _db.habitsDao.getAllHabits();
+    return rows.map(HabitMapper.toEntity).toList();
+  }
+
+  @override
+  Stream<List<Habit>> watchActiveHabits() {
+    return _db.habitsDao.watchActiveHabits().map(
+          (rows) => rows.map(HabitMapper.toEntity).toList(),
+        );
+  }
+
+  @override
+  Future<List<Habit>> getActiveHabits() async {
+    final rows = await _db.habitsDao.getActiveHabits();
+    return rows.map(HabitMapper.toEntity).toList();
+  }
+
+  @override
+  Stream<List<Habit>> watchArchivedHabits() {
+    return _db.habitsDao.watchArchivedHabits().map(
+          (rows) => rows.map(HabitMapper.toEntity).toList(),
+        );
+  }
+
+  @override
+  Future<List<Habit>> getArchivedHabits() async {
+    final rows = await _db.habitsDao.getArchivedHabits();
     return rows.map(HabitMapper.toEntity).toList();
   }
 

@@ -59,12 +59,77 @@ void main() {
       expect(retrieved?.targetCount, equals(30));
     });
 
-    test('deleteHabit removes habit from database', () async {
+    test('archiveHabit marks habit as archived in database', () async {
       await repository.createHabit(testHabit);
+      expect((await repository.getHabit('habit-1'))?.isArchived, isFalse);
+
+      await repository.archiveHabit('habit-1');
+      final archived = await repository.getHabit('habit-1');
+
+      expect(archived?.isArchived, isTrue);
+    });
+
+    test('restoreHabit marks archived habit as active in database', () async {
+      final archivedHabit = testHabit.copyWith(isArchived: true);
+      await repository.createHabit(archivedHabit);
+      expect((await repository.getHabit('habit-1'))?.isArchived, isTrue);
+
+      await repository.restoreHabit('habit-1');
+      final restored = await repository.getHabit('habit-1');
+
+      expect(restored?.isArchived, isFalse);
+    });
+
+    test('getActiveHabits and getArchivedHabits filter habits correctly', () async {
+      final activeHabit = testHabit.copyWith(id: 'active-1', isArchived: false);
+      final archivedHabit = testHabit.copyWith(id: 'archived-1', isArchived: true);
+
+      await repository.createHabit(activeHabit);
+      await repository.createHabit(archivedHabit);
+
+      final activeList = await repository.getActiveHabits();
+      final archivedList = await repository.getArchivedHabits();
+
+      expect(activeList.length, equals(1));
+      expect(activeList.first.id, equals('active-1'));
+
+      expect(archivedList.length, equals(1));
+      expect(archivedList.first.id, equals('archived-1'));
+    });
+
+    test('watchActiveHabits and watchArchivedHabits emit reactive filtered streams', () async {
+      final activeHabit = testHabit.copyWith(id: 'active-1', isArchived: false);
+      final archivedHabit = testHabit.copyWith(id: 'archived-1', isArchived: true);
+
+      await repository.createHabit(activeHabit);
+      await repository.createHabit(archivedHabit);
+
+      final activeStreamList = await repository.watchActiveHabits().first;
+      final archivedStreamList = await repository.watchArchivedHabits().first;
+
+      expect(activeStreamList.length, equals(1));
+      expect(activeStreamList.first.id, equals('active-1'));
+
+      expect(archivedStreamList.length, equals(1));
+      expect(archivedStreamList.first.id, equals('archived-1'));
+    });
+
+    test('deleteHabit removes habit and cascades deletion to associated habit logs', () async {
+      await repository.createHabit(testHabit);
+      final testLog = HabitLog(
+        id: 'cascade-log-1',
+        habitId: 'habit-1',
+        targetDate: now,
+        status: HabitLogStatus.completed,
+      );
+      await repository.saveHabitLog(testLog);
+
+      expect(await repository.getHabitLog('cascade-log-1'), isNotNull);
+
       await repository.deleteHabit('habit-1');
 
-      final retrieved = await repository.getHabit('habit-1');
-      expect(retrieved, isNull);
+      expect(await repository.getHabit('habit-1'), isNull);
+      expect(await repository.getHabitLog('cascade-log-1'), isNull);
     });
 
     group('watchHabits Stream', () {

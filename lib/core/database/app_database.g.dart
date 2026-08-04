@@ -915,6 +915,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       'idx_habit_logs_habit_target_date',
       'CREATE INDEX idx_habit_logs_habit_target_date ON habit_logs (habit_id, target_date)');
   late final HabitLogsDao habitLogsDao = HabitLogsDao(this as AppDatabase);
+  late final HabitsDao habitsDao = HabitsDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();

@@ -4,10 +4,16 @@ import '../entities/habit_log.dart';
 abstract class HabitRepository {
   Future<void> createHabit(Habit habit);
   Future<void> updateHabit(Habit habit);
+  Future<void> archiveHabit(String id);
+  Future<void> restoreHabit(String id);
   Future<void> deleteHabit(String id);
   Future<Habit?> getHabit(String id);
   Stream<List<Habit>> watchHabits();
   Future<List<Habit>> getHabits();
+  Stream<List<Habit>> watchActiveHabits();
+  Future<List<Habit>> getActiveHabits();
+  Stream<List<Habit>> watchArchivedHabits();
+  Future<List<Habit>> getArchivedHabits();
 
   // Habit Log Persistence Methods
   Future<void> saveHabitLog(HabitLog log);

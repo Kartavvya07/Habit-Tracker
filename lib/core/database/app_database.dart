@@ -1,11 +1,12 @@
 import 'package:drift/drift.dart';
 import 'daos/habit_logs_dao.dart';
+import 'daos/habits_dao.dart';
 import 'tables/habit_logs_table.dart';
 import 'tables/habits_table.dart';
 
 part 'app_database.g.dart';
 
-@DriftDatabase(tables: [Habits, HabitLogs], daos: [HabitLogsDao])
+@DriftDatabase(tables: [Habits, HabitLogs], daos: [HabitLogsDao, HabitsDao])
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 

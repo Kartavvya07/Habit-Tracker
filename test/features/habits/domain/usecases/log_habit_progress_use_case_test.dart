@@ -33,6 +33,20 @@ class InMemoryHabitRepository implements HabitRepository {
   }
 
   @override
+  Future<void> archiveHabit(String id) async {
+    final index = habits.indexWhere((h) => h.id == id);
+    if (index != -1) habits[index] = habits[index].copyWith(isArchived: true);
+    _notify();
+  }
+
+  @override
+  Future<void> restoreHabit(String id) async {
+    final index = habits.indexWhere((h) => h.id == id);
+    if (index != -1) habits[index] = habits[index].copyWith(isArchived: false);
+    _notify();
+  }
+
+  @override
   Future<void> deleteHabit(String id) async {
     habits.removeWhere((h) => h.id == id);
     _notify();
@@ -51,6 +65,24 @@ class InMemoryHabitRepository implements HabitRepository {
   Stream<List<Habit>> watchHabits() async* {
     yield List.unmodifiable(habits);
     yield* _habitsController.stream;
+  }
+
+  @override
+  Future<List<Habit>> getActiveHabits() async =>
+      habits.where((h) => !h.isArchived).toList();
+
+  @override
+  Stream<List<Habit>> watchActiveHabits() async* {
+    yield habits.where((h) => !h.isArchived).toList();
+  }
+
+  @override
+  Future<List<Habit>> getArchivedHabits() async =>
+      habits.where((h) => h.isArchived).toList();
+
+  @override
+  Stream<List<Habit>> watchArchivedHabits() async* {
+    yield habits.where((h) => h.isArchived).toList();
   }
 
   @override

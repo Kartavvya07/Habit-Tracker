@@ -27,6 +27,22 @@ class FakeHabitRepository implements HabitRepository {
   }
 
   @override
+  Future<void> archiveHabit(String id) async {
+    final index = _habits.indexWhere((h) => h.id == id);
+    if (index != -1) {
+      _habits[index] = _habits[index].copyWith(isArchived: true);
+    }
+  }
+
+  @override
+  Future<void> restoreHabit(String id) async {
+    final index = _habits.indexWhere((h) => h.id == id);
+    if (index != -1) {
+      _habits[index] = _habits[index].copyWith(isArchived: false);
+    }
+  }
+
+  @override
   Future<void> deleteHabit(String id) async {
     _habits.removeWhere((h) => h.id == id);
   }
@@ -45,6 +61,26 @@ class FakeHabitRepository implements HabitRepository {
   @override
   Stream<List<Habit>> watchHabits() {
     return Stream.value(_habits);
+  }
+
+  @override
+  Future<List<Habit>> getActiveHabits() async {
+    return _habits.where((h) => !h.isArchived).toList();
+  }
+
+  @override
+  Stream<List<Habit>> watchActiveHabits() {
+    return Stream.value(_habits.where((h) => !h.isArchived).toList());
+  }
+
+  @override
+  Future<List<Habit>> getArchivedHabits() async {
+    return _habits.where((h) => h.isArchived).toList();
+  }
+
+  @override
+  Stream<List<Habit>> watchArchivedHabits() {
+    return Stream.value(_habits.where((h) => h.isArchived).toList());
   }
 
   @override

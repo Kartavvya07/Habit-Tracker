@@ -27,6 +27,12 @@ class MockHabitRepository implements HabitRepository {
   Future<void> updateHabit(Habit habit) async {}
 
   @override
+  Future<void> archiveHabit(String id) async {}
+
+  @override
+  Future<void> restoreHabit(String id) async {}
+
+  @override
   Future<void> deleteHabit(String id) async {}
 
   @override
@@ -37,6 +43,18 @@ class MockHabitRepository implements HabitRepository {
 
   @override
   Stream<List<Habit>> watchHabits() => Stream.value(savedHabits);
+
+  @override
+  Future<List<Habit>> getActiveHabits() async => savedHabits.where((h) => !h.isArchived).toList();
+
+  @override
+  Stream<List<Habit>> watchActiveHabits() => Stream.value(savedHabits.where((h) => !h.isArchived).toList());
+
+  @override
+  Future<List<Habit>> getArchivedHabits() async => savedHabits.where((h) => h.isArchived).toList();
+
+  @override
+  Stream<List<Habit>> watchArchivedHabits() => Stream.value(savedHabits.where((h) => h.isArchived).toList());
 
   @override
   Future<void> saveHabitLog(HabitLog log) async {}
