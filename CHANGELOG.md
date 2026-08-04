@@ -2,6 +2,26 @@
 
 All notable changes to the Habit Tracker project will be documented in this file.
 
+## v0.4.0-alpha
+
+### Features
+- **Habit Editing Engine**: Complete habit editing capabilities via `EditHabitScreen` pre-populated with existing habit title, description, frequency, habit type, numeric target count, target duration, color token, and icon avatar.
+- **Form State Pre-Population**: `EditHabitNotifier` extending `AutoDisposeFamilyNotifier<EditHabitState, Habit>` (`editHabitProvider`) for instant, zero-spin form initialization.
+- **Safe Archive & Restore Workflow**: Added `ArchiveHabitUseCase` and `RestoreHabitUseCase` moving active habits out of the daily dashboard feed to `ArchivedHabitsScreen` to prevent accidental log deletion.
+- **Archived Habits Management Screen**: Dedicated screen (`ArchivedHabitsScreen`) listing archived habits reactively via `watchArchivedHabits()`, featuring empty states, 1-tap Restore actions (`RestoreHabitUseCase`), and Permanent Delete actions with native M3 `AlertDialog` confirmation.
+- **Dashboard Swipe Gestures**: `Dismissible` swipe interactions on `HabitCard` cards:
+  - **Swipe Right (Start-to-End)**: Triggers quick edit navigation to `/edit-habit`.
+  - **Swipe Left (End-to-Start)**: Archives the habit with an instant SnackBar **Undo** action to restore state if tapped.
+- **Header Navigation**: Added Archived Habits header action button (`Icons.archive_outlined`) in `DashboardScreen` AppBar.
+- **Drift DAO Architecture**: Built `HabitsDao` with dedicated accessors for active/archived queries (`watchActiveHabits()`, `watchArchivedHabits()`), updating, archiving, restoring, and deleting with foreign key cascading log deletions.
+
+### Quality & Engineering
+- **Static Analysis**: 0 warnings (`flutter analyze`).
+- **Test Suite Coverage**: 100% test pass rate across 177 unit and widget tests (`flutter test`).
+- **Production Build**: Generated release APK (`app-release.apk`).
+
+---
+
 ## v0.3.0-alpha
 
 ### Features
@@ -24,13 +44,9 @@ All notable changes to the Habit Tracker project will be documented in this file
 - **Test Suite Coverage**: 100% test pass rate across 155 unit and widget tests (`flutter test`).
 - **Physical Device Validation**: Tested and validated on physical Android device.
 
-### Known Limitations
-- Habit editing, archiving, and deletion deferred to Phase 6 (`v0.4.0-alpha`).
-- System notifications and reminders deferred to Phase 7 (`v0.5.0-beta`).
-- Native home screen widgets deferred to Phase 8.
-- Gamification & XP engine deferred to Phase 9.
+---
 
-
+## v0.2.0-alpha
 
 ### Features
 - Reactive Dashboard Screen with Material 3 design system
@@ -41,11 +57,7 @@ All notable changes to the Habit Tracker project will be documented in this file
 - Floating Action Button navigation to `/create-habit`
 - Expanded widget test suite covering all presentation states, FAB navigation, retry error handling, and reactive stream updates
 
-### Known Limitations
-- Completion tracking not implemented (Phase 5)
-- Edit/Delete not implemented (Phase 5)
-- Notifications not implemented (Phase 6)
-- Streaks not implemented (Phase 5)
+---
 
 ## v0.1.0-alpha
 
@@ -58,11 +70,3 @@ All notable changes to the Habit Tracker project will be documented in this file
 - CreateHabitUseCase
 - SQLite integration
 - Android APK generation
-
-### Fixed
-- Android MainActivity package mismatch
-
-### Technical
-- Providers moved to presentation layer
-- HabitColor decoupled from UI
-- Added unit and widget tests

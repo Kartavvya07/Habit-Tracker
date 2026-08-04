@@ -11,18 +11,21 @@ A modern, local-first Flutter Habit Tracker application built with Clean Archite
 - ✅ **Phase 3 Complete:** Habit CRUD & Management (Create Habit Vertical Slice)
 - ✅ **Phase 4 Complete:** Habit Dashboard (Read Vertical Slice)
 - ✅ **Phase 5 Complete:** Habit Loop & Streak Engine (`v0.3.0-alpha`)
+- ✅ **Phase 6 Complete:** Habit Management (Edit, Delete, Archive) (`v0.4.0-alpha`)
 
 ---
 
-## Key Features (v0.3.0-alpha)
+## Key Features (v0.4.0-alpha)
 
-- **Habit Loop Engine**: Atomic progress logging for Boolean, Numeric, and Timer habits backed by Drift SQLite.
+- **Habit Editing Screen**: Pre-populated form (`EditHabitScreen`) for updating title, description, frequency, habit type, numeric target, target duration, color token, and icon avatar.
+- **Safe Archive & Restore Workflow**: Archives active habits out of the daily dashboard feed to `ArchivedHabitsScreen` to prevent accidental log loss.
+- **Archived Habits Management**: Dedicated screen (`ArchivedHabitsScreen`) for managing archived habits with 1-tap Restore and Permanent Delete confirmation dialogs.
+- **Dashboard Swipe Gestures**: `Dismissible` swipe interactions on habit cards (Swipe Right to Edit, Swipe Left to Archive with SnackBar Undo).
+- **Habit Loop Engine**: Atomic progress logging for Boolean, Numeric, and Timer habits backed by Drift SQLite DAOs (`HabitsDao`, `HabitLogsDao`).
 - **Streak Calculation Engine**: Real-time evaluation of current streak, best streak, completion rates, and Vacation Mode protections.
 - **Material 3 Progress Sheets**: `NumericProgressBottomSheet` with 4-way synced inputs and `TimerProgressBottomSheet` with Android-style countdown timer.
 - **Persistent Timer Sessions**: Non-autoDispose timer providers that survive screen navigation and automatically complete.
-- **Live Dashboard Sync**: Real-time timer countdown displays on habit cards (`⏱ 14 sec remaining`).
 - **Vacation Mode**: Global streak freeze protection banner and notifier.
-- **Safe Area Architecture**: Sticky bottom action buttons respecting system gesture and navigation bars.
 
 ---
 
@@ -33,7 +36,7 @@ A modern, local-first Flutter Habit Tracker application built with Clean Archite
 | `v0.1.0-alpha` | Create Habit | Completed ✅ |
 | `v0.2.0-alpha` | Dashboard | Completed ✅ |
 | `v0.3.0-alpha` | Phase 5 – Habit Loop & Streak Engine | Completed ✅ |
-| `v0.4.0-alpha` | Phase 6 – Habit Management (Edit/Delete) | Planned |
+| `v0.4.0-alpha` | Phase 6 – Habit Management (Edit, Delete, Archive) | Completed ✅ |
 | `v0.5.0-beta` | Phase 7 – Notifications & Reminders | Planned |
 | `v1.0.0` | First Stable Release | Planned |
 
@@ -47,7 +50,7 @@ graph TD
     Riverpod["Riverpod (Notifiers & Stream Providers)"]
     UseCases["Use Cases (Domain Logic & Streak Engine)"]
     Repository["Repository Interface & Drift Implementation"]
-    Drift["Drift (Data Access Object / Mappers / SQLite)"]
+    Drift["Drift (DAOs / Mappers / SQLite)"]
     SQLite["SQLite Database"]
 
     Presentation --> Riverpod

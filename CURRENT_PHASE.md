@@ -8,9 +8,9 @@
 
 # Current Phase
 
-**Phase:** Phase 5 – Habit Loop & Streak Engine  
-**Status:** COMPLETED ✅ (`v0.3.0-alpha`)  
-**Last Updated:** July 29, 2026  
+**Phase:** Phase 6 – Habit Management (Edit, Delete, Archive)  
+**Status:** COMPLETED ✅ (`v0.4.0-alpha`)  
+**Last Updated:** August 4, 2026  
 
 ---
 
@@ -21,42 +21,25 @@
 | `v0.1.0-alpha` | Create Habit | Completed ✅ |
 | `v0.2.0-alpha` | Dashboard | Completed ✅ |
 | `v0.3.0-alpha` | Phase 5 – Habit Loop & Streak Engine | Completed ✅ |
-| `v0.4.0-alpha` | Phase 6 – Habit Management (Edit/Delete) | Planned |
+| `v0.4.0-alpha` | Phase 6 – Habit Management (Edit, Delete, Archive) | Completed ✅ |
 | `v0.5.0-beta` | Phase 7 – Notifications & Reminders | Planned |
 | `v1.0.0` | First Stable Release | Planned |
 
 ---
 
-# Phase 5 Completed Issues Breakdown
+# Phase 6 Completed Issues Breakdown
 
-- **P5-01 Habit Log Schema & Drift Migration:** Built `HabitLogsTable` in Drift SQLite with compound indexes on `(habit_id, target_date)`, `HabitLog` domain entity, and bidirectional `HabitLogMapper`.
-- **P5-02 Repository Integration:** Integrated atomic progress logging and reactive streams (`watchTodayLogs`, `getLogsForHabit`, `logProgress`, `deleteLog`) in `DriftHabitRepository`.
-- **P5-03 Domain Use Cases:** Built pure business logic use cases `LogHabitProgressUseCase` (supporting boolean, numeric stepper, and timer habits), `CalculateStreakUseCase` (calculating current streak, best streak, completion rates, edge cases), and `GetDailyCompletionUseCase`.
-- **P5-04 Riverpod Providers:** Created `todayLogsStreamProvider`, `todayCompletionsProvider`, and `streakProvider` for reactive UI updates without presentation coupling.
-- **P5-05 Numeric & Timer Progress Logging UI:** Built `NumericProgressBottomSheet` (custom stepper, quick chips, validation) and `TimerProgressBottomSheet` (live stopwatch, action controls, manual minute chips).
-- **P5-06 Boolean Quick Completion Toggle UI:** Implemented 1-tap completion toggle on `HabitCard` with optimistic animations, strikethrough styling, haptic feedback, and error state rollback.
-- **P5-07 Vacation Mode & Streak Protection:** Implemented `VacationModeNotifier`, `vacationModeProvider`, `VacationBanner`, and streak freeze protection in `CalculateStreakUseCase`.
-- **P5-08 Dashboard Progress & Streak Integration:** Integrated `StreakBadge`, `DailySummaryCard`, and `CompletionRing` into `DashboardScreen`.
-- **P5-09 Engineering Audit & Quality Refinement:** Conducted architecture audit, Riverpod rebuild optimization, Material 3 design audit, WCAG AA accessibility audit (`Semantics`, 48x48dp touch targets), landscape overflow protection (`SingleChildScrollView`), and test suite verification (137 tests passing, 0 analyze warnings).
-- **P5-10 Release & Verification:** Verified fresh clone workflow (`flutter pub get`, `flutter analyze`, `flutter test`), built production release APK (`app-release.apk`), created git tag `v0.3.0-alpha`, and finalized release notes.
-
----
-
-# Physical Device UX Refinement Sprints (v0.3.1-alpha)
-
-- **UX-01 Bottom Sheet Safe Area & Sticky Action (#143):** Re-architected modal sheets (`showModalBottomSheet` with `useSafeArea: true`) so primary action buttons are sticky at the bottom and never obscured by Android gesture navigation, 3-button navigation, or soft keyboards.
-- **UX-02 Timer Habit Duration Picker & Adaptive Formatting (#144):** Built decoupled `DurationPicker` widget with Hours/Minutes/Seconds wheel scroll pickers and `HabitDuration` domain value object for single-source adaptive formatting (`45 sec`, `1 min 30 sec`, `15 min`, `1 hr`, `1 hr 15 min`).
-- **UX-03 Numeric Progress Slider & 4-Way Input Sync (#145):** Added Material `Slider`, visual progress bar (`55 / 100`), 4-way synchronized inputs (Slider, Stepper, Quick Chips, Direct Text Editing), and Goal Reached status indicator.
-- **UX-04 Timer Countdown & Auto-Completion (#147):** Transformed Timer Habits into a genuine Android countdown timer (`30:00` → `00:00`), auto-completing on zero, restoring target duration on reset, and transitioning buttons cleanly (`Start` → `Pause/Reset` → `Resume/Reset` → `Completed`).
-- **UX-05 Timer UX Refinement Sprint – Issue 1 Countdown Formatting (#148):** Created single-source `DurationFormatter` utility providing dynamic clock formatting (`MM:SS` for < 1hr, `HH:MM:SS` for ≥ 1hr up to `99:59:59`) reused consistently across bottom sheet, habit cards, dashboard, and duration pickers.
-- **UX-06 Timer UX Refinement Sprint – Issue 2 Persistent Timer Session (#149):** Refactored `timerCountdownProvider` to non-autoDispose Riverpod `NotifierProviderFamily` using timestamp delta calculations (`targetDuration - (now - startTimestamp)`). Timer survives bottom sheet dismissal, screen navigation, and auto-logs progress on completion without user interaction.
-- **UX-07 Timer UX Refinement Sprint – Issue 3 Duration Picker Range Expansion (#150):** Expanded `DurationPicker` hours wheel range to `0-99` hours, supporting multi-day durations (`48:00:00`, `72:15:10`, `99:59:59`) with no clock wraparound or arbitrary caps.
-- **UX-08 Live Timer Progress Synchronization on Dashboard (#151):** Subscribed `HabitCard` directly to `timerCountdownProvider` for timer habits, enabling real-time dashboard updates (`⏱ 14 sec remaining`, `Paused • 08:42 remaining`) without duplicate timer state or database read overhead.
+- **P6-01 Edit & Archive Domain Use Cases:** Implemented `ArchiveHabitUseCase`, `RestoreHabitUseCase`, `UpdateHabitUseCase`, and `DeleteHabitUseCase` pure domain use cases with complete DartDoc specifications.
+- **P6-02 Repository Edit, Archive & Deletion Queries:** Built `HabitsDao` with Drift SQLite accessors for active/archived habit filtering, updating, archiving (`isArchived: true`), restoring, and deleting with foreign key cascading log deletions.
+- **P6-03 Edit Habit Riverpod Notifier & State:** Created `EditHabitState` and `EditHabitNotifier` family provider (`editHabitProvider`) for form pre-population, field validation, and repository update dispatches.
+- **P6-04 Edit Habit Screen UI:** Implemented `EditHabitScreen` with Material 3 inputs, pre-populated form controls, shared color selector, icon selector, duration pickers, and Archive action header button.
+- **P6-05 Swipe-to-Edit & Swipe-to-Archive Dashboard Actions:** Wrapped `HabitCard` in `Dismissible` supporting Swipe Right (Edit navigation to `/edit-habit`) and Swipe Left (Archive habit with instant SnackBar Undo action).
+- **P6-06 Archived Habits Management Screen:** Built `ArchivedHabitsScreen` consuming `archivedHabitsProvider` (`watchArchivedHabits()`), featuring empty state illustration, Restore action, and Permanent Delete action with native M3 `AlertDialog` confirmation.
+- **P6-07 Habit Management Unit & Widget Tests:** Expanded test suite with 177 unit and widget tests covering DAOs, repository queries, use cases, state notifiers, form screens, swipe actions, and archived habits management.
+- **P6-08 Release & Verification:** Conducted static analysis audit (`flutter analyze` → 0 warnings), verified automated test suite (`flutter test` → 177 tests passing), built production release APK (`app-release.apk`), closed GitHub issues #68-#75, and tagged git release `v0.4.0-alpha`.
 
 ---
 
 # Next Active Phase
 
-**Next Phase:** Phase 6 – Habit Management (Edit, Delete, Archive) (`v0.4.0-alpha`)
-
-
+**Next Phase:** Phase 7 – Notification & Reminder Engine (`v0.5.0-beta`)
