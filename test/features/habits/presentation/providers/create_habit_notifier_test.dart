@@ -24,16 +24,27 @@ class MockHabitRepository implements HabitRepository {
   }
 
   @override
-  Future<void> updateHabit(Habit habit) async {}
+  Future<void> updateHabit(Habit habit) async {
+    final index = savedHabits.indexWhere((h) => h.id == habit.id);
+    if (index != -1) savedHabits[index] = habit;
+  }
 
   @override
-  Future<void> archiveHabit(String id) async {}
+  Future<void> archiveHabit(String id) async {
+    final index = savedHabits.indexWhere((h) => h.id == id);
+    if (index != -1) savedHabits[index] = savedHabits[index].copyWith(isArchived: true);
+  }
 
   @override
-  Future<void> restoreHabit(String id) async {}
+  Future<void> restoreHabit(String id) async {
+    final index = savedHabits.indexWhere((h) => h.id == id);
+    if (index != -1) savedHabits[index] = savedHabits[index].copyWith(isArchived: false);
+  }
 
   @override
-  Future<void> deleteHabit(String id) async {}
+  Future<void> deleteHabit(String id) async {
+    savedHabits.removeWhere((h) => h.id == id);
+  }
 
   @override
   Future<Habit?> getHabit(String id) async => null;

@@ -1,6 +1,8 @@
 import 'package:go_router/go_router.dart';
 import '../features/dashboard/presentation/screens/dashboard_screen.dart';
+import '../features/habits/domain/entities/habit.dart';
 import '../features/habits/presentation/screens/create_habit_screen.dart';
+import '../features/habits/presentation/screens/edit_habit_screen.dart';
 
 final goRouter = GoRouter(
   initialLocation: '/',
@@ -12,6 +14,13 @@ final goRouter = GoRouter(
     GoRoute(
       path: '/create-habit',
       builder: (context, state) => const CreateHabitScreen(),
+    ),
+    GoRoute(
+      path: '/edit-habit',
+      builder: (context, state) {
+        final habit = state.extra as Habit;
+        return EditHabitScreen(habit: habit);
+      },
     ),
   ],
 );
