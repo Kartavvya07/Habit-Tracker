@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../habits/domain/entities/habit.dart';
 import '../../../habits/presentation/providers/habit_providers.dart';
 import '../../../settings/presentation/providers/vacation_mode_provider.dart';
+import '../../../habits/presentation/providers/use_case_providers.dart';
 import '../providers/dashboard_provider.dart';
 import '../providers/dashboard_state.dart';
 import '../widgets/daily_summary_card.dart';
@@ -19,12 +20,18 @@ class DashboardScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(dashboardProvider);
     final isVacationModeActive = ref.watch(vacationModeProvider);
+    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Habit Tracker'),
         centerTitle: false,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.archive_outlined),
+            tooltip: 'Archived Habits',
+            onPressed: () => context.push('/archived-habits'),
+          ),
           Semantics(
             button: true,
             label: 'Toggle Vacation Mode',
@@ -34,7 +41,7 @@ class DashboardScreen extends ConsumerWidget {
                     ? Icons.beach_access_rounded
                     : Icons.beach_access_outlined,
                 color: isVacationModeActive
-                    ? Theme.of(context).colorScheme.tertiary
+                    ? theme.colorScheme.tertiary
                     : null,
               ),
               tooltip: isVacationModeActive
@@ -169,6 +176,7 @@ class _DashboardLoadedView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isVacationModeActive = ref.watch(vacationModeProvider);
+    final theme = Theme.of(context);
 
     return ListView.builder(
       padding: const EdgeInsets.only(top: 4, bottom: 88),
@@ -186,9 +194,81 @@ class _DashboardLoadedView extends ConsumerWidget {
           return const DailySummaryCard();
         }
         final habit = habits[index - 2];
-        return HabitCard(
-          key: ValueKey(habit.id),
-          habit: habit,
+        return Dismissible(
+          key: ValueKey('dismissible-${habit.id}'),
+          background: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primaryContainer,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            alignment: Alignment.centerLeft,
+            child: Row(
+              children: [
+                Icon(Icons.edit, color: theme.colorScheme.onPrimaryContainer),
+                const SizedBox(width: 8),
+                Text(
+                  'Edit',
+                  style: TextStyle(
+                    color: theme.colorScheme.onPrimaryContainer,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          secondaryBackground: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.tertiaryContainer,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            alignment: Alignment.centerRight,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  'Archive',
+                  style: TextStyle(
+                    color: theme.colorScheme.onTertiaryContainer,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Icon(Icons.archive_outlined, color: theme.colorScheme.onTertiaryContainer),
+              ],
+            ),
+          ),
+          confirmDismiss: (direction) async {
+            if (direction == DismissDirection.startToEnd) {
+              context.push('/edit-habit', extra: habit);
+              return false;
+            } else if (direction == DismissDirection.endToStart) {
+              final archiveUseCase = ref.read(archiveHabitUseCaseProvider);
+              await archiveUseCase.execute(habit.id);
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('${habit.title} archived'),
+                    action: SnackBarAction(
+                      label: 'Undo',
+                      onPressed: () {
+                        ref.read(restoreHabitUseCaseProvider).execute(habit.id);
+                      },
+                    ),
+                  ),
+                );
+              }
+              return true;
+            }
+            return false;
+          },
+          child: HabitCard(
+            key: ValueKey(habit.id),
+            habit: habit,
+          ),
         );
       },
     );

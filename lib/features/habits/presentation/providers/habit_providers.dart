@@ -11,6 +11,11 @@ final habitRepositoryProvider = Provider<HabitRepository>((ref) {
 
 final habitsStreamProvider = StreamProvider<List<Habit>>((ref) {
   final repository = ref.watch(habitRepositoryProvider);
-  return repository.watchHabits();
+  return repository.watchActiveHabits();
+});
+
+final archivedHabitsProvider = StreamProvider<List<Habit>>((ref) {
+  final repository = ref.watch(habitRepositoryProvider);
+  return repository.watchArchivedHabits();
 });
 

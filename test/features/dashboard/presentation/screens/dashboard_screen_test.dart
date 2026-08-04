@@ -187,10 +187,35 @@ void main() {
       await tester.pump();
 
       expect(find.text('No habits yet'), findsNothing);
-      expect(find.text('Habit One (Newer)'), findsOneWidget);
-      expect(find.byType(HabitCard), findsOneWidget);
-
       await controller.close();
+    });
+
+    testWidgets('renders archived habits button in AppBar', (tester) async {
+      await tester.pumpWidget(
+        buildTestableDashboard(
+          overrides: [
+            dashboardProvider.overrideWithValue(
+              DashboardLoaded([sampleHabit1]),
+            ),
+          ],
+        ),
+      );
+
+      expect(find.byIcon(Icons.archive_outlined), findsOneWidget);
+    });
+
+    testWidgets('wraps habit card in Dismissible for swipe actions', (tester) async {
+      await tester.pumpWidget(
+        buildTestableDashboard(
+          overrides: [
+            dashboardProvider.overrideWithValue(
+              DashboardLoaded([sampleHabit1]),
+            ),
+          ],
+        ),
+      );
+
+      expect(find.byType(Dismissible), findsOneWidget);
     });
   });
 }

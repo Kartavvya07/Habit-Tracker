@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import '../features/dashboard/presentation/screens/dashboard_screen.dart';
 import '../features/habits/domain/entities/habit.dart';
+import '../features/habits/presentation/screens/archived_habits_screen.dart';
 import '../features/habits/presentation/screens/create_habit_screen.dart';
 import '../features/habits/presentation/screens/edit_habit_screen.dart';
 
@@ -21,6 +22,10 @@ final goRouter = GoRouter(
         final habit = state.extra as Habit;
         return EditHabitScreen(habit: habit);
       },
+    ),
+    GoRoute(
+      path: '/archived-habits',
+      builder: (context, state) => const ArchivedHabitsScreen(),
     ),
   ],
 );
