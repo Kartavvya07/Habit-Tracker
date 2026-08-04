@@ -14,6 +14,18 @@ A modern, local-first Flutter Habit Tracker application built with Clean Archite
 
 ---
 
+## Key Features (v0.3.0-alpha)
+
+- **Habit Loop Engine**: Atomic progress logging for Boolean, Numeric, and Timer habits backed by Drift SQLite.
+- **Streak Calculation Engine**: Real-time evaluation of current streak, best streak, completion rates, and Vacation Mode protections.
+- **Material 3 Progress Sheets**: `NumericProgressBottomSheet` with 4-way synced inputs and `TimerProgressBottomSheet` with Android-style countdown timer.
+- **Persistent Timer Sessions**: Non-autoDispose timer providers that survive screen navigation and automatically complete.
+- **Live Dashboard Sync**: Real-time timer countdown displays on habit cards (`⏱ 14 sec remaining`).
+- **Vacation Mode**: Global streak freeze protection banner and notifier.
+- **Safe Area Architecture**: Sticky bottom action buttons respecting system gesture and navigation bars.
+
+---
+
 ## Release Checkpoints
 
 | Version | Phase | Status |

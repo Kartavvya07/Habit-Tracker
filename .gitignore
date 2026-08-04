@@ -8,7 +8,6 @@
 .buildlog/
 .history
 .svn/
-*~
 
 # IntelliJ / Android Studio
 *.iml
@@ -28,54 +27,30 @@
 .pub/
 build/
 
-# Android
-android/.gradle/
-android/captures/
-android/gradleApp.setting
-android/local.properties
-android/workspace.xml
-android/app/release/
-android/app/debug/
-android/app/profile/
-android/app/.gradle/
-android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
-
-# iOS
-ios/Runner.xcodeproj/project.xcworkspace/xcuserdata/
-ios/Runner.xcodeproj/xcuserdata/
-ios/Flutter/App.framework
-ios/Flutter/Flutter.framework
-ios/Flutter/Flutter.podspec
-ios/Flutter/Generated.xcconfig
-ios/Flutter/app.flx
-ios/Flutter/app.zip
-ios/Flutter/flutter_assets/
-ios/Flutter/flutter_export_environment.sh
-ios/Flutter/ephemeral/
-ios/ServiceDefinitions.json
-ios/Runner/GeneratedPluginRegistrant.h
-ios/Runner/GeneratedPluginRegistrant.m
-
-# macOS
-macos/Flutter/ephemeral/
-macos/Flutter/GeneratedPluginRegistrant.swift
-
-# Windows
-windows/flutter/ephemeral/
-windows/flutter/generated_plugin_registrant.cc
-windows/flutter/generated_plugin_registrant.h
-windows/flutter/generated_plugins.cmake
-
-# Linux
-linux/flutter/ephemeral/
-linux/flutter/generated_plugin_registrant.cc
-linux/flutter/generated_plugin_registrant.h
-linux/flutter/generated_plugins.cmake
+# Generated files
+*.g.dart
+*.freezed.dart
+*.config.dart
 
 # Symbol files
 *.m
 *.symbol
 
-# Environment & Secret files
+# Environment files
 .env
 .env.*
+
+# Android
+android/.gradle/
+android/local.properties
+
+# iOS
+ios/Flutter/ephemeral/
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+
+# macOS/Linux/Windows generated
+**/GeneratedPluginRegistrant.*
+**/generated_plugin_registrant.*
+**/generated_plugins.cmake
+android/app/.gradle/
