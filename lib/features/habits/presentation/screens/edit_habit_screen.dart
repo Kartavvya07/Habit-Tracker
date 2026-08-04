@@ -63,42 +63,6 @@ class _EditHabitScreenState extends ConsumerState<EditHabitScreen> {
     }
   }
 
-  void _onDeletePressed() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Delete Habit?'),
-        content: const Text(
-          'This action will permanently remove this habit and all associated execution logs. This action cannot be undone.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(ctx).colorScheme.error,
-              foregroundColor: Theme.of(ctx).colorScheme.onError,
-            ),
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed == true && mounted) {
-      final success = await ref.read(editHabitProvider(widget.habit).notifier).deleteHabit();
-      if (success && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Habit deleted permanently.')),
-        );
-        Navigator.of(context).maybePop();
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(editHabitProvider(widget.habit));
@@ -125,11 +89,6 @@ class _EditHabitScreenState extends ConsumerState<EditHabitScreen> {
             icon: Icon(state.isArchived ? Icons.unarchive : Icons.archive_outlined),
             tooltip: state.isArchived ? 'Restore Habit' : 'Archive Habit',
             onPressed: state.isSubmitting ? null : _onArchiveTogglePressed,
-          ),
-          IconButton(
-            icon: Icon(Icons.delete_outline, color: theme.colorScheme.error),
-            tooltip: 'Delete Habit',
-            onPressed: state.isSubmitting ? null : _onDeletePressed,
           ),
         ],
       ),

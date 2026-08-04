@@ -54,7 +54,6 @@ void main() {
       expect(find.text('Run 5km every morning'), findsOneWidget);
       expect(find.text('Update Habit'), findsOneWidget);
       expect(find.byIcon(Icons.archive_outlined), findsOneWidget);
-      expect(find.byIcon(Icons.delete_outline), findsOneWidget);
     });
 
     testWidgets('editing fields and clicking Update Habit saves changes', (tester) async {
@@ -82,24 +81,6 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(repository.savedHabits.first.isArchived, isTrue);
-    });
-
-    testWidgets('tapping delete button shows confirmation dialog and deletes on confirm', (tester) async {
-      await tester.pumpWidget(createWidgetUnderTest(testHabit));
-      await tester.pumpAndSettle();
-
-      final deleteButton = find.byIcon(Icons.delete_outline);
-      await tester.tap(deleteButton);
-      await tester.pumpAndSettle();
-
-      expect(find.text('Delete Habit?'), findsOneWidget);
-      expect(find.text('This action will permanently remove this habit and all associated execution logs. This action cannot be undone.'), findsOneWidget);
-
-      final confirmDeleteButton = find.widgetWithText(FilledButton, 'Delete');
-      await tester.tap(confirmDeleteButton);
-      await tester.pumpAndSettle();
-
-      expect(repository.savedHabits.where((h) => h.id == 'habit-widget-test-1'), isEmpty);
     });
   });
 }
