@@ -261,28 +261,8 @@ class _DashboardLoadedView extends ConsumerWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  content: Text('${habit.title} archived'),
-                  action: SnackBarAction(
-                    label: 'Undo',
-                    textColor: theme.colorScheme.inversePrimary,
-                    onPressed: () async {
-                      messenger.clearSnackBars();
-                      await ref
-                          .read(restoreHabitUseCaseProvider)
-                          .execute(habit.id);
-                      messenger.showSnackBar(
-                        SnackBar(
-                          behavior: SnackBarBehavior.floating,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          content:
-                              Text('${habit.title} restored to dashboard.'),
-                          duration: const Duration(seconds: 2),
-                        ),
-                      );
-                    },
-                  ),
+                  duration: const Duration(seconds: 2),
+                  content: const Text('✓ Habit moved to Archived'),
                 ),
               );
             }

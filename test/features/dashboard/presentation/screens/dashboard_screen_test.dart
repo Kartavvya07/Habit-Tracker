@@ -10,7 +10,6 @@ import 'package:habit_tracker/features/dashboard/presentation/widgets/habit_card
 import 'package:habit_tracker/features/habits/domain/entities/habit.dart';
 import 'package:habit_tracker/features/habits/presentation/providers/habit_providers.dart';
 import 'package:habit_tracker/features/habits/domain/usecases/archive_habit_use_case.dart';
-import 'package:habit_tracker/features/habits/domain/usecases/restore_habit_use_case.dart';
 import 'package:habit_tracker/features/habits/presentation/providers/use_case_providers.dart';
 import 'package:habit_tracker/features/settings/presentation/providers/vacation_mode_provider.dart';
 
@@ -21,14 +20,6 @@ class FakeArchiveHabitUseCase extends Fake implements ArchiveHabitUseCase {
   @override
   Future<void> execute(String id) async {
     archivedIds.add(id);
-  }
-}
-
-class FakeRestoreHabitUseCase extends Fake implements RestoreHabitUseCase {
-  final List<String> restoredIds = [];
-  @override
-  Future<void> execute(String id) async {
-    restoredIds.add(id);
   }
 }
 
@@ -237,10 +228,9 @@ void main() {
       expect(find.byType(Dismissible), findsOneWidget);
     });
 
-    testWidgets('swiping left archives habit and pressing Undo calls RestoreHabitUseCase',
+    testWidgets('swiping left archives habit and displays simple floating SnackBar without Undo action',
         (tester) async {
       final fakeArchiveUseCase = FakeArchiveHabitUseCase();
-      final fakeRestoreUseCase = FakeRestoreHabitUseCase();
 
       await tester.pumpWidget(
         buildTestableDashboard(
@@ -249,7 +239,6 @@ void main() {
               DashboardLoaded([sampleHabit1]),
             ),
             archiveHabitUseCaseProvider.overrideWithValue(fakeArchiveUseCase),
-            restoreHabitUseCaseProvider.overrideWithValue(fakeRestoreUseCase),
           ],
         ),
       );
@@ -261,18 +250,14 @@ void main() {
       // Verify ArchiveHabitUseCase was called
       expect(fakeArchiveUseCase.archivedIds, contains('habit-1'));
 
-      // Verify SnackBar and Undo action
+      // Verify SnackBar appears with message and no action button
       expect(find.byType(SnackBar), findsOneWidget);
-      expect(find.text('Habit One (Newer) archived'), findsOneWidget);
-      expect(find.text('Undo'), findsOneWidget);
+      expect(find.text('✓ Habit moved to Archived'), findsOneWidget);
+      expect(find.text('Undo'), findsNothing);
 
-      // Tap Undo action
-      await tester.tap(find.text('Undo'));
-      await tester.pumpAndSettle();
-
-      // Verify RestoreHabitUseCase was called
-      expect(fakeRestoreUseCase.restoredIds, contains('habit-1'));
-      expect(find.text('Habit One (Newer) restored to dashboard.'), findsOneWidget);
+      final snackBar = tester.widget<SnackBar>(find.byType(SnackBar));
+      expect(snackBar.action, isNull);
+      expect(snackBar.behavior, equals(SnackBarBehavior.floating));
     });
   });
 }
