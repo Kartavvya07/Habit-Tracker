@@ -9,9 +9,28 @@ import 'package:habit_tracker/features/dashboard/presentation/screens/dashboard_
 import 'package:habit_tracker/features/dashboard/presentation/widgets/habit_card.dart';
 import 'package:habit_tracker/features/habits/domain/entities/habit.dart';
 import 'package:habit_tracker/features/habits/presentation/providers/habit_providers.dart';
+import 'package:habit_tracker/features/habits/domain/usecases/archive_habit_use_case.dart';
+import 'package:habit_tracker/features/habits/domain/usecases/restore_habit_use_case.dart';
+import 'package:habit_tracker/features/habits/presentation/providers/use_case_providers.dart';
 import 'package:habit_tracker/features/settings/presentation/providers/vacation_mode_provider.dart';
 
 import '../../../settings/presentation/providers/vacation_mode_provider_test.dart';
+
+class FakeArchiveHabitUseCase extends Fake implements ArchiveHabitUseCase {
+  final List<String> archivedIds = [];
+  @override
+  Future<void> execute(String id) async {
+    archivedIds.add(id);
+  }
+}
+
+class FakeRestoreHabitUseCase extends Fake implements RestoreHabitUseCase {
+  final List<String> restoredIds = [];
+  @override
+  Future<void> execute(String id) async {
+    restoredIds.add(id);
+  }
+}
 
 void main() {
   final now = DateTime(2026, 7, 25);
@@ -216,6 +235,44 @@ void main() {
       );
 
       expect(find.byType(Dismissible), findsOneWidget);
+    });
+
+    testWidgets('swiping left archives habit and pressing Undo calls RestoreHabitUseCase',
+        (tester) async {
+      final fakeArchiveUseCase = FakeArchiveHabitUseCase();
+      final fakeRestoreUseCase = FakeRestoreHabitUseCase();
+
+      await tester.pumpWidget(
+        buildTestableDashboard(
+          overrides: [
+            dashboardProvider.overrideWithValue(
+              DashboardLoaded([sampleHabit1]),
+            ),
+            archiveHabitUseCaseProvider.overrideWithValue(fakeArchiveUseCase),
+            restoreHabitUseCaseProvider.overrideWithValue(fakeRestoreUseCase),
+          ],
+        ),
+      );
+
+      // Swipe left on Dismissible
+      await tester.drag(find.byType(Dismissible), const Offset(-500, 0));
+      await tester.pumpAndSettle();
+
+      // Verify ArchiveHabitUseCase was called
+      expect(fakeArchiveUseCase.archivedIds, contains('habit-1'));
+
+      // Verify SnackBar and Undo action
+      expect(find.byType(SnackBar), findsOneWidget);
+      expect(find.text('Habit One (Newer) archived'), findsOneWidget);
+      expect(find.text('Undo'), findsOneWidget);
+
+      // Tap Undo action
+      await tester.tap(find.text('Undo'));
+      await tester.pumpAndSettle();
+
+      // Verify RestoreHabitUseCase was called
+      expect(fakeRestoreUseCase.restoredIds, contains('habit-1'));
+      expect(find.text('Habit One (Newer) restored to dashboard.'), findsOneWidget);
     });
   });
 }

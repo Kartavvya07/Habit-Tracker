@@ -245,25 +245,47 @@ class _DashboardLoadedView extends ConsumerWidget {
             if (direction == DismissDirection.startToEnd) {
               context.push('/edit-habit', extra: habit);
               return false;
-            } else if (direction == DismissDirection.endToStart) {
+            }
+            return direction == DismissDirection.endToStart;
+          },
+          onDismissed: (direction) async {
+            if (direction == DismissDirection.endToStart) {
+              final messenger = ScaffoldMessenger.of(context);
               final archiveUseCase = ref.read(archiveHabitUseCaseProvider);
               await archiveUseCase.execute(habit.id);
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('${habit.title} archived'),
-                    action: SnackBarAction(
-                      label: 'Undo',
-                      onPressed: () {
-                        ref.read(restoreHabitUseCaseProvider).execute(habit.id);
-                      },
-                    ),
+
+              messenger.clearSnackBars();
+              messenger.showSnackBar(
+                SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                );
-              }
-              return true;
+                  content: Text('${habit.title} archived'),
+                  action: SnackBarAction(
+                    label: 'Undo',
+                    textColor: theme.colorScheme.inversePrimary,
+                    onPressed: () async {
+                      messenger.clearSnackBars();
+                      await ref
+                          .read(restoreHabitUseCaseProvider)
+                          .execute(habit.id);
+                      messenger.showSnackBar(
+                        SnackBar(
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          content:
+                              Text('${habit.title} restored to dashboard.'),
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              );
             }
-            return false;
           },
           child: HabitCard(
             key: ValueKey(habit.id),
