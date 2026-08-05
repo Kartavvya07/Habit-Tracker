@@ -17,22 +17,22 @@ class HabitLogsDao extends DatabaseAccessor<AppDatabase> with _$HabitLogsDaoMixi
       });
 
   Future<HabitLogTableData?> getLogById(String id) =>
-      (select(habitLogs)..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
+      (select(habitLogs)..where((_) => habitLogs.id.equals(id))).getSingleOrNull();
 
   Future<List<HabitLogTableData>> getLogsForHabit(String habitId) =>
-      (select(habitLogs)..where((tbl) => tbl.habitId.equals(habitId))).get();
+      (select(habitLogs)..where((_) => habitLogs.habitId.equals(habitId))).get();
 
   Stream<List<HabitLogTableData>> watchLogsForHabit(String habitId) =>
-      (select(habitLogs)..where((tbl) => tbl.habitId.equals(habitId))).watch();
+      (select(habitLogs)..where((_) => habitLogs.habitId.equals(habitId))).watch();
 
   Future<List<HabitLogTableData>> getLogsForDate(DateTime startOfDay, DateTime endOfDay) =>
       (select(habitLogs)
-        ..where((tbl) => tbl.targetDate.isBetweenValues(startOfDay, endOfDay)))
+        ..where((_) => habitLogs.targetDate.isBetweenValues(startOfDay, endOfDay)))
       .get();
 
   Stream<List<HabitLogTableData>> watchLogsForDate(DateTime startOfDay, DateTime endOfDay) =>
       (select(habitLogs)
-        ..where((tbl) => tbl.targetDate.isBetweenValues(startOfDay, endOfDay)))
+        ..where((_) => habitLogs.targetDate.isBetweenValues(startOfDay, endOfDay)))
       .watch();
 
   Future<List<HabitLogTableData>> getLogsForDateRange(
@@ -41,9 +41,9 @@ class HabitLogsDao extends DatabaseAccessor<AppDatabase> with _$HabitLogsDaoMixi
     List<String>? habitIds,
   }) {
     final query = select(habitLogs)
-      ..where((tbl) => tbl.targetDate.isBetweenValues(startOfRange, endOfRange));
+      ..where((_) => habitLogs.targetDate.isBetweenValues(startOfRange, endOfRange));
     if (habitIds != null && habitIds.isNotEmpty) {
-      query.where((tbl) => tbl.habitId.isIn(habitIds));
+      query.where((_) => habitLogs.habitId.isIn(habitIds));
     }
     return query.get();
   }
@@ -54,16 +54,16 @@ class HabitLogsDao extends DatabaseAccessor<AppDatabase> with _$HabitLogsDaoMixi
     List<String>? habitIds,
   }) {
     final query = select(habitLogs)
-      ..where((tbl) => tbl.targetDate.isBetweenValues(startOfRange, endOfRange));
+      ..where((_) => habitLogs.targetDate.isBetweenValues(startOfRange, endOfRange));
     if (habitIds != null && habitIds.isNotEmpty) {
-      query.where((tbl) => tbl.habitId.isIn(habitIds));
+      query.where((_) => habitLogs.habitId.isIn(habitIds));
     }
     return query.watch();
   }
 
   Future<List<HabitLogTableData>> getLogsForHabits(List<String> habitIds) {
     if (habitIds.isEmpty) return Future.value([]);
-    return (select(habitLogs)..where((tbl) => tbl.habitId.isIn(habitIds))).get();
+    return (select(habitLogs)..where((_) => habitLogs.habitId.isIn(habitIds))).get();
   }
 
   Future<List<HabitLogTableData>> getLogsForHabitAndDateRange(
@@ -73,9 +73,9 @@ class HabitLogsDao extends DatabaseAccessor<AppDatabase> with _$HabitLogsDaoMixi
   ) =>
       (select(habitLogs)
         ..where(
-          (tbl) =>
-              tbl.habitId.equals(habitId) &
-              tbl.targetDate.isBetweenValues(startOfRange, endOfRange),
+          (_) =>
+              habitLogs.habitId.equals(habitId) &
+              habitLogs.targetDate.isBetweenValues(startOfRange, endOfRange),
         ))
       .get();
 
@@ -86,13 +86,12 @@ class HabitLogsDao extends DatabaseAccessor<AppDatabase> with _$HabitLogsDaoMixi
   ) =>
       (select(habitLogs)
         ..where(
-          (tbl) =>
-              tbl.habitId.equals(habitId) &
-              tbl.targetDate.isBetweenValues(startOfRange, endOfRange),
+          (_) =>
+              habitLogs.habitId.equals(habitId) &
+              habitLogs.targetDate.isBetweenValues(startOfRange, endOfRange),
         ))
       .watch();
 
   Future<int> deleteLog(String id) =>
-      (delete(habitLogs)..where((tbl) => tbl.id.equals(id))).go();
+      (delete(habitLogs)..where((_) => habitLogs.id.equals(id))).go();
 }
-
