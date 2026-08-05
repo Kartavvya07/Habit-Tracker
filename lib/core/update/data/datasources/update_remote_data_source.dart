@@ -29,8 +29,9 @@ class HttpUpdateRemoteDataSource implements UpdateRemoteDataSource {
 
   @override
   Future<UpdateManifest> fetchManifest(UpdateChannel channel) async {
+    final manifestFileName = channel == UpdateChannel.development ? 'latest-dev.json' : '${channel.id}.json';
     final urlString = baseManifestUrl ??
-        'https://raw.githubusercontent.com/kartavvya07/Habit-Tracker/main/updates/${channel.id}.json';
+        'https://raw.githubusercontent.com/kartavvya07/Habit-Tracker/main/updates/$manifestFileName';
     final uri = Uri.parse(urlString);
 
     try {

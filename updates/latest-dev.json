@@ -1,0 +1,14 @@
+{
+  "channel": "development",
+  "latestBuild": 179,
+  "version": "0.4.0-dev.179",
+  "apkUrl": "https://github.com/kartavvya07/Habit-Tracker/releases/download/dev-build-179/app-release.apk",
+  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "releaseNotes": [
+    "Development build update system integrated",
+    "Timer formatting fixes",
+    "Archive improvements"
+  ],
+  "publishedAt": "2026-08-05T16:00:00Z",
+  "mandatory": false
+}
