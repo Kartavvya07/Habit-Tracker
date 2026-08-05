@@ -52,6 +52,11 @@ class DashboardScreen extends ConsumerWidget {
               },
             ),
           ),
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            tooltip: 'Settings',
+            onPressed: () => context.push('/settings'),
+          ),
         ],
       ),
       body: SafeArea(

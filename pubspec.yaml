@@ -30,6 +30,10 @@ dependencies:
   json_annotation: ^4.8.1
   intl: ^0.20.2
 
+  # Networking & Cryptography
+  http: ^1.2.0
+  crypto: ^3.0.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

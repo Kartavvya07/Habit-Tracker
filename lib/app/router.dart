@@ -4,6 +4,7 @@ import '../features/habits/domain/entities/habit.dart';
 import '../features/habits/presentation/screens/archived_habits_screen.dart';
 import '../features/habits/presentation/screens/create_habit_screen.dart';
 import '../features/habits/presentation/screens/edit_habit_screen.dart';
+import '../features/settings/presentation/screens/settings_screen.dart';
 
 final goRouter = GoRouter(
   initialLocation: '/',
@@ -26,6 +27,10 @@ final goRouter = GoRouter(
     GoRoute(
       path: '/archived-habits',
       builder: (context, state) => const ArchivedHabitsScreen(),
+    ),
+    GoRoute(
+      path: '/settings',
+      builder: (context, state) => const SettingsScreen(),
     ),
   ],
 );

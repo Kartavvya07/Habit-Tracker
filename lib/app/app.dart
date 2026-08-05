@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/update/presentation/update_listener.dart';
 import 'router.dart';
 import 'theme.dart';
 
@@ -12,6 +13,11 @@ class App extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       routerConfig: goRouter,
+      builder: (context, child) {
+        return UpdateListener(
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
     );
   }
 }
