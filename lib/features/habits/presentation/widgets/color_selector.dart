@@ -38,8 +38,8 @@ class ColorSelector extends StatelessWidget {
                 borderRadius: BorderRadius.circular(24),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  width: 44,
-                  height: 44,
+                  width: 48,
+                  height: 48,
                   decoration: BoxDecoration(
                     color: color.color,
                     shape: BoxShape.circle,
