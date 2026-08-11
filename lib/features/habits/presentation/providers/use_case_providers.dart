@@ -8,6 +8,7 @@ import '../../domain/usecases/create_habit_use_case.dart';
 import '../../domain/usecases/delete_habit_use_case.dart';
 import '../../domain/usecases/get_daily_completion_use_case.dart';
 import '../../domain/usecases/log_habit_progress_use_case.dart';
+import '../../domain/usecases/reconcile_reminders_use_case.dart';
 import '../../domain/usecases/restore_habit_use_case.dart';
 import '../../domain/usecases/schedule_habit_reminders_use_case.dart';
 import '../../domain/usecases/update_habit_use_case.dart';
@@ -71,4 +72,11 @@ final getDailyCompletionUseCaseProvider =
     Provider<GetDailyCompletionUseCase>((ref) {
   final repository = ref.watch(habitRepositoryProvider);
   return GetDailyCompletionUseCase(repository);
+});
+
+final reconcileRemindersUseCaseProvider =
+    Provider<ReconcileRemindersUseCase>((ref) {
+  final repository = ref.watch(habitRepositoryProvider);
+  final scheduleReminders = ref.watch(scheduleHabitRemindersUseCaseProvider);
+  return ReconcileRemindersUseCase(repository, scheduleReminders);
 });

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:habit_tracker/features/habits/domain/entities/habit.dart';
 import 'package:habit_tracker/features/habits/domain/entities/habit_frequency.dart';
+import 'package:habit_tracker/features/habits/domain/entities/habit_log.dart';
 import 'package:habit_tracker/features/habits/domain/repositories/habit_repository.dart';
 import 'package:habit_tracker/features/habits/domain/usecases/archive_habit_use_case.dart';
 import 'package:habit_tracker/features/habits/domain/usecases/cancel_habit_reminders_use_case.dart';
@@ -14,6 +15,26 @@ import '../../../../core/notifications/notification_service_test.dart';
 
 class MockHabitRepository implements HabitRepository {
   final Map<String, Habit> habits = {};
+  final List<HabitLog> loggedEntries = [];
+
+  @override
+  Future<void> saveHabitLog(HabitLog log) async {
+    loggedEntries.add(log);
+  }
+
+  @override
+  Future<List<Habit>> getActiveHabits() async {
+    return habits.values.where((h) => !h.isArchived).toList();
+  }
+
+  @override
+  Future<List<HabitLog>> getLogsForHabitAndDateRange(
+    String habitId,
+    DateTime startDate,
+    DateTime endDate,
+  ) async {
+    return loggedEntries.where((l) => l.habitId == habitId).toList();
+  }
 
   @override
   Future<void> createHabit(Habit habit) async {

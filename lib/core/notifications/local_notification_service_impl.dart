@@ -1,6 +1,7 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'notification_action_handler.dart';
 import 'notification_service.dart';
 
 /// Implementation of [NotificationService] using [FlutterLocalNotificationsPlugin].
@@ -70,12 +71,12 @@ class LocalNotificationServiceImpl implements NotificationService {
 
   @pragma('vm:entry-point')
   static void _onNotificationResponse(NotificationResponse response) {
-    // Handled in app context or background payload listener
+    NotificationActionHandler.handleNotificationResponse(response);
   }
 
   @pragma('vm:entry-point')
   static void _onBackgroundNotificationResponse(NotificationResponse response) {
-    // Background action payload handler
+    NotificationActionHandler.handleNotificationResponse(response);
   }
 
   @override
@@ -135,6 +136,20 @@ class LocalNotificationServiceImpl implements NotificationService {
         importance: Importance.high,
         priority: Priority.high,
         icon: '@mipmap/ic_launcher',
+        actions: <AndroidNotificationAction>[
+          AndroidNotificationAction(
+            NotificationActionHandler.markCompleteActionId,
+            'Mark Complete',
+            showsUserInterface: false,
+            cancelNotification: true,
+          ),
+          AndroidNotificationAction(
+            NotificationActionHandler.snooze15mActionId,
+            'Snooze 15m',
+            showsUserInterface: false,
+            cancelNotification: true,
+          ),
+        ],
       );
 
       const iosDetails = DarwinNotificationDetails(
