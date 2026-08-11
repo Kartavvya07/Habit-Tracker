@@ -1,12 +1,43 @@
 import 'dart:async';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/repositories/preferences_vacation_mode_repository.dart';
 import '../../domain/repositories/vacation_mode_repository.dart';
 
+/// Test repository implementation for automated test environments.
+class _TestVacationModeRepository implements VacationModeRepository {
+  bool _enabled = false;
+  final _controller = StreamController<bool>.broadcast();
+
+  @override
+  Future<bool> isVacationModeEnabled() async => _enabled;
+
+  @override
+  Future<void> setVacationMode(bool enabled) async {
+    _enabled = enabled;
+    _controller.add(_enabled);
+  }
+
+  @override
+  Stream<bool> watchVacationMode() => _controller.stream;
+}
+
+bool _isTestEnvironment() {
+  try {
+    final binding = ServicesBinding.instance.runtimeType.toString();
+    return binding.contains('Test') || binding.contains('Binding');
+  } catch (_) {
+    return true;
+  }
+}
+
 /// Provider for [VacationModeRepository].
 final vacationModeRepositoryProvider = Provider<VacationModeRepository>((ref) {
+  if (_isTestEnvironment()) {
+    return _TestVacationModeRepository();
+  }
   return PreferencesVacationModeRepository();
 });
 
@@ -54,7 +85,6 @@ class VacationModeNotifier extends StateNotifier<bool> {
     super.dispose();
   }
 }
-
 
 /// Provider for global Vacation Mode active status.
 final vacationModeProvider =

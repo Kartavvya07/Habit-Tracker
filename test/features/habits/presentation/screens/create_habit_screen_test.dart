@@ -44,7 +44,13 @@ class FakeHabitRepository implements HabitRepository {
   }
 
   @override
-  Future<Habit?> getHabit(String id) async => null;
+  Future<Habit?> getHabit(String id) async {
+    try {
+      return savedHabits.firstWhere((h) => h.id == id);
+    } catch (_) {
+      return null;
+    }
+  }
 
   @override
   Future<List<Habit>> getHabits() async => savedHabits;
