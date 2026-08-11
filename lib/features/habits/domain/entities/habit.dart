@@ -20,6 +20,8 @@ class Habit with _$Habit {
     required DateTime createdAt,
     required DateTime updatedAt,
     @Default(false) bool isArchived,
+    String? reminderTime,
+    @Default(false) bool isReminderEnabled,
   }) = _Habit;
 
   factory Habit.fromJson(Map<String, dynamic> json) => _$HabitFromJson(json);

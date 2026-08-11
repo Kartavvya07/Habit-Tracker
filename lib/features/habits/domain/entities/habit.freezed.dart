@@ -31,6 +31,8 @@ mixin _$Habit {
   DateTime get createdAt => throw _privateConstructorUsedError;
   DateTime get updatedAt => throw _privateConstructorUsedError;
   bool get isArchived => throw _privateConstructorUsedError;
+  String? get reminderTime => throw _privateConstructorUsedError;
+  bool get isReminderEnabled => throw _privateConstructorUsedError;
 
   /// Serializes this Habit to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -57,7 +59,9 @@ abstract class $HabitCopyWith<$Res> {
       int targetCount,
       DateTime createdAt,
       DateTime updatedAt,
-      bool isArchived});
+      bool isArchived,
+      String? reminderTime,
+      bool isReminderEnabled});
 }
 
 /// @nodoc
@@ -86,6 +90,8 @@ class _$HabitCopyWithImpl<$Res, $Val extends Habit>
     Object? createdAt = null,
     Object? updatedAt = null,
     Object? isArchived = null,
+    Object? reminderTime = freezed,
+    Object? isReminderEnabled = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -132,6 +138,14 @@ class _$HabitCopyWithImpl<$Res, $Val extends Habit>
           ? _value.isArchived
           : isArchived // ignore: cast_nullable_to_non_nullable
               as bool,
+      reminderTime: freezed == reminderTime
+          ? _value.reminderTime
+          : reminderTime // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isReminderEnabled: null == isReminderEnabled
+          ? _value.isReminderEnabled
+          : isReminderEnabled // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -154,7 +168,9 @@ abstract class _$$HabitImplCopyWith<$Res> implements $HabitCopyWith<$Res> {
       int targetCount,
       DateTime createdAt,
       DateTime updatedAt,
-      bool isArchived});
+      bool isArchived,
+      String? reminderTime,
+      bool isReminderEnabled});
 }
 
 /// @nodoc
@@ -181,6 +197,8 @@ class __$$HabitImplCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? updatedAt = null,
     Object? isArchived = null,
+    Object? reminderTime = freezed,
+    Object? isReminderEnabled = null,
   }) {
     return _then(_$HabitImpl(
       id: null == id
@@ -227,6 +245,14 @@ class __$$HabitImplCopyWithImpl<$Res>
           ? _value.isArchived
           : isArchived // ignore: cast_nullable_to_non_nullable
               as bool,
+      reminderTime: freezed == reminderTime
+          ? _value.reminderTime
+          : reminderTime // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isReminderEnabled: null == isReminderEnabled
+          ? _value.isReminderEnabled
+          : isReminderEnabled // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -245,7 +271,9 @@ class _$HabitImpl implements _Habit {
       this.targetCount = 1,
       required this.createdAt,
       required this.updatedAt,
-      this.isArchived = false});
+      this.isArchived = false,
+      this.reminderTime,
+      this.isReminderEnabled = false});
 
   factory _$HabitImpl.fromJson(Map<String, dynamic> json) =>
       _$$HabitImplFromJson(json);
@@ -279,10 +307,15 @@ class _$HabitImpl implements _Habit {
   @override
   @JsonKey()
   final bool isArchived;
+  @override
+  final String? reminderTime;
+  @override
+  @JsonKey()
+  final bool isReminderEnabled;
 
   @override
   String toString() {
-    return 'Habit(id: $id, title: $title, description: $description, icon: $icon, color: $color, frequency: $frequency, habitType: $habitType, targetCount: $targetCount, createdAt: $createdAt, updatedAt: $updatedAt, isArchived: $isArchived)';
+    return 'Habit(id: $id, title: $title, description: $description, icon: $icon, color: $color, frequency: $frequency, habitType: $habitType, targetCount: $targetCount, createdAt: $createdAt, updatedAt: $updatedAt, isArchived: $isArchived, reminderTime: $reminderTime, isReminderEnabled: $isReminderEnabled)';
   }
 
   @override
@@ -307,7 +340,11 @@ class _$HabitImpl implements _Habit {
             (identical(other.updatedAt, updatedAt) ||
                 other.updatedAt == updatedAt) &&
             (identical(other.isArchived, isArchived) ||
-                other.isArchived == isArchived));
+                other.isArchived == isArchived) &&
+            (identical(other.reminderTime, reminderTime) ||
+                other.reminderTime == reminderTime) &&
+            (identical(other.isReminderEnabled, isReminderEnabled) ||
+                other.isReminderEnabled == isReminderEnabled));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -324,7 +361,9 @@ class _$HabitImpl implements _Habit {
       targetCount,
       createdAt,
       updatedAt,
-      isArchived);
+      isArchived,
+      reminderTime,
+      isReminderEnabled);
 
   /// Create a copy of Habit
   /// with the given fields replaced by the non-null parameter values.
@@ -354,7 +393,9 @@ abstract class _Habit implements Habit {
       final int targetCount,
       required final DateTime createdAt,
       required final DateTime updatedAt,
-      final bool isArchived}) = _$HabitImpl;
+      final bool isArchived,
+      final String? reminderTime,
+      final bool isReminderEnabled}) = _$HabitImpl;
 
   factory _Habit.fromJson(Map<String, dynamic> json) = _$HabitImpl.fromJson;
 
@@ -380,6 +421,10 @@ abstract class _Habit implements Habit {
   DateTime get updatedAt;
   @override
   bool get isArchived;
+  @override
+  String? get reminderTime;
+  @override
+  bool get isReminderEnabled;
 
   /// Create a copy of Habit
   /// with the given fields replaced by the non-null parameter values.

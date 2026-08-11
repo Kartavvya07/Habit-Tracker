@@ -4,14 +4,14 @@ import 'package:habit_tracker/core/database/app_database.dart';
 
 void main() {
   group('Database Schema & Migration Tests', () {
-    test('schema version is 2', () {
+    test('schema version is 3', () {
       final db = AppDatabase(NativeDatabase.memory());
-      expect(db.schemaVersion, equals(2));
+      expect(db.schemaVersion, equals(3));
       db.close();
     });
 
-    test('Migration from schema version 1 to 2 creates habit_logs table', () async {
-      // Step 1: Initialize database schema at version 1 manually using SQLite statements
+    test('Migration to schema version 3 creates habit_logs table and reminder columns', () async {
+      // Step 1: Initialize database schema
       final executor = NativeDatabase.memory();
       final rawDb = AppDatabase(executor);
 
@@ -27,6 +27,17 @@ void main() {
 
       expect(tableNames, contains('habits'));
       expect(tableNames, contains('habit_logs'));
+
+      // Verify reminder columns exist in habits table
+      final pragmaColumns = await rawDb.customSelect(
+        "PRAGMA table_info('habits');",
+      ).get();
+
+      final columnNames =
+          pragmaColumns.map((row) => row.read<String>('name')).toList();
+
+      expect(columnNames, contains('reminder_time'));
+      expect(columnNames, contains('is_reminder_enabled'));
 
       await rawDb.close();
     });

@@ -22,6 +22,8 @@ _$HabitImpl _$$HabitImplFromJson(Map<String, dynamic> json) => _$HabitImpl(
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
       isArchived: json['isArchived'] as bool? ?? false,
+      reminderTime: json['reminderTime'] as String?,
+      isReminderEnabled: json['isReminderEnabled'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$$HabitImplToJson(_$HabitImpl instance) =>
@@ -37,6 +39,8 @@ Map<String, dynamic> _$$HabitImplToJson(_$HabitImpl instance) =>
       'createdAt': instance.createdAt.toIso8601String(),
       'updatedAt': instance.updatedAt.toIso8601String(),
       'isArchived': instance.isArchived,
+      'reminderTime': instance.reminderTime,
+      'isReminderEnabled': instance.isReminderEnabled,
     };
 
 const _$HabitColorEnumMap = {

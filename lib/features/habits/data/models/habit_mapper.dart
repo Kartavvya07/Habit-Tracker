@@ -28,6 +28,8 @@ class HabitMapper {
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
       isArchived: data.isArchived,
+      reminderTime: data.reminderTime,
+      isReminderEnabled: data.isReminderEnabled,
     );
   }
 
@@ -44,6 +46,8 @@ class HabitMapper {
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
       isArchived: Value(entity.isArchived),
+      reminderTime: Value(entity.reminderTime),
+      isReminderEnabled: Value(entity.isReminderEnabled),
     );
   }
 }

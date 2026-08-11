@@ -11,7 +11,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration {
@@ -22,6 +22,10 @@ class AppDatabase extends _$AppDatabase {
       onUpgrade: (migrator, from, to) async {
         if (from < 2) {
           await migrator.createTable(habitLogs);
+        }
+        if (from < 3) {
+          await migrator.addColumn(habits, habits.reminderTime);
+          await migrator.addColumn(habits, habits.isReminderEnabled);
         }
       },
     );

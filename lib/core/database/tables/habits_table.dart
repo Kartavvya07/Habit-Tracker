@@ -13,6 +13,9 @@ class Habits extends Table {
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
   BoolColumn get isArchived => boolean().withDefault(const Constant(false))();
+  TextColumn get reminderTime => text().nullable()();
+  BoolColumn get isReminderEnabled =>
+      boolean().withDefault(const Constant(false))();
 
   @override
   Set<Column> get primaryKey => {id};
