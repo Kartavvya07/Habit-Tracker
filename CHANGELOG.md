@@ -2,6 +2,28 @@
 
 All notable changes to the Habit Tracker project will be documented in this file.
 
+## v0.5.0-beta
+
+### Features
+- **Local Notifications & Reminders Engine**: Integrated `flutter_local_notifications: ^17.1.2` and `timezone: ^0.9.3` for high-precision local exact alarms on Android (`habit_reminders` M3 notification channel).
+- **Drift Database Schema v3 Migration**: Extended `habits` table with `reminder_time` (`TEXT`) and `is_reminder_enabled` (`BOOLEAN`) columns with automatic schema migration.
+- **Deterministic Notification Scheduling Engine**: `ScheduleHabitRemindersUseCase` with deterministic notification ID hashing (`getNotificationId`), exact `TZDateTime` calculation (`computeNextReminderDateTime`), weekly/monthly day-of-week/day-of-month frequency math, and Vacation Mode suppression.
+- **Habit Lifecycle Notification Triggers**: Integrated notification scheduling & cancellation into habit CRUD lifecycle (`CreateHabitUseCase`, `UpdateHabitUseCase`, `ArchiveHabitUseCase`, `RestoreHabitUseCase`, `DeleteHabitUseCase`).
+- **Interactive Notification Action Buttons**:
+  - **Mark Complete**: Top-level background callback (`NotificationActionHandler`) logging habit progress for today directly to Drift SQLite when tapped from notification drawer.
+  - **Snooze 15m**: Schedules a 15-minute one-off notification reminder.
+- **Reboot & Timezone Recovery Engine**: `ReconcileRemindersUseCase` automatically restoring all active exact habit alarms on app launch and system startup (`RECEIVE_BOOT_COMPLETED`).
+- **Reminder Time Picker Widget**: M3 `ReminderTimePicker` form widget integrated into `CreateHabitScreen` and `EditHabitScreen` with toggle switch and M3 `showTimePicker` dialog.
+- **OEM Battery Optimization Onboarding UX**: Dedicated M3 `BatteryOptimizationDialog` in `SettingsScreen` providing step-by-step guidance for Xiaomi MIUI, Samsung OneUI, and Huawei EMUI background battery restrictions.
+
+### Quality & Engineering
+- **Desugaring Enabled**: Enabled Android Core Library Desugaring (`desugar_jdk_libs:2.1.4`) for Java 8+ time API compatibility.
+- **Static Analysis**: 0 errors / 0 warnings (`flutter analyze`).
+- **Test Suite Coverage**: 100% test pass rate across 220 unit, widget, and mock integration tests (`flutter test`).
+- **Android Compilation**: Successfully compiled debug APK (`app-debug.apk`).
+
+---
+
 ## v0.4.0-alpha
 
 ### Features
