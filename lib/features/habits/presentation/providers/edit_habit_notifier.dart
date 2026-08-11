@@ -53,6 +53,14 @@ class EditHabitNotifier
     );
   }
 
+  void updateReminderEnabled(bool enabled) {
+    state = state.copyWith(isReminderEnabled: enabled);
+  }
+
+  void updateReminderTime(String reminderTime) {
+    state = state.copyWith(reminderTime: () => reminderTime);
+  }
+
   bool validate() {
     String? titleErr;
     String? targetCountErr;
@@ -99,6 +107,8 @@ class EditHabitNotifier
         createdAt: state.createdAt,
         updatedAt: now,
         isArchived: state.isArchived,
+        isReminderEnabled: state.isReminderEnabled,
+        reminderTime: state.reminderTime,
       );
 
       final updateHabitUseCase = ref.read(updateHabitUseCaseProvider);

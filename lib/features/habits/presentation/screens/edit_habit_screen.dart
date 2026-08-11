@@ -10,6 +10,7 @@ import '../providers/edit_habit_notifier.dart';
 import '../widgets/color_selector.dart';
 import '../widgets/duration_picker.dart';
 import '../widgets/icon_selector.dart';
+import '../widgets/reminder_time_picker.dart';
 
 class EditHabitScreen extends ConsumerStatefulWidget {
   final Habit habit;
@@ -198,13 +199,18 @@ class _EditHabitScreenState extends ConsumerState<EditHabitScreen> {
                   const SizedBox(height: 8),
                   Text(
                     state.targetCountError!,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.error,
-                    ),
+                    style: TextStyle(color: theme.colorScheme.error),
                   ),
                 ],
                 const SizedBox(height: 20),
               ],
+              ReminderTimePicker(
+                isEnabled: state.isReminderEnabled,
+                reminderTime: state.reminderTime,
+                onEnabledChanged: notifier.updateReminderEnabled,
+                onTimeChanged: notifier.updateReminderTime,
+              ),
+              const SizedBox(height: 20),
               ColorSelector(
                 selectedColor: state.color,
                 onColorSelected: notifier.updateColor,

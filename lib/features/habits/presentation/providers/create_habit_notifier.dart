@@ -51,6 +51,14 @@ class CreateHabitNotifier extends AutoDisposeNotifier<CreateHabitState> {
     );
   }
 
+  void updateReminderEnabled(bool enabled) {
+    state = state.copyWith(isReminderEnabled: enabled);
+  }
+
+  void updateReminderTime(String reminderTime) {
+    state = state.copyWith(reminderTime: () => reminderTime);
+  }
+
   bool validate() {
     String? titleErr;
     String? targetCountErr;
@@ -97,6 +105,8 @@ class CreateHabitNotifier extends AutoDisposeNotifier<CreateHabitState> {
         createdAt: now,
         updatedAt: now,
         isArchived: false,
+        isReminderEnabled: state.isReminderEnabled,
+        reminderTime: state.reminderTime,
       );
 
       final createHabitUseCase = ref.read(createHabitUseCaseProvider);

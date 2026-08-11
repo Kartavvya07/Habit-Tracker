@@ -15,6 +15,8 @@ class EditHabitState {
   final int targetCount;
   final DateTime createdAt;
   final bool isArchived;
+  final bool isReminderEnabled;
+  final String? reminderTime;
   final String? titleError;
   final String? targetCountError;
   final FormSubmissionStatus status;
@@ -31,6 +33,8 @@ class EditHabitState {
     this.targetCount = 1,
     required this.createdAt,
     this.isArchived = false,
+    this.isReminderEnabled = false,
+    this.reminderTime,
     this.titleError,
     this.targetCountError,
     this.status = FormSubmissionStatus.initial,
@@ -49,6 +53,8 @@ class EditHabitState {
       targetCount: habit.targetCount,
       createdAt: habit.createdAt,
       isArchived: habit.isArchived,
+      isReminderEnabled: habit.isReminderEnabled,
+      reminderTime: habit.reminderTime,
     );
   }
 
@@ -63,6 +69,8 @@ class EditHabitState {
     HabitType? habitType,
     int? targetCount,
     bool? isArchived,
+    bool? isReminderEnabled,
+    String? Function()? reminderTime,
     String? Function()? titleError,
     String? Function()? targetCountError,
     FormSubmissionStatus? status,
@@ -79,6 +87,8 @@ class EditHabitState {
       targetCount: targetCount ?? this.targetCount,
       createdAt: createdAt,
       isArchived: isArchived ?? this.isArchived,
+      isReminderEnabled: isReminderEnabled ?? this.isReminderEnabled,
+      reminderTime: reminderTime != null ? reminderTime() : this.reminderTime,
       titleError: titleError != null ? titleError() : this.titleError,
       targetCountError:
           targetCountError != null ? targetCountError() : this.targetCountError,

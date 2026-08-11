@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/notifications/notification_provider.dart';
 import '../../../../core/update/widgets/settings_update_section.dart';
 import '../providers/vacation_mode_provider.dart';
+import '../widgets/battery_optimization_dialog.dart';
 
-/// App Settings screen incorporating Vacation Mode & Updates management.
+/// App Settings screen incorporating Vacation Mode, Notifications & Updates management.
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
@@ -54,6 +56,68 @@ class SettingsScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: Text(
+                      'Notifications & Reminders',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                  Card(
+                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    child: Column(
+                      children: [
+                        ListTile(
+                          leading: Icon(
+                            Icons.notifications_active_outlined,
+                            color: theme.colorScheme.primary,
+                          ),
+                          title: const Text('Notification Permissions'),
+                          subtitle: const Text('Request system notification permissions'),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: () async {
+                            final notificationService =
+                                ref.read(notificationServiceProvider);
+                            final granted =
+                                await notificationService.requestPermissions();
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    granted
+                                        ? 'Notification permissions granted'
+                                        : 'Notification permissions denied',
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                        const Divider(height: 1),
+                        ListTile(
+                          leading: Icon(
+                            Icons.battery_saver_outlined,
+                            color: theme.colorScheme.primary,
+                          ),
+                          title: const Text('Battery Optimization Guide'),
+                          subtitle: const Text(
+                            'Exempt app from OEM task killers for reliable alarms',
+                          ),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: () {
+                            showDialog<void>(
+                              context: context,
+                              builder: (_) => const BatteryOptimizationDialog(),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
                   const SettingsUpdateSection(),
                   const SizedBox(height: 16),
                   Padding(
@@ -74,7 +138,7 @@ class SettingsScreen extends ConsumerWidget {
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
                       title: const Text('Habit Tracker'),
-                      subtitle: const Text('Version 0.4.0-alpha'),
+                      subtitle: const Text('Version 0.5.0-beta'),
                       trailing: Text(
                         'Clean Architecture',
                         style: theme.textTheme.labelSmall?.copyWith(

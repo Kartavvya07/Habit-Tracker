@@ -17,6 +17,9 @@ class CreateHabitState {
   final FormSubmissionStatus status;
   final String? errorMessage;
 
+  final bool isReminderEnabled;
+  final String? reminderTime;
+
   const CreateHabitState({
     this.title = '',
     this.description = '',
@@ -25,6 +28,8 @@ class CreateHabitState {
     this.frequency = HabitFrequency.daily,
     this.habitType = HabitType.boolean,
     this.targetCount = 1,
+    this.isReminderEnabled = false,
+    this.reminderTime,
     this.titleError,
     this.targetCountError,
     this.status = FormSubmissionStatus.initial,
@@ -41,6 +46,8 @@ class CreateHabitState {
     HabitFrequency? frequency,
     HabitType? habitType,
     int? targetCount,
+    bool? isReminderEnabled,
+    String? Function()? reminderTime,
     String? Function()? titleError,
     String? Function()? targetCountError,
     FormSubmissionStatus? status,
@@ -54,6 +61,8 @@ class CreateHabitState {
       frequency: frequency ?? this.frequency,
       habitType: habitType ?? this.habitType,
       targetCount: targetCount ?? this.targetCount,
+      isReminderEnabled: isReminderEnabled ?? this.isReminderEnabled,
+      reminderTime: reminderTime != null ? reminderTime() : this.reminderTime,
       titleError: titleError != null ? titleError() : this.titleError,
       targetCountError:
           targetCountError != null ? targetCountError() : this.targetCountError,

@@ -9,6 +9,7 @@ import '../providers/create_habit_notifier.dart';
 import '../widgets/color_selector.dart';
 import '../widgets/duration_picker.dart';
 import '../widgets/icon_selector.dart';
+import '../widgets/reminder_time_picker.dart';
 
 class CreateHabitScreen extends ConsumerStatefulWidget {
   const CreateHabitScreen({super.key});
@@ -186,6 +187,13 @@ class _CreateHabitScreenState extends ConsumerState<CreateHabitScreen> {
                 ],
                 const SizedBox(height: 20),
               ],
+              ReminderTimePicker(
+                isEnabled: state.isReminderEnabled,
+                reminderTime: state.reminderTime,
+                onEnabledChanged: notifier.updateReminderEnabled,
+                onTimeChanged: notifier.updateReminderTime,
+              ),
+              const SizedBox(height: 20),
               ColorSelector(
                 selectedColor: state.color,
                 onColorSelected: notifier.updateColor,
