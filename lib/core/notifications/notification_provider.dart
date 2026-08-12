@@ -1,4 +1,4 @@
-import 'package:flutter/services.dart';
+import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'local_notification_service_impl.dart';
 import 'mock_notification_service.dart';
@@ -6,10 +6,9 @@ import 'notification_service.dart';
 
 bool _isTestEnvironment() {
   try {
-    final binding = ServicesBinding.instance.runtimeType.toString();
-    return binding.contains('Test') || binding.contains('Binding');
+    return Platform.environment.containsKey('FLUTTER_TEST');
   } catch (_) {
-    return true;
+    return false;
   }
 }
 
