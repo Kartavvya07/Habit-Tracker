@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import '../../../../core/notifications/notification_service.dart';
 import '../../../settings/domain/repositories/vacation_mode_repository.dart';
 import '../entities/habit.dart';
@@ -56,7 +57,6 @@ class ScheduleHabitRemindersUseCase {
           scheduled = scheduled.add(const Duration(days: 7));
           break;
         case HabitFrequency.monthly:
-          // Add 1 month preserving day
           final nextMonth = DateTime(scheduled.year, scheduled.month + 1, 1);
           final lastDayOfNextMonth =
               DateTime(nextMonth.year, nextMonth.month + 1, 0).day;
@@ -86,6 +86,7 @@ class ScheduleHabitRemindersUseCase {
       final isVacationActive =
           await _vacationModeRepository.isVacationModeEnabled();
       if (isVacationActive) {
+        debugPrint('[ScheduleHabitRemindersUseCase] Vacation Mode active -> cancelling Notification ID: $notificationId');
         await _notificationService.cancelNotification(notificationId);
         return;
       }
@@ -94,9 +95,15 @@ class ScheduleHabitRemindersUseCase {
     final nextTrigger = computeNextReminderDateTime(habit);
 
     if (nextTrigger == null) {
+      debugPrint('[ScheduleHabitRemindersUseCase] Reminder disabled or invalid -> cancelling Notification ID: $notificationId');
       await _notificationService.cancelNotification(notificationId);
       return;
     }
+
+    debugPrint('[ScheduleHabitRemindersUseCase] Habit: "${habit.title}" (ID: ${habit.id})');
+    debugPrint('[ScheduleHabitRemindersUseCase] Reminder selected: ${habit.reminderTime}');
+    debugPrint('[ScheduleHabitRemindersUseCase] Calculated notification time: $nextTrigger');
+    debugPrint('[ScheduleHabitRemindersUseCase] Notification ID: $notificationId');
 
     await _notificationService.scheduleNotification(
       id: notificationId,

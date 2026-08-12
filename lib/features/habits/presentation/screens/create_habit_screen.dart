@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/notifications/notification_provider.dart';
+
 import '../../domain/entities/habit_duration.dart';
 import '../../domain/entities/habit_frequency.dart';
 import '../../domain/entities/habit_type.dart';
@@ -40,8 +42,47 @@ class _CreateHabitScreenState extends ConsumerState<CreateHabitScreen> {
   }
 
   void _onSavePressed() async {
+    final state = ref.read(createHabitProvider);
+    final notificationService = ref.read(notificationServiceProvider);
+
+    if (state.isReminderEnabled) {
+      final hasPerms = await notificationService.hasPermissions();
+      if (!hasPerms) {
+        final granted = await notificationService.requestPermissions();
+        if (!granted && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Notifications are disabled'),
+              action: SnackBarAction(
+                label: 'Enable',
+                onPressed: () async {
+                  await notificationService.requestPermissions();
+                },
+              ),
+            ),
+          );
+        }
+      }
+    }
+
     final success = await ref.read(createHabitProvider.notifier).saveHabit();
     if (success && mounted) {
+      if (state.isReminderEnabled && state.reminderTime != null) {
+        final parts = state.reminderTime!.split(':');
+        String formattedTime = state.reminderTime!;
+        if (parts.length == 2) {
+          final h = int.tryParse(parts[0]) ?? 8;
+          final m = int.tryParse(parts[1]) ?? 0;
+          final tod = TimeOfDay(hour: h, minute: m);
+          formattedTime = tod.format(context);
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Reminder set for $formattedTime'),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
       Navigator.of(context).maybePop();
     }
   }

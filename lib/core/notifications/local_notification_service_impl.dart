@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'notification_action_handler.dart';
@@ -23,6 +25,13 @@ class LocalNotificationServiceImpl implements NotificationService {
 
     try {
       tz.initializeTimeZones();
+      try {
+        final String timeZoneName = await FlutterTimezone.getLocalTimezone();
+        tz.setLocalLocation(tz.getLocation(timeZoneName));
+        debugPrint('[NotificationService] TimeZone initialized: $timeZoneName');
+      } catch (e) {
+        debugPrint('[NotificationService] TimeZone detection warning: $e');
+      }
 
       const androidSettings =
           AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -45,8 +54,8 @@ class LocalNotificationServiceImpl implements NotificationService {
       );
 
       await _createNotificationChannel();
-    } catch (_) {
-      // Safe fallback when running unit/widget tests without native bindings
+    } catch (e) {
+      debugPrint('[NotificationService] Initialization error: $e');
     }
     _isInitialized = true;
   }
@@ -66,7 +75,9 @@ class LocalNotificationServiceImpl implements NotificationService {
           _plugin.resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>();
       await androidImplementation?.createNotificationChannel(androidChannel);
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('[NotificationService] Error creating channel: $e');
+    }
   }
 
   @pragma('vm:entry-point')
@@ -86,6 +97,7 @@ class LocalNotificationServiceImpl implements NotificationService {
           AndroidFlutterLocalNotificationsPlugin>();
       final androidGranted =
           await androidImpl?.requestNotificationsPermission() ?? false;
+      await androidImpl?.requestExactAlarmsPermission();
 
       final iosImpl = _plugin.resolvePlatformSpecificImplementation<
           IOSFlutterLocalNotificationsPlugin>();
@@ -97,7 +109,8 @@ class LocalNotificationServiceImpl implements NotificationService {
           false;
 
       return androidGranted || iosGranted;
-    } catch (_) {
+    } catch (e) {
+      debugPrint('[NotificationService] Error requesting permissions: $e');
       return false;
     }
   }
@@ -109,7 +122,8 @@ class LocalNotificationServiceImpl implements NotificationService {
           AndroidFlutterLocalNotificationsPlugin>();
       final granted = await androidImpl?.areNotificationsEnabled() ?? false;
       return granted;
-    } catch (_) {
+    } catch (e) {
+      debugPrint('[NotificationService] Error checking permissions: $e');
       return false;
     }
   }
@@ -128,6 +142,12 @@ class LocalNotificationServiceImpl implements NotificationService {
 
     try {
       final scheduledTzDate = tz.TZDateTime.from(scheduledDate, tz.local);
+
+      debugPrint('[NotificationService] Scheduling Notification ID: $id');
+      debugPrint('[NotificationService] Title: "$title"');
+      debugPrint('[NotificationService] Local scheduled timestamp: $scheduledDate');
+      debugPrint('[NotificationService] TZ location: ${tz.local.name}');
+      debugPrint('[NotificationService] Computed TZ timestamp: $scheduledTzDate');
 
       const androidDetails = AndroidNotificationDetails(
         channelId,
@@ -163,31 +183,48 @@ class LocalNotificationServiceImpl implements NotificationService {
         iOS: iosDetails,
       );
 
+      final androidImpl = _plugin.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>();
+      final canExact = await androidImpl?.canScheduleExactNotifications() ?? true;
+      final scheduleMode = canExact
+          ? AndroidScheduleMode.exactAllowWhileIdle
+          : AndroidScheduleMode.inexactAllowWhileIdle;
+
       await _plugin.zonedSchedule(
         id,
         title,
         body,
         scheduledTzDate,
         details,
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        androidScheduleMode: scheduleMode,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
         payload: payload,
       );
-    } catch (_) {}
+      debugPrint('[NotificationService] SUCCESS: Scheduled Notification ID $id at $scheduledTzDate');
+    } catch (e, st) {
+      debugPrint('[NotificationService] ERROR scheduling Notification ID $id: $e\n$st');
+      rethrow;
+    }
   }
 
   @override
   Future<void> cancelNotification(int id) async {
     try {
       await _plugin.cancel(id);
-    } catch (_) {}
+      debugPrint('[NotificationService] Cancelled Notification ID: $id');
+    } catch (e) {
+      debugPrint('[NotificationService] Error cancelling notification $id: $e');
+    }
   }
 
   @override
   Future<void> cancelAllNotifications() async {
     try {
       await _plugin.cancelAll();
-    } catch (_) {}
+      debugPrint('[NotificationService] Cancelled all notifications');
+    } catch (e) {
+      debugPrint('[NotificationService] Error cancelling all notifications: $e');
+    }
   }
 }

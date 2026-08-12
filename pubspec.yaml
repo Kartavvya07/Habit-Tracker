@@ -33,6 +33,7 @@ dependencies:
   # Notifications & Alarms
   flutter_local_notifications: ^17.1.2
   timezone: ^0.9.3
+  flutter_timezone: ^3.0.1
 
   # Networking & Cryptography
   http: ^1.2.0
