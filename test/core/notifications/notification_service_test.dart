@@ -47,6 +47,28 @@ class MockNotificationService implements NotificationService {
   }
 
   @override
+  Future<void> showNotificationNow({
+    required int id,
+    required String title,
+    required String body,
+    String? payload,
+  }) async {
+    scheduledNotifications.add({
+      'id': id,
+      'title': title,
+      'body': body,
+      'scheduledDate': DateTime.now(),
+      'payload': payload,
+      'immediate': true,
+    });
+  }
+
+  @override
+  Future<List<dynamic>> getPendingNotifications() async {
+    return scheduledNotifications;
+  }
+
+  @override
   Future<void> cancelAllNotifications() async {
     cancelledNotificationIds.addAll(
         scheduledNotifications.map((n) => n['id'] as int).toList());

@@ -11,6 +11,14 @@ abstract class NotificationService {
   /// Checks if notification permissions have been granted.
   Future<bool> hasPermissions();
 
+  /// Shows an immediate notification without scheduling.
+  Future<void> showNotificationNow({
+    required int id,
+    required String title,
+    required String body,
+    String? payload,
+  });
+
   /// Schedules an exact local alarm/notification for the specified [scheduledDate].
   Future<void> scheduleNotification({
     required int id,
@@ -25,4 +33,7 @@ abstract class NotificationService {
 
   /// Cancels all active and pending scheduled notifications.
   Future<void> cancelAllNotifications();
+
+  /// Returns active pending notification requests from Android AlarmManager / OS.
+  Future<List<dynamic>> getPendingNotifications();
 }

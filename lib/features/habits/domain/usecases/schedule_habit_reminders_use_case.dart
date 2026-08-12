@@ -48,7 +48,15 @@ class ScheduleHabitRemindersUseCase {
       minute,
     );
 
-    if (scheduled.isBefore(baseDate) || scheduled.isAtSameMomentAs(baseDate)) {
+    final baseDateMinutePrecision = DateTime(
+      baseDate.year,
+      baseDate.month,
+      baseDate.day,
+      baseDate.hour,
+      baseDate.minute,
+    );
+
+    if (scheduled.isBefore(baseDateMinutePrecision)) {
       switch (habit.frequency) {
         case HabitFrequency.daily:
           scheduled = scheduled.add(const Duration(days: 1));

@@ -27,8 +27,13 @@ class LocalNotificationServiceImpl implements NotificationService {
       tz.initializeTimeZones();
       try {
         final String timeZoneName = await FlutterTimezone.getLocalTimezone();
-        tz.setLocalLocation(tz.getLocation(timeZoneName));
-        debugPrint('[NotificationService] TimeZone initialized: $timeZoneName');
+        debugPrint('[NotificationService] Native device timeZoneName: "$timeZoneName"');
+        try {
+          tz.setLocalLocation(tz.getLocation(timeZoneName));
+        } catch (e) {
+          debugPrint('[NotificationService] Primary tz.getLocation failed for "$timeZoneName": $e');
+        }
+        debugPrint('[NotificationService] Active tz.local.name: "${tz.local.name}"');
       } catch (e) {
         debugPrint('[NotificationService] TimeZone detection warning: $e');
       }
@@ -66,7 +71,7 @@ class LocalNotificationServiceImpl implements NotificationService {
         channelId,
         channelName,
         description: channelDescription,
-        importance: Importance.high,
+        importance: Importance.max,
         playSound: true,
         enableVibration: true,
       );
@@ -129,6 +134,39 @@ class LocalNotificationServiceImpl implements NotificationService {
   }
 
   @override
+  Future<void> showNotificationNow({
+    required int id,
+    required String title,
+    required String body,
+    String? payload,
+  }) async {
+    if (!_isInitialized) {
+      await initialize();
+    }
+
+    try {
+      const androidDetails = AndroidNotificationDetails(
+        channelId,
+        channelName,
+        channelDescription: channelDescription,
+        importance: Importance.max,
+        priority: Priority.high,
+        icon: '@mipmap/ic_launcher',
+      );
+
+      const details = NotificationDetails(
+        android: androidDetails,
+      );
+
+      await _plugin.show(id, title, body, details, payload: payload);
+      debugPrint('[NotificationService] SUCCESS: Immediate notification $id shown');
+    } catch (e, st) {
+      debugPrint('[NotificationService] ERROR showing immediate notification $id: $e\n$st');
+      rethrow;
+    }
+  }
+
+  @override
   Future<void> scheduleNotification({
     required int id,
     required String title,
@@ -141,7 +179,23 @@ class LocalNotificationServiceImpl implements NotificationService {
     }
 
     try {
-      final scheduledTzDate = tz.TZDateTime.from(scheduledDate, tz.local);
+      final now = tz.TZDateTime.now(tz.local);
+      var scheduledTzDate = scheduledDate is tz.TZDateTime
+          ? scheduledDate
+          : tz.TZDateTime(
+              tz.local,
+              scheduledDate.year,
+              scheduledDate.month,
+              scheduledDate.day,
+              scheduledDate.hour,
+              scheduledDate.minute,
+              scheduledDate.second,
+              scheduledDate.millisecond,
+            );
+
+      if (scheduledTzDate.isBefore(now.subtract(const Duration(minutes: 1)))) {
+        scheduledTzDate = scheduledTzDate.add(const Duration(days: 1));
+      }
 
       debugPrint('[NotificationService] Scheduling Notification ID: $id');
       debugPrint('[NotificationService] Title: "$title"');
@@ -153,7 +207,7 @@ class LocalNotificationServiceImpl implements NotificationService {
         channelId,
         channelName,
         channelDescription: channelDescription,
-        importance: Importance.high,
+        importance: Importance.max,
         priority: Priority.high,
         icon: '@mipmap/ic_launcher',
         actions: <AndroidNotificationAction>[
@@ -190,6 +244,8 @@ class LocalNotificationServiceImpl implements NotificationService {
           ? AndroidScheduleMode.exactAllowWhileIdle
           : AndroidScheduleMode.inexactAllowWhileIdle;
 
+      debugPrint('[NotificationService] Selected scheduleMode: $scheduleMode (canExact: $canExact)');
+
       await _plugin.zonedSchedule(
         id,
         title,
@@ -202,6 +258,7 @@ class LocalNotificationServiceImpl implements NotificationService {
         payload: payload,
       );
       debugPrint('[NotificationService] SUCCESS: Scheduled Notification ID $id at $scheduledTzDate');
+      await getPendingNotifications();
     } catch (e, st) {
       debugPrint('[NotificationService] ERROR scheduling Notification ID $id: $e\n$st');
       rethrow;
@@ -225,6 +282,21 @@ class LocalNotificationServiceImpl implements NotificationService {
       debugPrint('[NotificationService] Cancelled all notifications');
     } catch (e) {
       debugPrint('[NotificationService] Error cancelling all notifications: $e');
+    }
+  }
+
+  @override
+  Future<List<PendingNotificationRequest>> getPendingNotifications() async {
+    try {
+      final pending = await _plugin.pendingNotificationRequests();
+      debugPrint('[NotificationService] Pending notifications count: ${pending.length}');
+      for (final p in pending) {
+        debugPrint('[NotificationService] Pending ID: ${p.id}, Title: "${p.title}", Body: "${p.body}"');
+      }
+      return pending;
+    } catch (e) {
+      debugPrint('[NotificationService] Error fetching pending notifications: $e');
+      return [];
     }
   }
 }
